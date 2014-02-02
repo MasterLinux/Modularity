@@ -40,7 +40,7 @@ public class ApplicationsTest {
      */
     @Test
     public void testGetIt() {
-        String responseMsg = target.path("applications").request().get(String.class);
+        String responseMsg = target.path("applications").queryParam("offset", "2").request().get(String.class);
         Assert.assertEquals("Got it!", responseMsg);
     }
 }

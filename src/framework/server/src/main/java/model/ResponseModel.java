@@ -9,13 +9,9 @@ public class ResponseModel<T extends BaseModel> {
     private MetaModel meta;
     private List<T> objects;
 
-    public MetaModel getMeta() {
-        return meta;
-    }
+    public MetaModel getMeta() { return meta; }
 
-    public void setMeta(MetaModel meta) {
-        this.meta = meta;
-    }
+    public void setMeta(MetaModel meta) { this.meta = meta; }
 
     public List<T> getObjects() {
         return objects;

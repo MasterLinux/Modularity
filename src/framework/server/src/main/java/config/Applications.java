@@ -1,13 +1,17 @@
 package config;
 
+import beanParam.MetaBeanParam;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import config.model.ApplicationModel;
-import model.MetaModel;
-import model.ResponseModel;
+import util.ResponseModelUtil;
 
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 
 /**
@@ -16,31 +20,38 @@ import java.util.ArrayList;
 @Path("/applications")
 public class Applications {
 
+    @Context
+    UriInfo uriInfo;
+
     @GET
     @Produces("application/json")
-    public String getApplications() {
-        ResponseModel<ApplicationModel> response = new ResponseModel<ApplicationModel>();
-
-        MetaModel meta = new MetaModel();
-        meta.setFilteredCount(1);
-        meta.setLimit(1);
-        meta.setNext("bla");
-        meta.setOffset(1);
-        meta.setPrevious("bla-1");
-        meta.setTotalCount(1);
-
-        response.setMeta(meta);
-
-        ApplicationModel application = new ApplicationModel();
-        application.setName("wusa");
-
+    public String getApplications(
+            @BeanParam MetaBeanParam metaParam
+    ) {
         ArrayList<ApplicationModel> objects = new ArrayList<ApplicationModel>();
-        objects.add(application);
 
-        response.setObjects(objects);
+        ApplicationModel application;
+        for(int i=0; i<60; i++) {
+            application = new ApplicationModel();
+            application.setName("application_" + i);
+            application.setId(i);
 
-        Gson gson = new Gson();
+            objects.add(application);
+        }
 
-        return gson.toJson(response);
+        ResponseModelUtil util =
+                new ResponseModelUtil<ApplicationModel>(
+                        uriInfo.getRequestUri(),
+                        objects,
+                        metaParam.getLimit(),
+                        metaParam.getOffset()
+                );
+
+        Gson gson = new GsonBuilder()
+                .disableHtmlEscaping()
+                .serializeNulls()
+                .create();
+
+        return gson.toJson(util.get());
     }
 }
