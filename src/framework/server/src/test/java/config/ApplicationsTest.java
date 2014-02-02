@@ -22,8 +22,8 @@ public class ApplicationsTest {
 
     @Before
     public void setUp() throws Exception {
-        ResourceConfig rc = new PackagesResourceConfig("com.javarest.javarest2");
-        server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://localhost:9090"));
+        ResourceConfig rc = new ResourceConfig().packages("config");
+        server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://localhost:9090"), rc);
         server.start();
 
         Client c = ClientBuilder.newClient();
