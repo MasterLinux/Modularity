@@ -1,4 +1,4 @@
-package config;
+package server.api.config;
 
 import junit.framework.Assert;
 import org.glassfish.grizzly.http.server.HttpServer;

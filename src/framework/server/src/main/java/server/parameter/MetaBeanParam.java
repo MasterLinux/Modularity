@@ -1,4 +1,4 @@
-package beanParam;
+package server.parameter;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;

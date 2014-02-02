@@ -1,3 +1,5 @@
+import server.Server;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.logging.Logger;

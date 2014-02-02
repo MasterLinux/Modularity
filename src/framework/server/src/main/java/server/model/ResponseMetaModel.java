@@ -1,9 +1,9 @@
-package model;
+package server.model;
 
 /**
  * Created by Christoph on 02.02.14.
  */
-public class MetaModel {
+public class ResponseMetaModel {
     private int offset;
     private int limit;
     private int filteredCount;

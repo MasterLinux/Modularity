@@ -1,4 +1,4 @@
-package model;
+package server.model;
 
 import java.util.List;
 
@@ -6,12 +6,12 @@ import java.util.List;
  * Created by Christoph on 02.02.14.
  */
 public class ResponseModel<T extends BaseModel> {
-    private MetaModel meta;
+    private ResponseMetaModel meta;
     private List<T> objects;
 
-    public MetaModel getMeta() { return meta; }
+    public ResponseMetaModel getMeta() { return meta; }
 
-    public void setMeta(MetaModel meta) { this.meta = meta; }
+    public void setMeta(ResponseMetaModel meta) { this.meta = meta; }
 
     public List<T> getObjects() {
         return objects;

@@ -14,11 +14,11 @@ class Config {
   const _RESOURCE_TEXTS = "/texts";
 
   /**
-   * initializes the config with
+   * initializes the server.api.config with
    * the help of the servers [baseUrl]
    */
   Config(int applicationId, {String scheme: 'https', String baseUrl: '127.0.0.1' }) {
-    //create URIs for getting the config
+    //create URIs for getting the server.api.config
     _applicationsUri = new Uri(
       path: _RESOURCE_APPLICATIONS,
       scheme: scheme,

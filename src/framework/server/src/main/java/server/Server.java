@@ -1,3 +1,5 @@
+package server;
+
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -23,7 +25,7 @@ public class Server {
         server = GrizzlyHttpServerFactory.createHttpServer(
                 this.uri,
                 new ResourceConfig()
-                        .packages("config")
+                        .packages("server.api.config")
         );
     }
 

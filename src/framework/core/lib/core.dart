@@ -7,7 +7,7 @@ part 'application.dart';
 part 'page.dart';
 part 'fragment.dart';
 part 'module.dart';
-part 'config.dart';
+part 'server.api.config.dart';
 
 class Core {
   Core() {

@@ -1,6 +1,6 @@
-package config.model;
+package server.model.config;
 
-import model.BaseModel;
+import server.model.BaseModel;
 
 /**
  * Model which describes an application

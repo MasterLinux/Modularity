@@ -1,7 +1,7 @@
-package model;
+package server.model;
 
 /**
- * Base implementation of a model
+ * Base implementation of a server.model
  * @author Christoph Grundmann
  */
 public class BaseModel {
