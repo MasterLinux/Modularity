@@ -56,7 +56,7 @@
     </breakpoint_any>
     <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
-      <breakpoint url="file://$PROJECT_DIR$/server/src/test/java/server/api/config/ApplicationsTest.java" line="25" class="config.ApplicationsTest" package="config">
+      <breakpoint url="file://$PROJECT_DIR$/server/src/test/java/server/api/config/ApplicationsTest.java" line="25" class="server.api.config.ApplicationsTest" package="server.api.config">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -71,7 +71,7 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/server/src/test/java/server/api/config/ApplicationsTest.java" line="42" class="config.ApplicationsTest" package="config">
+      <breakpoint url="file://$PROJECT_DIR$/server/src/test/java/server/api/config/ApplicationsTest.java" line="42" class="server.api.config.ApplicationsTest" package="server.api.config">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -99,28 +99,44 @@
       <file leaf-file-name="core.dart" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/lib/core.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="20" selection-start="59" selection-end="59" vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="357">
+            <state line="33" column="20" selection-start="493" selection-end="493" vertical-scroll-proportion="0.0" vertical-offset="184" max-vertical-offset="833">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="config.dart" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/lib/config.dart">
+      <file leaf-file-name="module.dart" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/lib/module.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="60" column="4" selection-start="1578" selection-end="1578" vertical-scroll-proportion="0.0" vertical-offset="1020" max-vertical-offset="1326">
+            <state line="13" column="90" selection-start="188" selection-end="188" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Applications.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/server/src/main/java/server/api/config/Applications.java">
+      <file leaf-file-name="event_args.dart" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/lib/event/event_args.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="21" column="13" selection-start="533" selection-end="533" vertical-scroll-proportion="0.30070922" vertical-offset="145" max-vertical-offset="1105">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="20" column="19" selection-start="334" selection-end="334" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="connect.dart" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/core/lib/event/connect.dart">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="45" column="11" selection-start="822" selection-end="822" vertical-scroll-proportion="0.68567026" vertical-offset="320" max-vertical-offset="969">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="slot.dart" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/lib/event/slot.dart">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="2" column="22" selection-start="47" selection-end="47" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="153">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -129,7 +145,12 @@
         <entry file="file://$PROJECT_DIR$/server/src/main/java/server/model/config/ApplicationModel.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="8" column="13" selection-start="154" selection-end="154" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="357">
-              <folding />
+              <folding>
+                <element signature="e#245#246#0" expanded="false" />
+                <element signature="e#272#273#0" expanded="false" />
+                <element signature="e#312#313#0" expanded="false" />
+                <element signature="e#344#345#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -138,17 +159,31 @@
         <entry file="file://$PROJECT_DIR$/server/src/main/java/server/model/ResponseMetaModel.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="5" column="21" selection-start="89" selection-end="89" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="731">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Server.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server/src/main/java/server/Server.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="41" selection-start="700" selection-end="700" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1003">
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#289#290#0" expanded="false" />
+                <element signature="e#318#319#0" expanded="false" />
+                <element signature="e#359#360#0" expanded="false" />
+                <element signature="e#395#396#0" expanded="false" />
+                <element signature="e#424#425#0" expanded="false" />
+                <element signature="e#452#453#0" expanded="false" />
+                <element signature="e#491#492#0" expanded="false" />
+                <element signature="e#525#526#0" expanded="false" />
+                <element signature="e#562#563#0" expanded="false" />
+                <element signature="e#598#599#0" expanded="false" />
+                <element signature="e#653#654#0" expanded="false" />
+                <element signature="e#703#704#0" expanded="false" />
+                <element signature="e#737#738#0" expanded="false" />
+                <element signature="e#770#771#0" expanded="false" />
+                <element signature="e#819#820#0" expanded="false" />
+                <element signature="e#863#864#0" expanded="false" />
+                <element signature="e#894#895#0" expanded="false" />
+                <element signature="e#921#922#0" expanded="false" />
+                <element signature="e#961#962#0" expanded="false" />
+                <element signature="e#993#994#0" expanded="false" />
+                <element signature="e#1028#1029#0" expanded="false" />
+                <element signature="e#1059#1060#0" expanded="false" />
+                <element signature="e#1107#1108#0" expanded="false" />
+                <element signature="e#1147#1148#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -157,25 +192,8 @@
       <file leaf-file-name="Main.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/src/main/java/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="42" selection-start="368" selection-end="368" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="850">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ResponseBuilder.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server/src/main/java/server/util/ResponseBuilder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="13" selection-start="295" selection-end="295" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3094">
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="method#setResourceUri#0;class#ResponseBuilder#0" expanded="true" />
-                <element signature="method#setObjects#0;class#ResponseBuilder#0" expanded="true" />
-                <element signature="method#setLimit#0;class#ResponseBuilder#0" expanded="true" />
-                <element signature="method#setOffset#0;class#ResponseBuilder#0" expanded="true" />
-              </folding>
+            <state line="17" column="42" selection-start="368" selection-end="368" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="782">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -184,7 +202,13 @@
         <entry file="file://$PROJECT_DIR$/server/src/main/java/server/parameter/MetaBeanParam.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="10" column="23" selection-start="212" selection-end="212" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
-              <folding />
+              <folding>
+                <element signature="imports" expanded="false" />
+                <element signature="e#467#468#0" expanded="false" />
+                <element signature="e#495#496#0" expanded="false" />
+                <element signature="e#525#526#0" expanded="false" />
+                <element signature="e#554#555#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -199,12 +223,9 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/core/lib/module.dart" />
         <option value="$PROJECT_DIR$/core/lib/fragment.dart" />
         <option value="$PROJECT_DIR$/core/lib/page.dart" />
         <option value="$PROJECT_DIR$/core/lib/application.dart" />
-        <option value="$PROJECT_DIR$/core/web/index.html" />
-        <option value="$PROJECT_DIR$/core/lib/core.dart" />
         <option value="$PROJECT_DIR$/core/lib/config.dart" />
         <option value="$PROJECT_DIR$/server/src/lib/server/config/Applications.java" />
         <option value="$PROJECT_DIR$/server/src/lib/server/test/ApplicationsTest.java" />
@@ -229,6 +250,14 @@
         <option value="$PROJECT_DIR$/server/src/main/java/server/api/config/Applications.java" />
         <option value="$PROJECT_DIR$/server/src/main/java/server/model/config/ConfigApplicationModel.java" />
         <option value="$PROJECT_DIR$/server/src/main/java/server/model/config/ApplicationModel.java" />
+        <option value="$PROJECT_DIR$/core/web/index.html" />
+        <option value="$PROJECT_DIR$/core/lib/event/eventArgs.dart" />
+        <option value="$PROJECT_DIR$/core/lib/event/event.dart" />
+        <option value="$PROJECT_DIR$/core/lib/event/slot.dart" />
+        <option value="$PROJECT_DIR$/core/lib/event/connect.dart" />
+        <option value="$PROJECT_DIR$/core/lib/core.dart" />
+        <option value="$PROJECT_DIR$/core/lib/module.dart" />
+        <option value="$PROJECT_DIR$/core/lib/event/event_args.dart" />
       </list>
     </option>
   </component>
@@ -292,7 +321,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -409,6 +437,36 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="server" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="server" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="config" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="framework" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -441,8 +499,27 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="framework" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="event" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -487,7 +564,7 @@
       <recent name="C:\Users\Christoph\Documents\Development\Dart\Build_Ya_App\src\framework\server\lib" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="JavaScript Debug.index.html">
     <configuration default="false" name="All in server" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="server" />
@@ -572,6 +649,23 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="core.dart" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application" temporary="true">
+      <option name="VMOptions" />
+      <option name="arguments" />
+      <option name="filePath" value="$PROJECT_DIR$/core/lib/core.dart" />
+      <option name="name" value="core.dart" />
+      <option name="saveOutputToFile" value="false" />
+      <option name="showConsoleOnStdErr" value="false" />
+      <option name="showConsoleOnStdOut" value="false" />
+      <RunnerSettings RunnerId="DartCommandLineRunner" />
+      <ConfigurationWrapper RunnerId="DartCommandLineRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="index.html" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true" temporary="true" engineId="dartium" uri="http://localhost:63342/framework/web/index.html">
+      <RunnerSettings RunnerId="JavascriptDebugRunner" />
+      <ConfigurationWrapper RunnerId="JavascriptDebugRunner" />
       <method />
     </configuration>
     <configuration default="true" type="GrailsRunConfigurationType" factoryName="Grails" singleton="true">
@@ -798,9 +892,9 @@
     <configuration default="true" type="DartUnitRunConfigurationType" factoryName="DartUnit">
       <option name="VMOptions" />
       <option name="arguments" />
-      <option name="filePath" />
+      <option name="filePath" value="$PROJECT_DIR$/core/lib/core.dart" />
       <option name="scope" value="ALL" />
-      <option name="testName" />
+      <option name="testName" value="lib.core" />
       <method />
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
@@ -950,16 +1044,20 @@
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
-    <list size="3">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="JUnit.All in server" />
       <item index="1" class="java.lang.String" itemvalue="Application.Main" />
       <item index="2" class="java.lang.String" itemvalue="JUnit.ApplicationsTest" />
+      <item index="3" class="java.lang.String" itemvalue="Dart Command Line Application.core.dart" />
+      <item index="4" class="java.lang.String" itemvalue="JavaScript Debug.index.html" />
     </list>
     <recent_temporary>
-      <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Application.Main" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.ApplicationsTest" />
-        <item index="2" class="java.lang.String" itemvalue="JUnit.All in server" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.index.html" />
+        <item index="1" class="java.lang.String" itemvalue="Dart Command Line Application.core.dart" />
+        <item index="2" class="java.lang.String" itemvalue="Application.Main" />
+        <item index="3" class="java.lang.String" itemvalue="JUnit.ApplicationsTest" />
+        <item index="4" class="java.lang.String" itemvalue="JUnit.All in server" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -978,12 +1076,13 @@
       <workItem from="1391284737709" duration="1690000" />
       <workItem from="1391286429890" duration="1319000" />
       <workItem from="1391347128553" duration="17432000" />
-      <workItem from="1391376537989" duration="2970000" />
+      <workItem from="1391376537989" duration="3473000" />
+      <workItem from="1391451692168" duration="7323000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="35339000" />
+    <option name="totallyTimeSpent" value="43165000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1007,7 +1106,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1696" height="1036" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1015,11 +1114,10 @@
       <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32819384" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289183" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32971373" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289183" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25496688" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25496688" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -1031,11 +1129,12 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6132353" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1947497" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19315673" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1947497" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19315673" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289183" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -1053,62 +1152,21 @@
     </option>
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/core/lib/event/event_args.dart</url>
+          <line>5</line>
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="1" />
+    </breakpoint-manager>
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/server/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="19" selection-start="1218" selection-end="1218" vertical-scroll-proportion="0.0" vertical-offset="132" max-vertical-offset="680">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/server.iml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="0" selection-start="2390" selection-end="2390" vertical-scroll-proportion="0.0" vertical-offset="595" max-vertical-offset="901" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/src/main/java/server/api/config/Applications.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="11" selection-start="11" selection-end="11" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/src/test/java/server/api/config/ApplicationsTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="13" selection-start="419" selection-end="419" vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="833">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/src/main/java/server/Server.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="17" selection-start="62" selection-end="62" vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="187">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/web/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="238" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/lib/module.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="17" selection-start="17" selection-end="17" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="204" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/lib/core.dart">
       <provider selected="true" editor-type-id="text-editor">
         <state line="3" column="20" selection-start="59" selection-end="59" vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="357">
@@ -1197,11 +1255,6 @@
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="238" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/lib/module.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="17" selection-start="17" selection-end="17" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="903" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/lib/fragment.dart">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1" column="0" selection-start="18" selection-end="18" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="204" />
@@ -1262,18 +1315,6 @@
         <state line="545" column="11" selection-start="18863" selection-end="18863" vertical-scroll-proportion="0.4251825" vertical-offset="8403" max-vertical-offset="33983" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/lib/core.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="20" selection-start="59" selection-end="59" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="357">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/web/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="903" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/server.iml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="42" column="0" selection-start="3178" selection-end="3178" vertical-scroll-proportion="0.8865248" vertical-offset="89" max-vertical-offset="969" />
@@ -1289,13 +1330,6 @@
     <entry file="file://$PROJECT_DIR$/server/src/main/java/server/model/BaseModel.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="21" column="5" selection-start="350" selection-end="350" vertical-scroll-proportion="0.3617021" vertical-offset="0" max-vertical-offset="705">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/lib/config.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="60" column="4" selection-start="1578" selection-end="1578" vertical-scroll-proportion="0.0" vertical-offset="1020" max-vertical-offset="1326">
           <folding />
         </state>
       </provider>
@@ -1318,17 +1352,45 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="9" column="28" selection-start="191" selection-end="191" vertical-scroll-proportion="0.23574731" vertical-offset="0" max-vertical-offset="649">
           <folding>
-            <element signature="e#247#248#0" expanded="true" />
-            <element signature="e#262#263#0" expanded="true" />
-            <element signature="e#313#314#0" expanded="true" />
-            <element signature="e#333#334#0" expanded="true" />
+            <element signature="e#247#248#0" expanded="false" />
+            <element signature="e#262#263#0" expanded="false" />
+            <element signature="e#313#314#0" expanded="false" />
+            <element signature="e#333#334#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0/src.zip!/java/util/List.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="662" column="12" selection-start="29829" selection-end="29829" vertical-scroll-proportion="0.33333334" vertical-offset="10628" max-vertical-offset="11424">
+        <state line="662" column="12" selection-start="29829" selection-end="29829" vertical-scroll-proportion="0.33333334" vertical-offset="10628" max-vertical-offset="11424" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/src/main/java/server/Server.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="41" selection-start="700" selection-end="700" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1003">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/src/main/java/server/util/ResponseBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="13" selection-start="295" selection-end="295" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3094">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/src/main/java/server/api/config/Applications.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="131" selection-start="870" selection-end="870" vertical-scroll-proportion="0.0" vertical-offset="223" max-vertical-offset="1105">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/SDKs/dart/dart-sdk/lib/core/function.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="15" selection-start="448" selection-end="448" vertical-scroll-proportion="0.23129252" vertical-offset="0" max-vertical-offset="882">
           <folding />
         </state>
       </provider>
@@ -1336,44 +1398,12 @@
     <entry file="file://$PROJECT_DIR$/server/src/main/java/server/parameter/MetaBeanParam.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="10" column="23" selection-start="212" selection-end="212" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/src/main/java/server/model/ResponseMetaModel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="21" selection-start="89" selection-end="89" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="731">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/src/main/java/server/Server.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="41" selection-start="700" selection-end="700" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1003">
           <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/src/main/java/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="42" selection-start="368" selection-end="368" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="850">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/src/main/java/server/util/ResponseBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="13" selection-start="295" selection-end="295" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3094">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#setResourceUri#0;class#ResponseBuilder#0" expanded="true" />
-            <element signature="method#setObjects#0;class#ResponseBuilder#0" expanded="true" />
-            <element signature="method#setLimit#0;class#ResponseBuilder#0" expanded="true" />
-            <element signature="method#setOffset#0;class#ResponseBuilder#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#467#468#0" expanded="false" />
+            <element signature="e#495#496#0" expanded="false" />
+            <element signature="e#525#526#0" expanded="false" />
+            <element signature="e#554#555#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1381,16 +1411,121 @@
     <entry file="file://$PROJECT_DIR$/server/src/main/java/server/model/config/ApplicationModel.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="8" column="13" selection-start="154" selection-end="154" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="357">
+          <folding>
+            <element signature="e#245#246#0" expanded="false" />
+            <element signature="e#272#273#0" expanded="false" />
+            <element signature="e#312#313#0" expanded="false" />
+            <element signature="e#344#345#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/src/main/java/server/model/ResponseMetaModel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="21" selection-start="89" selection-end="89" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="731">
+          <folding>
+            <element signature="e#289#290#0" expanded="false" />
+            <element signature="e#318#319#0" expanded="false" />
+            <element signature="e#359#360#0" expanded="false" />
+            <element signature="e#395#396#0" expanded="false" />
+            <element signature="e#424#425#0" expanded="false" />
+            <element signature="e#452#453#0" expanded="false" />
+            <element signature="e#491#492#0" expanded="false" />
+            <element signature="e#525#526#0" expanded="false" />
+            <element signature="e#562#563#0" expanded="false" />
+            <element signature="e#598#599#0" expanded="false" />
+            <element signature="e#653#654#0" expanded="false" />
+            <element signature="e#703#704#0" expanded="false" />
+            <element signature="e#737#738#0" expanded="false" />
+            <element signature="e#770#771#0" expanded="false" />
+            <element signature="e#819#820#0" expanded="false" />
+            <element signature="e#863#864#0" expanded="false" />
+            <element signature="e#894#895#0" expanded="false" />
+            <element signature="e#921#922#0" expanded="false" />
+            <element signature="e#961#962#0" expanded="false" />
+            <element signature="e#993#994#0" expanded="false" />
+            <element signature="e#1028#1029#0" expanded="false" />
+            <element signature="e#1059#1060#0" expanded="false" />
+            <element signature="e#1107#1108#0" expanded="false" />
+            <element signature="e#1147#1148#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/src/main/java/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="42" selection-start="368" selection-end="368" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="850">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/src/main/java/server/api/config/Applications.java">
+    <entry file="file://$PROJECT_DIR$/core/web/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="13" selection-start="533" selection-end="533" vertical-scroll-proportion="0.30070922" vertical-offset="145" max-vertical-offset="1105">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="8" column="101" selection-start="149" selection-end="149" vertical-scroll-proportion="0.19970632" vertical-offset="0" max-vertical-offset="681">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/lib/config.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="60" column="4" selection-start="1578" selection-end="1578" vertical-scroll-proportion="0.0" vertical-offset="1020" max-vertical-offset="1326">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/SDKs/dart/dart-sdk/lib/_collection_dev/symbol.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="6" selection-start="536" selection-end="536" vertical-scroll-proportion="0.018489985" vertical-offset="226" max-vertical-offset="1411">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/SDKs/dart/dart-sdk/lib/mirrors/mirrors.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="459" column="6" selection-start="16439" selection-end="16439" vertical-scroll-proportion="0.56856704" vertical-offset="7434" max-vertical-offset="20468">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/lib/event/event.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="22" selection-start="47" selection-end="47" vertical-scroll-proportion="0.052388288" vertical-offset="0" max-vertical-offset="649">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/lib/event/slot.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="22" selection-start="47" selection-end="47" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="153">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/lib/module.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="90" selection-start="188" selection-end="188" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/lib/event/event_args.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="19" selection-start="334" selection-end="334" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/lib/core.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="20" selection-start="493" selection-end="493" vertical-scroll-proportion="0.0" vertical-offset="128" max-vertical-offset="833">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/lib/event/connect.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="11" selection-start="822" selection-end="822" vertical-scroll-proportion="0.68567026" vertical-offset="320" max-vertical-offset="969">
+          <folding />
         </state>
       </provider>
     </entry>
