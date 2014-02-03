@@ -1,11 +1,11 @@
 part of lib.core.event;
 
 class Connect {
-  final String signal;
+  final String _signal;
   static Map<String, Connect> _cache;
   List<Slot> _slots;
 
-  factory Connect(String signal) {
+  factory Connect._factory(String signal) {
     if(_cache == null) {
       _cache = {};
     }
@@ -20,8 +20,12 @@ class Connect {
     }
   }
 
-  Connect._internal(this.signal) {
+  Connect._internal(this._signal) {
     _slots = new List<Function>();
+  }
+
+  static Connect signal(String signal) {
+    return new Connect._factory(signal);
   }
 
   Connect to(Slot slot) {
@@ -34,7 +38,7 @@ class Connect {
 
     //remove signal if no slots are added anymore
     if(_slots.isEmpty) {
-      _cache.remove(signal);
+      _cache.remove(_signal);
     }
 
     return this;

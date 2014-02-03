@@ -99,7 +99,7 @@
       <file leaf-file-name="core.dart" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/lib/core.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="33" column="20" selection-start="493" selection-end="493" vertical-scroll-proportion="0.0" vertical-offset="184" max-vertical-offset="833">
+            <state line="37" column="11" selection-start="578" selection-end="578" vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="850">
               <folding />
             </state>
           </provider>
@@ -126,7 +126,7 @@
       <file leaf-file-name="connect.dart" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core/lib/event/connect.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="45" column="11" selection-start="822" selection-end="822" vertical-scroll-proportion="0.68567026" vertical-offset="320" max-vertical-offset="969">
+            <state line="33" column="3" selection-start="649" selection-end="649" vertical-scroll-proportion="0.56856704" vertical-offset="192" max-vertical-offset="1037">
               <folding />
             </state>
           </provider>
@@ -254,10 +254,10 @@
         <option value="$PROJECT_DIR$/core/lib/event/eventArgs.dart" />
         <option value="$PROJECT_DIR$/core/lib/event/event.dart" />
         <option value="$PROJECT_DIR$/core/lib/event/slot.dart" />
-        <option value="$PROJECT_DIR$/core/lib/event/connect.dart" />
-        <option value="$PROJECT_DIR$/core/lib/core.dart" />
         <option value="$PROJECT_DIR$/core/lib/module.dart" />
         <option value="$PROJECT_DIR$/core/lib/event/event_args.dart" />
+        <option value="$PROJECT_DIR$/core/lib/core.dart" />
+        <option value="$PROJECT_DIR$/core/lib/event/connect.dart" />
       </list>
     </option>
   </component>
@@ -1077,12 +1077,12 @@
       <workItem from="1391286429890" duration="1319000" />
       <workItem from="1391347128553" duration="17432000" />
       <workItem from="1391376537989" duration="3473000" />
-      <workItem from="1391451692168" duration="7323000" />
+      <workItem from="1391451692168" duration="8065000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="43165000" />
+    <option name="totallyTimeSpent" value="43907000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1517,14 +1517,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/lib/core.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="20" selection-start="493" selection-end="493" vertical-scroll-proportion="0.0" vertical-offset="128" max-vertical-offset="833">
+        <state line="37" column="11" selection-start="578" selection-end="578" vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="850">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/lib/event/connect.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="11" selection-start="822" selection-end="822" vertical-scroll-proportion="0.68567026" vertical-offset="320" max-vertical-offset="969">
+        <state line="33" column="3" selection-start="649" selection-end="649" vertical-scroll-proportion="0.56856704" vertical-offset="192" max-vertical-offset="1037">
           <folding />
         </state>
       </provider>

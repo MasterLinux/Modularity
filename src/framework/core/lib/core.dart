@@ -30,7 +30,8 @@ class Core {
 
   void tests() {
     var module = new Module("rofl");
-    new Connect("test")
+
+    Connect.signal("test")
       .to(module.printEvent)
       .to(module.printEvent)
       .emit(new LolEventArgs())
