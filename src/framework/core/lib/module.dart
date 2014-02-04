@@ -8,12 +8,26 @@ class Module {
 
   Slot get printEvent {
     return new Slot((args) {
-      print((args["text"] as String) + " lol");
+      //check whether all arguments are available
+      var hasName = args.hasArgument("title");
+      var hasHandler = args.hasArgument("handler");
+
+      //if so execute handler
+      if(hasName && hasHandler) {
+
+        //get and cast arguments
+        var handler = args["handler"] as Function;
+        var title = args["title"] as String;
+
+        //do crazy stuff
+        handler(title);
+      }
     });
   }
 
   Slot get printEventExpensive {
     return new Slot((args) {
+      /*
       StringBuffer s = new StringBuffer();
       int n = 0;
 
@@ -23,7 +37,8 @@ class Module {
 
       s.write(n);
 
-      print((args["text"] as String) + " expensiv_" + "id" + " " + s.toString());
+      print((args["title"] as String) + " expensiv_" + "id" + " " + s.toString());
+      */
     });
   }
 }

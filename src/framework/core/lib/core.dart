@@ -11,18 +11,6 @@ part 'fragment.dart';
 part 'module.dart';
 part 'config.dart';
 
-class LolEventArgs extends EventArgs {
-  String get text {
-    return "lol";
-  }
-}
-
-class RoflEventArgs extends EventArgs {
-  String get text {
-    return "rofl";
-  }
-}
-
 class Core {
   Core() {
 
@@ -35,15 +23,22 @@ class Core {
       .to(module.printEventExpensive)
       .to(module.printEvent)
       .to(module.printEvent)
-      .emit(new LolEventArgs())
-      .emit(new RoflEventArgs());
+      .emit(new EventArgs.from({
+        "title": "example_title",
+        "handler": (title) {
+          print(title);
+        }
+      }))
+      .emit(new EventArgs.from({
+        "text": "rofl"
+      }));
 
-
+    /*
     Disconnect.signal("test")
       .from(module.printEvent);
 
     Connect.signal("test")
-      .emit(new RoflEventArgs());
+      .emit(new RoflEventArgs()); */
   }
 }
 

@@ -96,28 +96,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="event_manager.dart" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/lib/event/event_manager.dart">
+      <file leaf-file-name="core.dart" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/core/lib/core.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="25" selection-start="542" selection-end="542" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1173">
+            <state line="24" column="22" selection-start="401" selection-end="401" vertical-scroll-proportion="0.47113165" vertical-offset="0" max-vertical-offset="884">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="module.dart" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/core/lib/module.dart">
+      <file leaf-file-name="connect.dart" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/lib/event/connect.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="32" selection-start="248" selection-end="248" vertical-scroll-proportion="0.2944573" vertical-offset="0" max-vertical-offset="866">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="event.dart" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/lib/event/event.dart">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="22" selection-start="91" selection-end="91" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="289">
+            <state line="29" column="2" selection-start="615" selection-end="727" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1224">
               <folding />
             </state>
           </provider>
@@ -126,25 +117,16 @@
       <file leaf-file-name="disconnect.dart" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/lib/event/disconnect.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="3" selection-start="319" selection-end="319" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
+            <state line="14" column="9" selection-start="343" selection-end="343" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="884">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="slot.dart" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/lib/event/slot.dart">
+      <file leaf-file-name="event_manager.dart" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/lib/event/event_manager.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="20" selection-start="210" selection-end="210" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="event_args.dart" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/lib/event/event_args.dart">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="16" selection-start="334" selection-end="334" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
+            <state line="24" column="12" selection-start="630" selection-end="685" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1836">
               <folding />
             </state>
           </provider>
@@ -189,14 +171,14 @@
         <option value="$PROJECT_DIR$/server/src/main/java/server/model/config/ApplicationModel.java" />
         <option value="$PROJECT_DIR$/core/web/index.html" />
         <option value="$PROJECT_DIR$/core/lib/event/eventArgs.dart" />
-        <option value="$PROJECT_DIR$/core/lib/event/event_args.dart" />
-        <option value="$PROJECT_DIR$/core/lib/event/disconnect.dart" />
-        <option value="$PROJECT_DIR$/core/lib/event/connect.dart" />
-        <option value="$PROJECT_DIR$/core/lib/core.dart" />
         <option value="$PROJECT_DIR$/core/lib/event/event.dart" />
+        <option value="$PROJECT_DIR$/core/lib/core.dart" />
+        <option value="$PROJECT_DIR$/core/lib/module.dart" />
         <option value="$PROJECT_DIR$/core/lib/event/slot.dart" />
         <option value="$PROJECT_DIR$/core/lib/event/event_manager.dart" />
-        <option value="$PROJECT_DIR$/core/lib/module.dart" />
+        <option value="$PROJECT_DIR$/core/lib/event/event_args.dart" />
+        <option value="$PROJECT_DIR$/core/lib/event/connect.dart" />
+        <option value="$PROJECT_DIR$/core/lib/event/disconnect.dart" />
       </list>
     </option>
   </component>
@@ -1017,12 +999,12 @@
       <workItem from="1391347128553" duration="17432000" />
       <workItem from="1391376537989" duration="3473000" />
       <workItem from="1391451692168" duration="8484000" />
-      <workItem from="1391507707452" duration="11270000" />
+      <workItem from="1391507707452" duration="19164000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="55596000" />
+    <option name="totallyTimeSpent" value="63490000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1096,7 +1078,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/core/lib/event/event_args.dart</url>
-          <line>5</line>
+          <line>52</line>
         </line-breakpoint>
       </breakpoints>
       <option name="time" value="1" />
@@ -1107,15 +1089,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/server/src/test/java/server/api/config/ApplicationsTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="7" selection-start="330" selection-end="330" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="731">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/web/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="238" />
@@ -1376,23 +1349,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/lib/event/connect.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="36" selection-start="373" selection-end="373" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/src/main/java/server/api/config/Applications.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="34" column="131" selection-start="870" selection-end="870" vertical-scroll-proportion="0.38792104" vertical-offset="23" max-vertical-offset="884">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/lib/core.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="6" selection-start="555" selection-end="555" vertical-scroll-proportion="0.0" vertical-offset="40" max-vertical-offset="969">
           <folding />
         </state>
       </provider>
@@ -1411,13 +1370,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/lib/event/event_args.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="16" selection-start="334" selection-end="334" vertical-scroll-proportion="0.0" vertical-offset="340" max-vertical-offset="493">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/SDKs/dart/dart-sdk/lib/async/future.dart">
       <provider selected="true" editor-type-id="text-editor">
         <state line="302" column="9" selection-start="11217" selection-end="11217" vertical-scroll-proportion="1.7459584" vertical-offset="3622" max-vertical-offset="9044">
@@ -1425,37 +1377,65 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/lib/event/event_manager.dart">
+    <entry file="file://C:/SDKs/dart/dart-sdk/lib/core/map.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="25" selection-start="542" selection-end="542" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1173">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/lib/event/slot.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="20" selection-start="210" selection-end="210" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/lib/event/event.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="22" selection-start="91" selection-end="91" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="289">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/lib/event/disconnect.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="3" selection-start="319" selection-end="319" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
+        <state line="94" column="5" selection-start="3299" selection-end="3347" vertical-scroll-proportion="0.29330254" vertical-offset="1344" max-vertical-offset="3332">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/lib/module.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="32" selection-start="248" selection-end="248" vertical-scroll-proportion="0.2944573" vertical-offset="0" max-vertical-offset="866">
+        <state line="9" column="30" selection-start="125" selection-end="125" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="850">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/lib/event/event.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="22" selection-start="91" selection-end="91" vertical-scroll-proportion="0.07852194" vertical-offset="0" max-vertical-offset="866">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/lib/event/event_args.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="58" column="39" selection-start="1368" selection-end="1368" vertical-scroll-proportion="1.1385682" vertical-offset="0" max-vertical-offset="1190">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/lib/event/slot.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="12" selection-start="762" selection-end="762" vertical-scroll-proportion="0.70669746" vertical-offset="0" max-vertical-offset="866">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/lib/event/connect.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="2" selection-start="615" selection-end="727" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1224">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/lib/event/disconnect.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="9" selection-start="343" selection-end="343" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="884">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/lib/event/event_manager.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="12" selection-start="630" selection-end="685" vertical-scroll-proportion="0.0" vertical-offset="1" max-vertical-offset="1836">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/lib/core.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="22" selection-start="401" selection-end="401" vertical-scroll-proportion="0.47113165" vertical-offset="0" max-vertical-offset="884">
           <folding />
         </state>
       </provider>
