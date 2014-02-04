@@ -29,13 +29,20 @@ class Core {
   }
 
   void tests() {
-    var module = new Module("rofl");
+    var module = new Module("module_id");
 
     Connect.signal("test")
+      .to(module.printEventExpensive)
       .to(module.printEvent)
       .to(module.printEvent)
       .emit(new LolEventArgs())
-      .remove(module.printEvent)
+      .emit(new RoflEventArgs());
+
+
+    Disconnect.signal("test")
+      .from(module.printEvent);
+
+    Connect.signal("test")
       .emit(new RoflEventArgs());
   }
 }
