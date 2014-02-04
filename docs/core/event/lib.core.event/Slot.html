@@ -1,0 +1,121 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Slot class / lib.core.event Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="lib.core.event" data-type="Slot">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../lib.core.event.html">lib.core.event</a> &rsaquo; <a href="../lib.core.event/Slot.html">Slot</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>Slot</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>Represents an event handler or callback
+which can be executed asynchronously.</p>
+<p>example usage:</p>
+<pre><code> //create a new slot instance
+ var slot = new Slot((EventArgs args) {
+     //do expensive work
+ });
+
+ //invoke event handler
+ slot.run(
+     new EventArgs.from({
+         ...
+     })
+ );
+</code></pre>
+<pre class="source">
+class Slot {
+ Function _handler;
+
+ /**
+  * Initializes the slot with the help
+  * of the [handler] which should be
+  * invoked when a specific signal is emitted.
+  */
+ Slot(void handler(EventArgs args)) {
+   _handler = handler;
+ }
+
+ /**
+  * Invokes the event handler
+  * asynchronously and hands over
+  * the event arguments [EventArgs]
+  * of the emitted signal.
+  */
+ Future run(EventArgs args) {
+   return new Future(() =&gt; _handler(args));
+ }
+}
+</pre>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="">
+<button class="show-code">Code</button>
+new <strong>Slot</strong>(void handler(<a href="../lib.core.event/EventArgs.html">EventArgs</a> args)) <a class="anchor-link" href="#"
+              title="Permalink to Slot.Slot">#</a></h4>
+<div class="doc">
+<p>Initializes the slot with the help
+of the 
+<span class="param">handler</span> which should be
+invoked when a specific signal is emitted.</p>
+<pre class="source">
+Slot(void handler(EventArgs args)) {
+ _handler = handler;
+}
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="run">
+<button class="show-code">Code</button>
+Future <strong>run</strong>(<a href="../lib.core.event/EventArgs.html">EventArgs</a> args) <a class="anchor-link" href="#run"
+              title="Permalink to Slot.run">#</a></h4>
+<div class="doc">
+<p>Invokes the event handler
+asynchronously and hands over
+the event arguments <a class="crossref" href="../lib.core.event/EventArgs.html">EventArgs</a>
+of the emitted signal.</p>
+<pre class="source">
+Future run(EventArgs args) {
+ return new Future(() =&gt; _handler(args));
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2014-02-04 23:10:34.248</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

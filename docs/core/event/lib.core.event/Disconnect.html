@@ -1,0 +1,140 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Disconnect class / lib.core.event Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="lib.core.event" data-type="Disconnect">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../lib.core.event.html">lib.core.event</a> &rsaquo; <a href="../lib.core.event/Disconnect.html">Disconnect</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>Disconnect</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>Disconnects a specific signal from a slot.</p>
+<p>example usage:</p>
+<pre><code>//create new example class which contains a slot
+var exampleClass = new ExampleClass();
+
+//connect the loaded signal to a slot
+Disconnect
+    .signal("loaded")
+    .from(exampleClass.onLoadedSlot);
+</code></pre>
+<pre class="source">
+class Disconnect {
+ EventManager manager;
+
+ /**
+  * Gets or creates a new instance
+  * of this helper to disconnect a
+  * specific [signal] from slot
+  * connected by [Connect] helper.
+  */
+ static Disconnect signal(String signal) {
+   return new Disconnect._internal(signal);
+ }
+
+ /**
+  * Initializes the disconnect helper
+  * with the help of a specific [signal].
+  */
+ Disconnect._internal(String signal) {
+   manager = new EventManager(signal);
+ }
+
+ /**
+  * Disconnects a specific [slot] from
+  * the signal of this helper.
+  */
+ Disconnect from(Slot slot) {
+   manager - slot;
+   return this;
+ }
+}
+</pre>
+</div>
+<div>
+<h3>Static Methods</h3>
+<div class="method"><h4 id="signal">
+<button class="show-code">Code</button>
+<a href="../lib.core.event/Disconnect.html">Disconnect</a> <strong>signal</strong>(String signal) <a class="anchor-link" href="#signal"
+              title="Permalink to Disconnect.signal">#</a></h4>
+<div class="doc">
+<p>Gets or creates a new instance
+of this helper to disconnect a
+specific 
+<span class="param">signal</span> from slot
+connected by <a class="crossref" href="../lib.core.event/Connect.html">Connect</a> helper.</p>
+<pre class="source">
+static Disconnect signal(String signal) {
+ return new Disconnect._internal(signal);
+}
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="manager">
+<button class="show-code">Code</button>
+<a href="../lib.core.event/EventManager.html">EventManager</a>         <strong>manager</strong> <a class="anchor-link"
+            href="#manager"
+            title="Permalink to Disconnect.manager">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+EventManager manager
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="from">
+<button class="show-code">Code</button>
+<a href="../lib.core.event/Disconnect.html">Disconnect</a> <strong>from</strong>(<a href="../lib.core.event/Slot.html">Slot</a> slot) <a class="anchor-link" href="#from"
+              title="Permalink to Disconnect.from">#</a></h4>
+<div class="doc">
+<p>Disconnects a specific 
+<span class="param">slot</span> from
+the signal of this helper.</p>
+<pre class="source">
+Disconnect from(Slot slot) {
+ manager - slot;
+ return this;
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2014-02-04 23:10:34.228</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        
