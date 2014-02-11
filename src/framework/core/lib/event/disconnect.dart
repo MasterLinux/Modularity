@@ -15,7 +15,7 @@ part of lib.core.event;
  *
  */
 class Disconnect {
-  EventManager manager;
+  EventManager _manager;
 
   /**
    * Gets or creates a new instance
@@ -32,7 +32,7 @@ class Disconnect {
    * with the help of a specific [signal].
    */
   Disconnect._internal(String signal) {
-    manager = new EventManager(signal);
+    _manager = new EventManager(signal);
   }
 
   /**
@@ -40,7 +40,12 @@ class Disconnect {
    * the signal of this helper.
    */
   Disconnect from(Slot slot) {
-    manager - slot;
+    _manager - slot;
+    return this;
+  }
+
+  Disconnect all() {
+    _manager.clear();
     return this;
   }
 }

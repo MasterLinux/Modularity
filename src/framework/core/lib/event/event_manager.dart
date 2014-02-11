@@ -29,6 +29,7 @@ part of lib.core.event;
  *
  *      //unsubscribe slot
  *      manager - exampleClass.onLoadedSlot;
+ *
  */
 class EventManager {
   final String _signal;
@@ -61,6 +62,15 @@ class EventManager {
    */
   EventManager._internal(this._signal) {
     _slots = new List<Function>();
+  }
+
+  /**
+   * Gets the number of slots
+   * subscribed to the signal
+   * of this event manager.
+   */
+  int get count {
+    return _slots.length;
   }
 
   /**
@@ -98,5 +108,12 @@ class EventManager {
     }
   }
 
+  /**
+   * Unsubscribes all slots from this
+   * event manager.
+   */
+  void clear() {
+    _slots.clear();
+  }
 }
 

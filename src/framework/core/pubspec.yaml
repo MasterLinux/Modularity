@@ -1,3 +1,4 @@
 name: core
 dependencies:
   browser: any
+  unittest: any
