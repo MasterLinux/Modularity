@@ -25,7 +25,7 @@ part of lib.core.event;
  *         );
  */
 class Connect {
-  EventManager manager;
+  EventManager _manager;
 
   /**
    * Gets or creates a new instance
@@ -41,7 +41,7 @@ class Connect {
    * listening to a specific [signal].
    */
   Connect._internal(String signal) {
-    manager = new EventManager(signal);
+    _manager = new EventManager(signal);
   }
 
   /**
@@ -49,7 +49,7 @@ class Connect {
    * signal of this connect helper.
    */
   Connect to(Slot slot) {
-    manager + slot;
+    _manager + slot;
     return this;
   }
 
@@ -60,7 +60,7 @@ class Connect {
    * event data.
    */
   Connect emit(EventArgs args) {
-    manager.emit(args);
+    _manager.emit(args);
     return this;
   }
 }
