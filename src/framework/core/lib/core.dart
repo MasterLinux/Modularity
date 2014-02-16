@@ -13,6 +13,7 @@ part 'module.dart';
 part 'config.dart';
 part 'event_args.dart';
 part 'navigation_event_args.dart';
+part 'missing_navigation_parameter_exception.dart';
 
 class Core {
   Core() {

@@ -26,7 +26,7 @@ abstract class Module {
 
   /**
    * This init function is called once when the module
-   * is initialized by the module loader.
+   * is initialized on app start.
    */
   void onInit(Map<String, dynamic> config);
 
