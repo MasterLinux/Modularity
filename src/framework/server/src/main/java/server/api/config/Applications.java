@@ -1,5 +1,6 @@
 package server.api.config;
 
+import server.BaseResource;
 import server.model.config.ApplicationModel;
 import server.parameter.MetaBeanParam;
 import com.google.gson.Gson;
@@ -19,10 +20,7 @@ import java.util.ArrayList;
  * Created by Christoph on 01.02.14.
  */
 @Path("/applications")
-public class Applications {
-
-    @Context
-    UriInfo uriInfo;
+public class Applications extends BaseResource {
 
     @GET
     @Produces("application/json")
@@ -40,20 +38,6 @@ public class Applications {
             objects.add(application);
         }
 
-        //build response
-        ResponseModel<ApplicationModel> response =
-                new ResponseBuilder<ApplicationModel>()
-                        .setResourceUri(uriInfo.getRequestUri())
-                        .setLimit(metaParam.getLimit())
-                        .setOffset(metaParam.getOffset())
-                        .setObjects(objects)
-                        .build();
-
-        Gson gson = new GsonBuilder()
-                .disableHtmlEscaping()
-                .serializeNulls()
-                .create();
-
-        return gson.toJson(response);
+        return buildResponse(metaParam, objects);
     }
 }
