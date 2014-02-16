@@ -11,6 +11,8 @@ part 'page.dart';
 part 'fragment.dart';
 part 'module.dart';
 part 'config.dart';
+part 'event_args.dart';
+part 'navigation_event_args.dart';
 
 class Core {
   Core() {
