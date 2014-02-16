@@ -8,7 +8,7 @@ abstract class Module {
   const ID_PREFIX = "module";
 
   Module(this.parentId, this.config) {
-    id = new UniqueUser(ID_PREFIX).getUniqueId();
+    id = new UniqueId(ID_PREFIX).getUniqueId();
     onInit(this.config);
   }
 
