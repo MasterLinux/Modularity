@@ -13,7 +13,7 @@
  *         //a signal is a static constant with the class name as
  *         //prefix followed by the specific signal name and
  *         //separated by an underscore. For example "ClassName_SignalName"
- *         static const String SIGNAL_ON_COMPLETED = "JsonReader_onCompleted";
+ *         final String SIGNAL_ON_COMPLETED = "JsonReader_onCompleted";
  *
  *         //reads a json from file and emits the onCompleted signal
  *         String readFrom(String path) {

@@ -1,8 +1,8 @@
 part of lib.core;
 
 class NavigationEventArgs extends EventArgs {
-  Map<String, dynamic> parameter;
-  bool isNavigatedBack;
+  final Map<String, dynamic> parameter;
+  final bool isNavigatedBack;
 
   NavigationEventArgs(this.parameter, this.isNavigatedBack);
 }
