@@ -1,57 +1,60 @@
 part of lib.core;
 
 abstract class AbstractModule {
-  Map<String, dynamic> config;
-  String fragmentId;
-  String templateId;
+  final Map<String, dynamic> config;
+  final String fragmentId;
+  String _templateId;
+  String _name;
 
-  String _namespace;
-  String _id;
-
+  /**
+   * Prefix used for the node ID
+   */
   final String ID_PREFIX = "module";
 
-  AbstractModule(this.fragmentId, this.config) {
-    templateId = new UniqueId(ID_PREFIX).build();
-    this.onInit(new InitEventArgs(this.config));
+  /**
+   * Initializes the module
+   */
+  AbstractModule(this.fragmentId, this.config, { String name }) {
+    _templateId = new UniqueId(ID_PREFIX).build();
+    _name = name;
+
+    onInit(new InitEventArgs(this.config));
   }
 
   /**
-   * Gets the namespace of the module
+   * Gets the name of the module.
    */
-  String get namespace => _namespace;
+  String get name {
+    return _name;
+  }
 
   /**
-   * Gets the name of the module
+   * Gets the ID of the template of the module.
    */
-  String get id => _id; //TODO rename to name?
-
-  void register(String namespace, String id) {
-    _namespace = namespace;
-    _id = id;
-
-    //new ModuleManager(_namespace).register(this); TODO implement a function like this
+  String get templateId {
+    return _templateId;
   }
 
   /**
    * Adds the template of the module to DOM.
    */
   void add(bool isNavigatedBack, Map<String, dynamic> parameter) {
-    this.onBeforeAdd(new NavigationEventArgs(isNavigatedBack, parameter));
+    onBeforeAdd(new NavigationEventArgs(isNavigatedBack, parameter));
 
     //TODO add template to DOM
 
-    this.onAdded();
+    onAdded();
   }
 
   /**
    * Removes the template of the module from DOM.
    */
   void remove(bool isNavigatedBack, Map<String, dynamic> parameter) {
-    this.onBeforeRemove(new NavigationEventArgs(isNavigatedBack, parameter));
+    onBeforeRemove(new NavigationEventArgs(isNavigatedBack, parameter));
 
     //TODO remove template from DOM
 
-    this.onRemoved();
+    onRemoved();
   }
 
   /**
@@ -99,6 +102,6 @@ abstract class AbstractModule {
    * also when an error occurred.
    */
   void onRequestCompleted(RequestCompletedEventArgs args) {
-
+    //does nothing, but can be overridden to handle this event
   }
 }

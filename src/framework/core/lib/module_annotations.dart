@@ -1,10 +1,9 @@
 part of lib.core;
 
 class Module {
-  final String namespace;
   final String name;
 
-  const Module(this.namespace, this.name);
+  const Module(this.name);
 }
 
 /**

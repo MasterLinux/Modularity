@@ -12,17 +12,21 @@ class AnnotatedModule extends AbstractModule {
   void onInit(InitEventArgs args) {
     _reflectedClass = reflectClass(moduleType);
     var metadata = _reflectedClass.metadata;
-    var annotation = metadata.first.reflectee;
+    var annotation = metadata.firstWhere(
+      (meta) => meta.hasReflectee && meta.reflectee is Module,
+      orElse: () => null
+    );
 
     //get new instance of module to invoke methods
     _instance = _reflectedClass.newInstance(const Symbol(''), []);
 
     //get module information for registration
-    if(annotation is Module) {
+    if(annotation != null) {
 
       //try to invoke onInit handler of module, if handler exists register module
-      if(tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
-        register(annotation.namespace, annotation.name);
+      if(_tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
+        //save module name
+        _name = annotation.reflectee.name;
       }
 
       else {
@@ -39,13 +43,12 @@ class AnnotatedModule extends AbstractModule {
   /**
    * Tries to invoke the onInit method of the [instanceMirror] of the module.
    * In case the [classMirror] of the module doesn't contain a method marked
-   * with the [@onInit] annotation this method returns false, otherwise it returns true
+   * with the [@OnInit] annotation this method returns false, otherwise it returns true
    */
-  bool tryInvokeOnInitHandler(ClassMirror classMirror, InstanceMirror instanceMirror, InitEventArgs args) {
+  bool _tryInvokeOnInitHandler(ClassMirror classMirror, InstanceMirror instanceMirror, InitEventArgs args) {
     var initHandlerExists = false;
 
     classMirror.instanceMembers.forEach((methodName, methodMirror) {
-      //TODO: to call the methodMirror.metadata getter will sometimes cause in a 139 crash, is that a dart bug?
 
       //check whether method is annotated
       if(!initHandlerExists
@@ -76,10 +79,13 @@ class AnnotatedModule extends AbstractModule {
 
   @override
   void onRequestCompleted(RequestCompletedEventArgs args) {
-    invokeOnRequestCompletedHandler(_reflectedClass, _instance, args);
+    _invokeOnRequestCompletedHandler(_reflectedClass, _instance, args);
   }
 
-  void invokeOnRequestCompletedHandler(ClassMirror classMirror, InstanceMirror instanceMirror, RequestCompletedEventArgs args) {
+  /**
+   * Invokes all methods which are marked by the [@OnRequestCompleted] annotation.
+   */
+  void _invokeOnRequestCompletedHandler(ClassMirror classMirror, InstanceMirror instanceMirror, RequestCompletedEventArgs args) {
     classMirror.instanceMembers.forEach((Symbol methodName, MethodMirror methodMirror) {
 
       //check whether method is annotated
