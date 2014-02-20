@@ -46,18 +46,22 @@ class AnnotatedModule extends AbstractModule {
     _instance = _reflectedClass.newInstance(const Symbol(''), []);
 
     //get module information for registration
-    if(annotation != null) {
-      _name = annotation.reflectee.name;
+    if(annotation != null && (_name = annotation.reflectee.name) != null) {
 
       //try to invoke onInit handler of module, if handler doesn't exists throw exception
       if(!_tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
-        //TODO throw MissingOnInitMethodException -> can't register module
+        throw new MissingInitMethodException(_name);
       }
+    }
+
+    //if name is missing throw exception
+    else if(annotation != null && _name == null) {
+      throw new MissingModuleNameException();
     }
 
     //if given type isn't a module throw exception
     else {
-      //TODO throw no module found exception
+      throw new InvalidModuleException(_reflectedClass.simpleName);
     }
   }
 
