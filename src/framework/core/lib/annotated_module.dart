@@ -8,6 +8,31 @@ class AnnotatedModule extends AbstractModule {
   AnnotatedModule.from(this.moduleType, String fragmentId, Map<String, dynamic> config)
     : super(fragmentId, config);
 
+  /**
+   * Invokes all event handler which are passed the given [test].
+   */
+  void _invokeHandlerWhere(bool test(InstanceMirror mirror), ClassMirror classMirror, InstanceMirror instanceMirror, [EventArgs args]) {
+    classMirror.instanceMembers.forEach((Symbol methodName, MethodMirror methodMirror) {
+
+      //check whether method is annotated
+      if(methodMirror.isRegularMethod
+        && methodMirror.metadata.isNotEmpty) {
+
+        //get all methods to invoke
+        var annotations = methodMirror.metadata.where(test);
+
+        //invoke onInit method
+        if(annotations.isNotEmpty) {
+          if(args != null) {
+            instanceMirror.invoke(methodName, [args]);
+          } else {
+            instanceMirror.invoke(methodName, []);
+          }
+        }
+      }
+    });
+  }
+
   @override
   void onInit(InitEventArgs args) {
     _reflectedClass = reflectClass(moduleType);
@@ -74,7 +99,62 @@ class AnnotatedModule extends AbstractModule {
 
   @override
   void onBeforeAdd(NavigationEventArgs args) {
+    _invokeOnBeforeAddHandler(_reflectedClass, _instance, args);
+  }
 
+  /**
+   * Invokes all methods which are marked by the [@OnBeforeAdded] annotation.
+   */
+  void _invokeOnBeforeAddHandler(ClassMirror classMirror, InstanceMirror instanceMirror, NavigationEventArgs args) {
+    _invokeHandlerWhere(
+      (InstanceMirror meta) => meta.hasReflectee && meta.reflectee is _OnBeforeAdd,
+      classMirror, instanceMirror, args
+    );
+  }
+
+  @override
+  void onAdded() {
+    _invokeOnAddedHandler(_reflectedClass, _instance);
+  }
+
+  /**
+   * Invokes all methods which are marked by the [@OnAdded] annotation.
+   */
+  void _invokeOnAddedHandler(ClassMirror classMirror, InstanceMirror instanceMirror) {
+    _invokeHandlerWhere(
+        (InstanceMirror meta) => meta.hasReflectee && meta.reflectee is _OnAdded,
+        classMirror, instanceMirror
+    );
+  }
+
+  @override
+  void onBeforeRemove(NavigationEventArgs args) {
+    _invokeOnBeforeRemoveHandler(_reflectedClass, _instance, args);
+  }
+
+  /**
+   * Invokes all methods which are marked by the [@OnBeforeRemove] annotation.
+   */
+  void _invokeOnBeforeRemoveHandler(ClassMirror classMirror, InstanceMirror instanceMirror, NavigationEventArgs args) {
+    _invokeHandlerWhere(
+        (InstanceMirror meta) => meta.hasReflectee && meta.reflectee is _OnBeforeRemove,
+        classMirror, instanceMirror, args
+    );
+  }
+
+  @override
+  void onRemoved() {
+    _invokeOnRemovedHandler(_reflectedClass, _instance);
+  }
+
+  /**
+   * Invokes all methods which are marked by the [@OnRemoved] annotation.
+   */
+  void _invokeOnRemovedHandler(ClassMirror classMirror, InstanceMirror instanceMirror) {
+    _invokeHandlerWhere(
+        (InstanceMirror meta) => meta.hasReflectee && meta.reflectee is _OnRemoved,
+        classMirror, instanceMirror
+    );
   }
 
   @override
@@ -86,28 +166,15 @@ class AnnotatedModule extends AbstractModule {
    * Invokes all methods which are marked by the [@OnRequestCompleted] annotation.
    */
   void _invokeOnRequestCompletedHandler(ClassMirror classMirror, InstanceMirror instanceMirror, RequestCompletedEventArgs args) {
-    classMirror.instanceMembers.forEach((Symbol methodName, MethodMirror methodMirror) {
-
-      //check whether method is annotated
-      if(methodMirror.isRegularMethod
-        && methodMirror.metadata.isNotEmpty) {
-
-        //get all methods to invoke
-        var annotations = methodMirror.metadata.where(
-                (meta) => meta.hasReflectee
-                            && meta.reflectee is OnRequestCompleted
-                            && (
-                              (meta.reflectee.requestId == args.requestId
-                                && meta.reflectee.isErrorHandler == args.isErrorOccurred)
-                              || meta.reflectee.isDefault
-                            )
-        );
-
-        //invoke onInit method
-        if(annotations.isNotEmpty) {
-          instanceMirror.invoke(methodName, [args]);
-        }
-      }
-    });
+    _invokeHandlerWhere(
+            (InstanceMirror meta) => meta.hasReflectee
+              && meta.reflectee is OnRequestCompleted
+              && (
+                  (meta.reflectee.requestId == args.requestId
+                  && meta.reflectee.isErrorHandler == args.isErrorOccurred)
+                  || meta.reflectee.isDefault
+              ),
+        classMirror, instanceMirror, args
+    );
   }
 }
