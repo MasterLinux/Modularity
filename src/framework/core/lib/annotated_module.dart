@@ -1,7 +1,7 @@
 part of lib.core;
 
-class AnnotatedModule extends Module {
-  //ClassMirror _reflectedClass;
+class AnnotatedModule extends AbstractModule {
+  ClassMirror _reflectedClass;
   InstanceMirror _instance;
   final Type moduleType;
 
@@ -10,7 +10,7 @@ class AnnotatedModule extends Module {
 
   @override
   void onInit(InitEventArgs args) {
-    var _reflectedClass = reflectClass(moduleType);
+    _reflectedClass = reflectClass(moduleType);
     var metadata = _reflectedClass.metadata;
     var annotation = metadata.first.reflectee;
 
@@ -18,7 +18,7 @@ class AnnotatedModule extends Module {
     _instance = _reflectedClass.newInstance(const Symbol(''), []);
 
     //get module information for registration
-    if(annotation is module) {
+    if(annotation is Module) {
 
       //try to invoke onInit handler of module, if handler exists register module
       if(tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
@@ -75,8 +75,7 @@ class AnnotatedModule extends Module {
   }
 
   @override
-  void monRequestCompleted(RequestCompletedEventArgs args) {
-    var _reflectedClass = reflectClass(moduleType);
+  void onRequestCompleted(RequestCompletedEventArgs args) {
     invokeOnRequestCompletedHandler(_reflectedClass, _instance, args);
   }
 
@@ -90,7 +89,7 @@ class AnnotatedModule extends Module {
         //get all methods to invoke
         var annotations = methodMirror.metadata.where(
                 (meta) => meta.hasReflectee
-                            && meta.reflectee is onRequestCompleted
+                            && meta.reflectee is OnRequestCompleted
                             && (
                               (meta.reflectee.requestId == args.requestId
                                 && meta.reflectee.isErrorHandler == args.isErrorOccurred)

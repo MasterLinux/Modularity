@@ -1,6 +1,6 @@
 part of lib.core;
 
-abstract class Module {
+abstract class AbstractModule {
   Map<String, dynamic> config;
   String fragmentId;
   String templateId;
@@ -10,7 +10,7 @@ abstract class Module {
 
   final String ID_PREFIX = "module";
 
-  Module(this.fragmentId, this.config) {
+  AbstractModule(this.fragmentId, this.config) {
     templateId = new UniqueId(ID_PREFIX).build();
     this.onInit(new InitEventArgs(this.config));
   }
@@ -98,7 +98,7 @@ abstract class Module {
    * is completed in case the request was successful but
    * also when an error occurred.
    */
-  void monRequestCompleted(RequestCompletedEventArgs args) {
+  void onRequestCompleted(RequestCompletedEventArgs args) {
 
   }
 }
