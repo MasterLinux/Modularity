@@ -9,7 +9,7 @@ class Module {
 /**
  * Annotation which marks a function
  * as init function of a module. A module
- * must be contain one init function(s).
+ * must be contain one init function.
  * In addition an init function is just
  * invoked once when the module is initialized
  * on application start.
