@@ -1,26 +1,27 @@
 part of lib.core;
 
 class AnnotatedModule extends Module {
+  //ClassMirror _reflectedClass;
   InstanceMirror _instance;
-  final Type moduleDefinition;
+  final Type moduleType;
 
-  AnnotatedModule.from(this.moduleDefinition, String fragmentId, Map<String, dynamic> config)
+  AnnotatedModule.from(this.moduleType, String fragmentId, Map<String, dynamic> config)
     : super(fragmentId, config);
 
   @override
   void onInit(InitEventArgs args) {
-    var classMirror = reflectClass(moduleDefinition);
-    var metadata = classMirror.metadata;
+    var _reflectedClass = reflectClass(moduleType);
+    var metadata = _reflectedClass.metadata;
     var annotation = metadata.first.reflectee;
 
     //get new instance of module to invoke methods
-    _instance = classMirror.newInstance(const Symbol(''), []);
+    _instance = _reflectedClass.newInstance(const Symbol(''), []);
 
     //get module information for registration
     if(annotation is module) {
 
       //try to invoke onInit handler of module, if handler exists register module
-      if(tryInvokeOnInitHandler(classMirror, _instance, args)) {
+      if(tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
         register(annotation.namespace, annotation.name);
       }
 
@@ -41,20 +42,67 @@ class AnnotatedModule extends Module {
    * with the [@onInit] annotation this method returns false, otherwise it returns true
    */
   bool tryInvokeOnInitHandler(ClassMirror classMirror, InstanceMirror instanceMirror, InitEventArgs args) {
+    var initHandlerExists = false;
+
     classMirror.instanceMembers.forEach((methodName, methodMirror) {
+      //TODO: to call the methodMirror.metadata getter will sometimes cause in a 139 crash, is that a dart bug?
 
       //check whether method is annotated
-      if(methodMirror.metadata.length > 0) {
-        var annotation = methodMirror.metadata.first.reflectee;
+      if(!initHandlerExists
+        && methodMirror.isRegularMethod
+        && methodMirror.metadata.isNotEmpty) {
 
-        //invoke onInit method
-        if(annotation is _OnInit) {
+        //get onInit annotation
+        var annotation = methodMirror.metadata.firstWhere(
+          (meta) => meta.hasReflectee && meta.reflectee is _OnInit,
+          orElse: () => null
+        );
+
+        //invoke onInit method if marked with onInit annotation
+        if(annotation != null) {
           instanceMirror.invoke(methodName, [args]);
-          return true;
+          initHandlerExists = true;
         }
       }
     });
 
-    return false;
+    return initHandlerExists;
+  }
+
+  @override
+  void onBeforeAdd(NavigationEventArgs args) {
+
+  }
+
+  @override
+  void monRequestCompleted(RequestCompletedEventArgs args) {
+    var _reflectedClass = reflectClass(moduleType);
+    invokeOnRequestCompletedHandler(_reflectedClass, _instance, args);
+  }
+
+  void invokeOnRequestCompletedHandler(ClassMirror classMirror, InstanceMirror instanceMirror, RequestCompletedEventArgs args) {
+    classMirror.instanceMembers.forEach((Symbol methodName, MethodMirror methodMirror) {
+
+      //check whether method is annotated
+      if(methodMirror.isRegularMethod
+        && methodMirror.metadata.isNotEmpty) {
+
+        //get all methods to invoke
+        var annotations = methodMirror.metadata.where(
+                (meta) => meta.hasReflectee
+                            && meta.reflectee is onRequestCompleted
+                            && (
+                              (meta.reflectee.requestId == args.requestId
+                                && meta.reflectee.isErrorHandler == args.isErrorOccurred)
+                              || meta.reflectee.isDefault
+                            )
+        );
+
+        //invoke onInit method
+        if(annotations.isNotEmpty) {
+          instanceMirror.invoke(methodName, [args]);
+        }
+      }
+    });
   }
 }

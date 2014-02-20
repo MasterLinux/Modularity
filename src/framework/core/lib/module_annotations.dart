@@ -33,31 +33,37 @@ class _OnInit {
  * Annotation which marks a function
  * as
  */
-class onBeforeAdd {
-  const onBeforeAdd();
+const Object onBeforeAdd = const _OnBeforeAdd();
+
+class _OnBeforeAdd {
+  const _OnBeforeAdd();
 }
 
-class onAdded {
-  const onAdded();
+const Object onAdded = const _OnAdded();
+
+class _OnAdded {
+  const _OnAdded();
 }
 
-class onBeforeRemove {
-  const onBeforeRemove();
+const Object onBeforeRemove = const _OnBeforeRemove();
+
+class _OnBeforeRemove {
+  const _OnBeforeRemove();
 }
 
-class onRemoved {
-  const onRemoved();
+const Object onRemoved = const _OnRemoved();
+
+class _OnRemoved {
+  const _OnRemoved();
 }
 
 class onRequestCompleted {
-  String requestId;
-  bool isErrorHandler;
+  final String requestId;
+  final bool isErrorHandler;
 
-  const String DEFAULT_REQUEST_ID = "_[default_request]_"; //TODO find prefixed ID? to avoid unexpected overrides
-
-  const onRequestCompleted({this.requestId: DEFAULT_REQUEST_ID, this.isErrorHandler: false});
+  const onRequestCompleted([this.requestId, this.isErrorHandler = false]);
 
   bool get isDefault {
-    return DEFAULT_REQUEST_ID == requestId;
+    return requestId == null;
   }
 }

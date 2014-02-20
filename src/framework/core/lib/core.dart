@@ -1,51 +1,1 @@
-library lib.core;
-
-//import 'dart:html';
-import 'dart:async';
-import 'dart:mirrors';
-
-import 'utility/utility.dart';
-import 'event/event.dart';
-
-part 'application.dart';
-part 'page.dart';
-part 'fragment.dart';
-part 'module.dart';
-part 'annotated_module.dart';
-part 'module_annotations.dart';
-part 'config.dart';
-part 'event_args.dart';
-part 'init_event_args.dart';
-part 'navigation_event_args.dart';
-part 'missing_navigation_parameter_exception.dart';
-
-class Core {
-  Core() {
-
-  }
-
-  void tests() {
-    var module = new AnnotatedModule.from(
-        TestModule,
-        "fragment_id", {
-          "test": new Core()
-        });
-
-    module.add(false, null);
-  }
-}
-
-@module("lib2", "testModule2")
-class TestModule {
-
-  @onInit
-  void init(InitEventArgs args) {
-    print("rofl");
-  }
-
-
-}
-
-void main() {
-  new Core().tests();
-}
+library lib.core;//import 'dart:html';import 'dart:async';import 'dart:mirrors';import 'utility/utility.dart';import 'event/event.dart';part 'application.dart';part 'page.dart';part 'fragment.dart';part 'module.dart';part 'annotated_module.dart';part 'module_annotations.dart';part 'config.dart';part 'event_args.dart';part 'init_event_args.dart';part 'navigation_event_args.dart';part 'request_completed_event_args.dart';part 'missing_navigation_parameter_exception.dart';class Core {  Core() {  }  void tests() {    var module = new AnnotatedModule.from(        TestModule,        "fragment_id", {          "test": null        });    //module.add(false, null);    module.monRequestCompleted(new RequestCompletedEventArgs("news", 200, null, isErrorOccurred: true));  }}@module("lib2", "testModule2")class TestModule {  @onInit  void inits(InitEventArgs args) {    print("rofl");  }  @onInit  void init(InitEventArgs args) {    print("rofl");  }  @onRequestCompleted()  void onResponseDef(RequestCompletedEventArgs response) {    print("def");  }  @onRequestCompleted("lol", true)  void onLolError(response) {    print("lol error");  }  @onRequestCompleted("news", true)  void onResponseError(response) {    print("news error");  }  @onRequestCompleted("news")  void onResponseSuccess(response) {    print("news success");  }}void main() {  new Core().tests();}

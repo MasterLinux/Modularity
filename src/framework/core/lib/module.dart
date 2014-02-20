@@ -92,4 +92,13 @@ abstract class Module {
   void onRemoved() {
     //does nothing, but can be overridden to handle this event
   }
+
+  /**
+   * This event handler is invoked whenever a request
+   * is completed in case the request was successful but
+   * also when an error occurred.
+   */
+  void monRequestCompleted(RequestCompletedEventArgs args) {
+
+  }
 }
