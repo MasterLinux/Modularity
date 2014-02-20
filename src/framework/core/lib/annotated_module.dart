@@ -47,14 +47,10 @@ class AnnotatedModule extends AbstractModule {
 
     //get module information for registration
     if(annotation != null) {
+      _name = annotation.reflectee.name;
 
-      //try to invoke onInit handler of module, if handler exists register module
-      if(_tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
-        //save module name
-        _name = annotation.reflectee.name;
-      }
-
-      else {
+      //try to invoke onInit handler of module, if handler doesn't exists throw exception
+      if(!_tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
         //TODO throw MissingOnInitMethodException -> can't register module
       }
     }
@@ -66,9 +62,10 @@ class AnnotatedModule extends AbstractModule {
   }
 
   /**
-   * Tries to invoke the onInit method of the [instanceMirror] of the module.
-   * In case the [classMirror] of the module doesn't contain a method marked
-   * with the [@OnInit] annotation this method returns false, otherwise it returns true
+   * Tries to invoke the init method of the the module.
+   * In case the module doesn't contain a method marked
+   * with the [@OnInit] annotation this method returns
+   * false, otherwise it returns true
    */
   bool _tryInvokeOnInitHandler(ClassMirror classMirror, InstanceMirror instanceMirror, InitEventArgs args) {
     var initHandlerExists = false;
