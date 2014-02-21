@@ -26,7 +26,7 @@ class Slot {
    * of the [handler] which should be
    * invoked when a specific signal is emitted.
    */
-  Slot(void handler(EventArgs args)) {
+  Slot(void handler(SignalEventArgs args)) {
     _handler = handler;
   }
 
@@ -36,7 +36,7 @@ class Slot {
    * the event arguments [EventArgs]
    * of the emitted signal.
    */
-  Future run(EventArgs args) {
+  Future run(SignalEventArgs args) {
     return new Future(() => _handler(args));
   }
 }

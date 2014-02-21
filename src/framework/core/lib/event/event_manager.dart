@@ -79,7 +79,7 @@ class EventManager {
    * each subscribed slot
    * asynchronously.
    */
-  Future emit(EventArgs args) {
+  Future emit(SignalEventArgs args) {
     var slots = new List<Slot>.from(_slots);
 
     return Future.forEach(slots, (Slot slot) {

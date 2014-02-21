@@ -29,14 +29,14 @@ part of lib.core.event;
  *      }
  *
  */
-class EventArgs {
+class SignalEventArgs { //TODO extends EventArgs
   Map<String, dynamic> _args;
 
   /**
    * Initializes the event args with the
    * help of a map of [arguments].
    */
-  EventArgs.from(Map<String, dynamic> arguments) {
+  SignalEventArgs.from(Map<String, dynamic> arguments) {
     _args = arguments;
 
     if(_args == null) {

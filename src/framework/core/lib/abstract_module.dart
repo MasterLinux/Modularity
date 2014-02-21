@@ -3,6 +3,7 @@ part of lib.core;
 abstract class AbstractModule {
   final Map<String, dynamic> config;
   final String fragmentId;
+  ModuleContext _context;
   String _templateId;
   String _name;
 
@@ -16,6 +17,7 @@ abstract class AbstractModule {
    */
   AbstractModule(this.fragmentId, this.config, { String name }) {
     _templateId = new UniqueId(ID_PREFIX).build();
+    _context = new ModuleContext(this);
     _name = name;
 
     onInit(new InitEventArgs(this.config));
@@ -33,6 +35,20 @@ abstract class AbstractModule {
    */
   String get templateId {
     return _templateId;
+  }
+
+  Page get page {
+    return null; //TODO implement
+  }
+
+  /**
+   * Gets the module context, used
+   * to get the current displayed
+   * page and to communicate with
+   * other modules.
+   */
+  ModuleContext get context {
+    return _context;
   }
 
   /**

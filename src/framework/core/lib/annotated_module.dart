@@ -89,7 +89,7 @@ class AnnotatedModule extends AbstractModule {
 
         //invoke onInit method if marked with onInit annotation
         if(annotation != null) {
-          instanceMirror.invoke(methodName, [args]);
+          instanceMirror.invoke(methodName, [context, args]);
           initHandlerExists = true;
         }
       }

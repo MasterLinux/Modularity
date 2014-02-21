@@ -59,7 +59,7 @@ class Connect {
    * The [EventArgs] contains all required
    * event data.
    */
-  Connect emit(EventArgs args) {
+  Connect emit(SignalEventArgs args) {
     _manager.emit(args);
     return this;
   }
