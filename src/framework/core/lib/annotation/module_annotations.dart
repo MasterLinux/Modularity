@@ -1,7 +1,7 @@
 part of lib.core;
 
 class Module {
-  final String name;
+  final String name; //TODO rename to id
 
   const Module(this.name);
 }

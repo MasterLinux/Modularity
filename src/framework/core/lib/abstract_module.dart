@@ -26,7 +26,7 @@ abstract class AbstractModule {
   /**
    * Gets the name of the module.
    */
-  String get name {
+  String get name { //TODO rename to id
     return _name;
   }
 

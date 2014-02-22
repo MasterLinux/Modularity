@@ -3,9 +3,11 @@ part of lib.core;
 class AnnotatedModule extends AbstractModule {
   ClassMirror _reflectedClass;
   InstanceMirror _instance;
-  final Type moduleType;
 
-  AnnotatedModule.from(this.moduleType, String fragmentId, Map<String, dynamic> config)
+  final String moduleLibrary;
+  final String moduleName;
+
+  AnnotatedModule.from(this.moduleLibrary, this.moduleName, String fragmentId, Map<String, dynamic> config)
     : super(fragmentId, config);
 
   /**
@@ -33,9 +35,39 @@ class AnnotatedModule extends AbstractModule {
     });
   }
 
+  /**
+   * Gets the class mirror of the required module with the help of
+   * its [libraryName] and [className].
+   */
+  ClassMirror _getReflectedClass(String libraryName, String className) {
+    Symbol librarySymbol = new Symbol(libraryName); //TODO is the usage of const Symbol('') possible?
+    Symbol classSymbol = new Symbol(className); //TODO is the usage of const Symbol('') possible?
+    ClassMirror reflectedClass;
+
+    //get current mirror system
+    var mirrors = currentMirrorSystem();
+
+    //get required library mirror
+    var libraryMirror = mirrors.libraries.values.firstWhere(
+            (libraryMirror) => libraryMirror.qualifiedName == librarySymbol,
+            orElse: () => null
+    );
+
+    if(libraryMirror != null
+    && (reflectedClass = libraryMirror.declarations[classSymbol]) != null) {
+      return reflectedClass;
+
+    } else if(libraryMirror != null && reflectedClass == null) {
+      //TODO throw missing class exception
+    } else {
+      //TODO throw missing library exception
+    }
+  }
+
   @override
   void onInit(InitEventArgs args) {
-    _reflectedClass = reflectClass(moduleType);
+    _reflectedClass = _getReflectedClass(moduleLibrary, moduleName);
+
     var metadata = _reflectedClass.metadata;
     var annotation = metadata.firstWhere(
       (meta) => meta.hasReflectee && meta.reflectee is Module,
