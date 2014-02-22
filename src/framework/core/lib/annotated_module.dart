@@ -70,7 +70,7 @@ class AnnotatedModule extends AbstractModule {
 
     var metadata = _reflectedClass.metadata;
     var annotation = metadata.firstWhere(
-      (meta) => meta.hasReflectee && meta.reflectee is Module,
+      (meta) => meta.hasReflectee && meta.reflectee is _Module,
       orElse: () => null
     );
 
@@ -78,7 +78,7 @@ class AnnotatedModule extends AbstractModule {
     _instance = _reflectedClass.newInstance(const Symbol(''), []);
 
     //get module information for registration
-    if(annotation != null && (_name = annotation.reflectee.name) != null) {
+    if(annotation != null && (_name = annotation.reflectee.name) != null) { //TODO rename name to id and get class name via reflection instead?
 
       //try to invoke onInit handler of module, if handler doesn't exists throw exception
       if(!_tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
@@ -210,4 +210,6 @@ class AnnotatedModule extends AbstractModule {
         classMirror, instanceMirror, args
     );
   }
+
+  //TODO implement function for OnLoadingStateChanged annotation
 }
