@@ -1,9 +1,9 @@
 part of lib.core;
 
-class Module {
-  final String name; //TODO rename to id
+const Object Module = const _Module();
 
-  const Module(this.name);
+class _Module {
+  const _Module();
 }
 
 /**
@@ -56,13 +56,19 @@ class _OnRemoved {
   const _OnRemoved();
 }
 
+class OnLoadingStateChanged {
+  final bool isLoading;
+
+  const OnLoadingStateChanged({this.isLoading});
+
+  bool get isDefault => isLoading == null;
+}
+
 class OnRequestCompleted {
   final String requestId;
   final bool isErrorHandler;
 
   const OnRequestCompleted([this.requestId, this.isErrorHandler = false]);
 
-  bool get isDefault {
-    return requestId == null;
-  }
+  bool get isDefault => requestId == null;
 }
