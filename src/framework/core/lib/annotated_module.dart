@@ -149,7 +149,7 @@ class AnnotatedModule extends AbstractModule {
    */
   void _invokeOnBeforeAddHandler(ClassMirror classMirror, InstanceMirror instanceMirror, NavigationEventArgs args) {
     _invokeHandlerWhere(
-      (InstanceMirror meta) => meta.hasReflectee && meta.reflectee is _OnBeforeAdd,
+      (meta) => meta.hasReflectee && meta.reflectee is _OnBeforeAdd,
       classMirror, instanceMirror, args
     );
   }
@@ -164,7 +164,7 @@ class AnnotatedModule extends AbstractModule {
    */
   void _invokeOnAddedHandler(ClassMirror classMirror, InstanceMirror instanceMirror) {
     _invokeHandlerWhere(
-        (InstanceMirror meta) => meta.hasReflectee && meta.reflectee is _OnAdded,
+        (meta) => meta.hasReflectee && meta.reflectee is _OnAdded,
         classMirror, instanceMirror
     );
   }
@@ -179,7 +179,7 @@ class AnnotatedModule extends AbstractModule {
    */
   void _invokeOnBeforeRemoveHandler(ClassMirror classMirror, InstanceMirror instanceMirror, NavigationEventArgs args) {
     _invokeHandlerWhere(
-        (InstanceMirror meta) => meta.hasReflectee && meta.reflectee is _OnBeforeRemove,
+        (meta) => meta.hasReflectee && meta.reflectee is _OnBeforeRemove,
         classMirror, instanceMirror, args
     );
   }
@@ -194,7 +194,7 @@ class AnnotatedModule extends AbstractModule {
    */
   void _invokeOnRemovedHandler(ClassMirror classMirror, InstanceMirror instanceMirror) {
     _invokeHandlerWhere(
-        (InstanceMirror meta) => meta.hasReflectee && meta.reflectee is _OnRemoved,
+        (meta) => meta.hasReflectee && meta.reflectee is _OnRemoved,
         classMirror, instanceMirror
     );
   }
@@ -209,7 +209,7 @@ class AnnotatedModule extends AbstractModule {
    */
   void _invokeOnRequestCompletedHandler(ClassMirror classMirror, InstanceMirror instanceMirror, RequestCompletedEventArgs args) {
     _invokeHandlerWhere(
-            (InstanceMirror meta) => meta.hasReflectee
+            (meta) => meta.hasReflectee
               && meta.reflectee is OnRequestCompleted
               && (
                   (meta.reflectee.requestId == args.requestId
@@ -220,5 +220,17 @@ class AnnotatedModule extends AbstractModule {
     );
   }
 
-  //TODO implement function for OnLoadingStateChanged annotation
+  @override
+  void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
+    _invokeOnLoadingStateChangedHandler(_reflectedClass, _instance, args);
+  }
+
+  void _invokeOnLoadingStateChangedHandler(ClassMirror classMirror, InstanceMirror instanceMirror, LoadingStateChangedEventArgs args) {
+    _invokeHandlerWhere(
+      (meta) => meta.hasReflectee
+        && meta.reflectee is OnLoadingStateChanged
+        && (meta.reflectee.isLoading == args.isLoading || meta.reflectee.isDefault),
+      classMirror, instanceMirror, args
+    );
+  }
 }

@@ -142,7 +142,7 @@ abstract class AbstractModule {
     //does nothing, but can be overridden to handle this event
   }
 
-  void onLoadingStateChanged(bool isLoading) {
+  void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
 
   }
 }
