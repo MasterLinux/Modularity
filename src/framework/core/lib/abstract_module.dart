@@ -5,7 +5,14 @@ abstract class AbstractModule {
   final String fragmentId;
   ModuleContext _context;
   String _templateId;
-  String _name;
+  String _id;
+
+  //author info
+  String _author;
+  String _company;
+  String _eMail;
+  String _website;
+  String _version;
 
   /**
    * Prefix used for the node ID
@@ -15,10 +22,10 @@ abstract class AbstractModule {
   /**
    * Initializes the module
    */
-  AbstractModule(this.fragmentId, this.config, { String name }) {
+  AbstractModule(this.fragmentId, this.config, { String id }) { //TODO id required?
     _templateId = new UniqueId(ID_PREFIX).build();
     _context = new ModuleContext(this);
-    _name = name;
+    _id = id;
 
     onInit(new InitEventArgs(this.config));
   }
@@ -26,8 +33,8 @@ abstract class AbstractModule {
   /**
    * Gets the name of the module.
    */
-  String get name { //TODO rename to id
-    return _name;
+  String get id {
+    return _id;
   }
 
   /**
@@ -37,6 +44,9 @@ abstract class AbstractModule {
     return _templateId;
   }
 
+  /**
+   * Gets the parent page of the module.
+   */
   Page get page {
     return null; //TODO implement
   }
@@ -47,9 +57,20 @@ abstract class AbstractModule {
    * page and to communicate with
    * other modules.
    */
+
   ModuleContext get context {
     return _context;
   }
+
+  String get company => _company;
+
+  String get eMail => _eMail;
+
+  String get website => _website;
+
+  String get version => _version;
+
+  String get author => _author;
 
   /**
    * Adds the template of the module to DOM.
@@ -119,5 +140,9 @@ abstract class AbstractModule {
    */
   void onRequestCompleted(RequestCompletedEventArgs args) {
     //does nothing, but can be overridden to handle this event
+  }
+
+  void onLoadingStateChanged(bool isLoading) {
+
   }
 }

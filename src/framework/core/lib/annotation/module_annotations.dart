@@ -1,9 +1,16 @@
 part of lib.core;
 
-const Object Module = const _Module();
+/**
+ * Annotation which marks a class as module.
+ */
+class Module {
+  final String author;
+  final String company;
+  final String eMail;
+  final String website;
+  final String version;
 
-class _Module {
-  const _Module();
+  const Module(this.version, {this.author, this.company, this.eMail, this.website});
 }
 
 /**

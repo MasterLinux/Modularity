@@ -7,7 +7,7 @@ class AnnotatedModule extends AbstractModule {
   final String moduleLibrary;
   final String moduleName;
 
-  AnnotatedModule.from(this.moduleLibrary, this.moduleName, String fragmentId, Map<String, dynamic> config)
+  AnnotatedModule(this.moduleLibrary, this.moduleName, String fragmentId, Map<String, dynamic> config)
     : super(fragmentId, config);
 
   /**
@@ -64,13 +64,21 @@ class AnnotatedModule extends AbstractModule {
     }
   }
 
+  void _setModuleInfo(Module meta) {
+      _version = meta.version;
+      _author = meta.author;
+      _eMail = meta.eMail;
+      _company = meta.company;
+      _website = meta.website;
+  }
+
   @override
   void onInit(InitEventArgs args) {
     _reflectedClass = _getReflectedClass(moduleLibrary, moduleName);
 
     var metadata = _reflectedClass.metadata;
     var annotation = metadata.firstWhere(
-      (meta) => meta.hasReflectee && meta.reflectee is _Module,
+      (meta) => meta.hasReflectee && meta.reflectee is Module,
       orElse: () => null
     );
 
@@ -78,17 +86,18 @@ class AnnotatedModule extends AbstractModule {
     _instance = _reflectedClass.newInstance(const Symbol(''), []);
 
     //get module information for registration
-    if(annotation != null && (_name = annotation.reflectee.name) != null) { //TODO rename name to id and get class name via reflection instead?
+    if(annotation != null && (_id = moduleName) != null) {
+      _setModuleInfo(annotation);
 
       //try to invoke onInit handler of module, if handler doesn't exists throw exception
       if(!_tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
-        throw new MissingInitMethodException(_name);
+        throw new MissingInitMethodException(_id);
       }
     }
 
     //if name is missing throw exception
-    else if(annotation != null && _name == null) {
-      throw new MissingModuleNameException();
+    else if(annotation != null && _id == null) {
+      throw new MissingModuleIdException();
     }
 
     //if given type isn't a module throw exception
