@@ -1,6 +1,6 @@
 part of lib.core;
 
-class RequestCompletedEventArgs<T> extends EventArgs {
+class RequestCompletedEventArgs<T> implements EventArgs {
   final String requestId;
   final int statusCode;
   final bool isErrorOccurred;

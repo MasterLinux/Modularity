@@ -1,6 +1,6 @@
 part of lib.core;
 
-class NavigationEventArgs extends EventArgs {
+class NavigationEventArgs implements EventArgs {
   final Map<String, dynamic> parameter;
   final bool isNavigatedBack;
 

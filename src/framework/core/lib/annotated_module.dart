@@ -140,17 +140,17 @@ class AnnotatedModule extends AbstractModule {
   }
 
   @override
-  void onBeforeAdd(NavigationEventArgs args) {
-    _invokeOnBeforeAddHandler(_reflectedClass, _instance, args);
+  void onBeforeAdd() {
+    _invokeOnBeforeAddHandler(_reflectedClass, _instance);
   }
 
   /**
    * Invokes all methods which are marked by the [@OnBeforeAdded] annotation.
    */
-  void _invokeOnBeforeAddHandler(ClassMirror classMirror, InstanceMirror instanceMirror, NavigationEventArgs args) {
+  void _invokeOnBeforeAddHandler(ClassMirror classMirror, InstanceMirror instanceMirror) {
     _invokeHandlerWhere(
       (meta) => meta.hasReflectee && meta.reflectee is _OnBeforeAdd,
-      classMirror, instanceMirror, args
+      classMirror, instanceMirror
     );
   }
 
@@ -170,17 +170,17 @@ class AnnotatedModule extends AbstractModule {
   }
 
   @override
-  void onBeforeRemove(NavigationEventArgs args) {
-    _invokeOnBeforeRemoveHandler(_reflectedClass, _instance, args);
+  void onBeforeRemove() {
+    _invokeOnBeforeRemoveHandler(_reflectedClass, _instance);
   }
 
   /**
    * Invokes all methods which are marked by the [@OnBeforeRemove] annotation.
    */
-  void _invokeOnBeforeRemoveHandler(ClassMirror classMirror, InstanceMirror instanceMirror, NavigationEventArgs args) {
+  void _invokeOnBeforeRemoveHandler(ClassMirror classMirror, InstanceMirror instanceMirror) {
     _invokeHandlerWhere(
         (meta) => meta.hasReflectee && meta.reflectee is _OnBeforeRemove,
-        classMirror, instanceMirror, args
+        classMirror, instanceMirror
     );
   }
 

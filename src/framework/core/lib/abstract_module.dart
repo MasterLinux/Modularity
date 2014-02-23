@@ -75,8 +75,8 @@ abstract class AbstractModule {
   /**
    * Adds the template of the module to DOM.
    */
-  void add(bool isNavigatedBack, Map<String, dynamic> parameter) {
-    onBeforeAdd(new NavigationEventArgs(isNavigatedBack, parameter));
+  void add() {
+    onBeforeAdd();
 
     //TODO add template to DOM
 
@@ -86,8 +86,8 @@ abstract class AbstractModule {
   /**
    * Removes the template of the module from DOM.
    */
-  void remove(bool isNavigatedBack, Map<String, dynamic> parameter) {
-    onBeforeRemove(new NavigationEventArgs(isNavigatedBack, parameter));
+  void remove() {
+    onBeforeRemove();
 
     //TODO remove template from DOM
 
@@ -104,7 +104,7 @@ abstract class AbstractModule {
    * This event handler is invoked when the module will be created,
    * but before the template of the module is added to the DOM.
    */
-  void onBeforeAdd(NavigationEventArgs args) {
+  void onBeforeAdd() {
     //does nothing, but can be overridden to handle this event
   }
 
@@ -121,7 +121,7 @@ abstract class AbstractModule {
    * will be destroyed but before the template
    * is removed from DOM.
    */
-  void onBeforeRemove(NavigationEventArgs args) {
+  void onBeforeRemove() {
     //does nothing, but can be overridden to handle this event
   }
 
