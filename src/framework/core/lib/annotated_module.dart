@@ -87,7 +87,7 @@ class AnnotatedModule extends AbstractModule {
 
     //get module information for registration
     if(annotation != null && (_id = moduleName) != null) {
-      _setModuleInfo(annotation);
+      _setModuleInfo(annotation.reflectee as Module);
 
       //try to invoke onInit handler of module, if handler doesn't exists throw exception
       if(!_tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
