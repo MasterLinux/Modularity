@@ -1,0 +1,114 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>OnLoadingStateChanged class / lib.core.annotation.module Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="lib.core.annotation.module" data-type="OnLoadingStateChanged">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../lib.core.annotation.module.html">lib.core.annotation.module</a> &rsaquo; <a href="../lib.core.annotation.module/OnLoadingStateChanged.html">OnLoadingStateChanged</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>OnLoadingStateChanged</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>The <code>@OnLoadingStateChanged</code> annotation is used to mark a function
+as event handler for the onLoadingStateChanged event of a module.</p>
+<p>example usage:</p>
+<pre><code>//is invoked when the app starts or stops to load
+@OnLoadingStateChanged()
+void onLoadingStateChangedEventHandler(LoadingStateChangedEventArgs args) { ... }
+
+//is just invoked when the app starts to load
+@OnLoadingStateChanged(isLoading: true)
+void onLoadingStartedEventHandler(LoadingStateChangedEventArgs args) { ... }
+
+//is just invoked when the app stops to load
+@OnLoadingStateChanged(isLoading: false)
+void onLoadingStoppedEventHandler(LoadingStateChangedEventArgs args) { ... }
+</code></pre>
+<pre class="source">
+class OnLoadingStateChanged {
+ final bool isLoading;
+
+ const OnLoadingStateChanged({this.isLoading});
+
+ bool get isDefault =&gt; isLoading == null;
+}
+</pre>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="">
+<button class="show-code">Code</button>
+const <strong>OnLoadingStateChanged</strong>({bool isLoading}) <a class="anchor-link" href="#"
+              title="Permalink to OnLoadingStateChanged.OnLoadingStateChanged">#</a></h4>
+<div class="doc">
+<div class="inherited">
+<p>Creates a new <code>Object</code> instance.</p>
+<p><code>Object</code> instances have no meaningful state, and are only useful
+through their identity. An <code>Object</code> instance is equal to itself
+only.</p>
+<div class="docs-inherited-from">docs inherited from Object </div></div>
+<pre class="source">
+const OnLoadingStateChanged({this.isLoading});
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="isDefault">
+<button class="show-code">Code</button>
+final bool         <strong>isDefault</strong> <a class="anchor-link"
+            href="#isDefault"
+            title="Permalink to OnLoadingStateChanged.isDefault">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+bool get isDefault =&gt; isLoading == null;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="isLoading">
+<button class="show-code">Code</button>
+final bool         <strong>isLoading</strong> <a class="anchor-link"
+            href="#isLoading"
+            title="Permalink to OnLoadingStateChanged.isLoading">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+final bool isLoading
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2014-02-24 23:49:05.091</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

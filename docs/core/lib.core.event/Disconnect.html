@@ -44,7 +44,7 @@ Disconnect
 </code></pre>
 <pre class="source">
 class Disconnect {
- EventManager manager;
+ EventManager _manager;
 
  /**
   * Gets or creates a new instance
@@ -61,7 +61,7 @@ class Disconnect {
   * with the help of a specific [signal].
   */
  Disconnect._internal(String signal) {
-   manager = new EventManager(signal);
+   _manager = new EventManager(signal);
  }
 
  /**
@@ -69,7 +69,12 @@ class Disconnect {
   * the signal of this helper.
   */
  Disconnect from(Slot slot) {
-   manager - slot;
+   _manager - slot;
+   return this;
+ }
+
+ Disconnect all() {
+   _manager.clear();
    return this;
  }
 }
@@ -96,22 +101,20 @@ static Disconnect signal(String signal) {
 </div>
 </div>
 <div>
-<h3>Properties</h3>
-<div class="field"><h4 id="manager">
+<h3>Methods</h3>
+<div class="method"><h4 id="all">
 <button class="show-code">Code</button>
-<a href="../lib.core.event/EventManager.html">EventManager</a>         <strong>manager</strong> <a class="anchor-link"
-            href="#manager"
-            title="Permalink to Disconnect.manager">#</a>
-        </h4>
-        <div class="doc">
+<a href="../lib.core.event/Disconnect.html">Disconnect</a> <strong>all</strong>() <a class="anchor-link" href="#all"
+              title="Permalink to Disconnect.all">#</a></h4>
+<div class="doc">
 <pre class="source">
-EventManager manager
+Disconnect all() {
+ _manager.clear();
+ return this;
+}
 </pre>
 </div>
 </div>
-</div>
-<div>
-<h3>Methods</h3>
 <div class="method"><h4 id="from">
 <button class="show-code">Code</button>
 <a href="../lib.core.event/Disconnect.html">Disconnect</a> <strong>from</strong>(<a href="../lib.core.event/Slot.html">Slot</a> slot) <a class="anchor-link" href="#from"
@@ -122,7 +125,7 @@ EventManager manager
 the signal of this helper.</p>
 <pre class="source">
 Disconnect from(Slot slot) {
- manager - slot;
+ _manager - slot;
  return this;
 }
 </pre>
@@ -133,7 +136,7 @@ Disconnect from(Slot slot) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2014-02-04 23:10:34.228</div>
+          <div>This page was generated at 2014-02-24 23:49:05.176</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

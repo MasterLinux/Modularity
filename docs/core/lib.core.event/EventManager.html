@@ -93,12 +93,21 @@ class EventManager {
  }
 
  /**
+  * Gets the number of slots
+  * subscribed to the signal
+  * of this event manager.
+  */
+ int get count {
+   return _slots.length;
+ }
+
+ /**
   * Emits the signal of this
   * event manager and invokes
   * each subscribed slot
   * asynchronously.
   */
- Future emit(EventArgs args) {
+ Future emit(SignalEventArgs args) {
    var slots = new List&lt;Slot&gt;.from(_slots);
 
    return Future.forEach(slots, (Slot slot) {
@@ -127,6 +136,13 @@ class EventManager {
    }
  }
 
+ /**
+  * Unsubscribes all slots from this
+  * event manager.
+  */
+ void clear() {
+   _slots.clear();
+ }
 }
 </pre>
 </div>
@@ -155,6 +171,26 @@ factory EventManager(String signal) {
    _cache[signal] = connect;
    return connect;
  }
+}
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="count">
+<button class="show-code">Code</button>
+final int         <strong>count</strong> <a class="anchor-link"
+            href="#count"
+            title="Permalink to EventManager.count">#</a>
+        </h4>
+        <div class="doc">
+<p>Gets the number of slots
+subscribed to the signal
+of this event manager.</p>
+<pre class="source">
+int get count {
+ return _slots.length;
 }
 </pre>
 </div>
@@ -198,9 +234,23 @@ void operator -(Slot slot) {
 </div>
 <div>
 <h3>Methods</h3>
+<div class="method"><h4 id="clear">
+<button class="show-code">Code</button>
+void <strong>clear</strong>() <a class="anchor-link" href="#clear"
+              title="Permalink to EventManager.clear">#</a></h4>
+<div class="doc">
+<p>Unsubscribes all slots from this
+event manager.</p>
+<pre class="source">
+void clear() {
+ _slots.clear();
+}
+</pre>
+</div>
+</div>
 <div class="method"><h4 id="emit">
 <button class="show-code">Code</button>
-Future <strong>emit</strong>(<a href="../lib.core.event/EventArgs.html">EventArgs</a> args) <a class="anchor-link" href="#emit"
+Future <strong>emit</strong>(<a href="../lib.core.event/SignalEventArgs.html">SignalEventArgs</a> args) <a class="anchor-link" href="#emit"
               title="Permalink to EventManager.emit">#</a></h4>
 <div class="doc">
 <p>Emits the signal of this
@@ -208,7 +258,7 @@ event manager and invokes
 each subscribed slot
 asynchronously.</p>
 <pre class="source">
-Future emit(EventArgs args) {
+Future emit(SignalEventArgs args) {
  var slots = new List&lt;Slot&gt;.from(_slots);
 
  return Future.forEach(slots, (Slot slot) {
@@ -223,7 +273,7 @@ Future emit(EventArgs args) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2014-02-04 23:10:34.202</div>
+          <div>This page was generated at 2014-02-24 23:49:05.154</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

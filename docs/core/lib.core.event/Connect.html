@@ -55,7 +55,7 @@ Connect
 </code></pre>
 <pre class="source">
 class Connect {
- EventManager manager;
+ EventManager _manager;
 
  /**
   * Gets or creates a new instance
@@ -71,7 +71,7 @@ class Connect {
   * listening to a specific [signal].
   */
  Connect._internal(String signal) {
-   manager = new EventManager(signal);
+   _manager = new EventManager(signal);
  }
 
  /**
@@ -79,7 +79,7 @@ class Connect {
   * signal of this connect helper.
   */
  Connect to(Slot slot) {
-   manager + slot;
+   _manager + slot;
    return this;
  }
 
@@ -89,8 +89,8 @@ class Connect {
   * The [EventArgs] contains all required
   * event data.
   */
- Connect emit(EventArgs args) {
-   manager.emit(args);
+ Connect emit(SignalEventArgs args) {
+   _manager.emit(args);
    return this;
  }
 }
@@ -116,34 +116,19 @@ static Connect signal(String signal) {
 </div>
 </div>
 <div>
-<h3>Properties</h3>
-<div class="field"><h4 id="manager">
-<button class="show-code">Code</button>
-<a href="../lib.core.event/EventManager.html">EventManager</a>         <strong>manager</strong> <a class="anchor-link"
-            href="#manager"
-            title="Permalink to Connect.manager">#</a>
-        </h4>
-        <div class="doc">
-<pre class="source">
-EventManager manager
-</pre>
-</div>
-</div>
-</div>
-<div>
 <h3>Methods</h3>
 <div class="method"><h4 id="emit">
 <button class="show-code">Code</button>
-<a href="../lib.core.event/Connect.html">Connect</a> <strong>emit</strong>(<a href="../lib.core.event/EventArgs.html">EventArgs</a> args) <a class="anchor-link" href="#emit"
+<a href="../lib.core.event/Connect.html">Connect</a> <strong>emit</strong>(<a href="../lib.core.event/SignalEventArgs.html">SignalEventArgs</a> args) <a class="anchor-link" href="#emit"
               title="Permalink to Connect.emit">#</a></h4>
 <div class="doc">
 <p>Invokes all slots connected to
 the signal of this connect helper.
-The <a class="crossref" href="../lib.core.event/EventArgs.html">EventArgs</a> contains all required
+The <code>EventArgs</code> contains all required
 event data.</p>
 <pre class="source">
-Connect emit(EventArgs args) {
- manager.emit(args);
+Connect emit(SignalEventArgs args) {
+ _manager.emit(args);
  return this;
 }
 </pre>
@@ -158,7 +143,7 @@ Connect emit(EventArgs args) {
 signal of this connect helper.</p>
 <pre class="source">
 Connect to(Slot slot) {
- manager + slot;
+ _manager + slot;
  return this;
 }
 </pre>
@@ -169,7 +154,7 @@ Connect to(Slot slot) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2014-02-04 23:10:34.240</div>
+          <div>This page was generated at 2014-02-24 23:49:05.184</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

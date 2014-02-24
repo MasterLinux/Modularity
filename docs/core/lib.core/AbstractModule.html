@@ -1,0 +1,507 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>AbstractModule abstract class / lib.core Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="lib.core" data-type="AbstractModule">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../lib.core.html">lib.core</a> &rsaquo; <a href="../lib.core/AbstractModule.html">AbstractModule</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>AbstractModule</strong>
+          abstract class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<pre class="source">
+abstract class AbstractModule {
+ final Map&lt;String, Object&gt; config;
+ final String fragmentId;
+ ModuleContext _context;
+ String _templateId;
+ String _id;
+
+ //author info
+ String _author;
+ String _company;
+ String _eMail;
+ String _website;
+ String _version;
+
+ /**
+  * Prefix used for the node ID
+  */
+ final String ID_PREFIX = "module";
+
+ /**
+  * Initializes the module
+  */
+ AbstractModule(this.fragmentId, this.config, { String id }) { //TODO id required?
+   _templateId = new UniqueId(ID_PREFIX).build();
+   _context = new ModuleContext(this);
+   _id = id;
+
+   onInit(new InitEventArgs(this.config));
+ }
+
+ /**
+  * Gets the name of the module.
+  */
+ String get id {
+   return _id;
+ }
+
+ /**
+  * Gets the ID of the template of the module.
+  */
+ String get templateId {
+   return _templateId;
+ }
+
+ /**
+  * Gets the parent page of the module.
+  */
+ Page get page {
+   return null; //TODO implement
+ }
+
+ /**
+  * Gets the module context, used
+  * to get the current displayed
+  * page and to communicate with
+  * other modules.
+  */
+
+ ModuleContext get context {
+   return _context;
+ }
+
+ String get company =&gt; _company;
+
+ String get eMail =&gt; _eMail;
+
+ String get website =&gt; _website;
+
+ String get version =&gt; _version;
+
+ String get author =&gt; _author;
+
+ /**
+  * Adds the template of the module to DOM.
+  */
+ void add() {
+   onBeforeAdd();
+
+   //TODO add template to DOM
+
+   onAdded();
+ }
+
+ /**
+  * Removes the template of the module from DOM.
+  */
+ void remove() {
+   onBeforeRemove();
+
+   //TODO remove template from DOM
+
+   onRemoved();
+ }
+
+ /**
+  * This init function is called once when the module
+  * is initialized on app start.
+  */
+ void onInit(InitEventArgs args);
+
+ /**
+  * This event handler is invoked when the module will be created,
+  * but before the template of the module is added to the DOM.
+  */
+ void onBeforeAdd() {
+   //does nothing, but can be overridden to handle this event
+ }
+
+ /**
+  * This event handler is invoked when the template
+  * of the module is completely added to DOM.
+  */
+ void onAdded() {
+   //does nothing, but can be overridden to handle this event
+ }
+
+ /**
+  * This event handler is invoked when the module
+  * will be destroyed but before the template
+  * is removed from DOM.
+  */
+ void onBeforeRemove() {
+   //does nothing, but can be overridden to handle this event
+ }
+
+ /**
+  * This event handler is invoked when the template
+  * of the module is completely removed from DOM.
+  */
+ void onRemoved() {
+   //does nothing, but can be overridden to handle this event
+ }
+
+ /**
+  * This event handler is invoked whenever a request
+  * is completed in case the request was successful but
+  * also when an error occurred.
+  */
+ void onRequestCompleted(RequestCompletedEventArgs args) {
+   //does nothing, but can be overridden to handle this event
+ }
+
+ void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
+
+ }
+}
+</pre>
+</div>
+<h3>Subclasses</h3>
+<p>
+<span class="type-box"><span class="icon-class"></span><a href="../lib.core/AnnotatedModule.html">AnnotatedModule</a></span></p>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="">
+<button class="show-code">Code</button>
+new <strong>AbstractModule</strong>(String fragmentId, Map&lt;String, Object&gt; config, {String id}) <a class="anchor-link" href="#"
+              title="Permalink to AbstractModule.AbstractModule">#</a></h4>
+<div class="doc">
+<p>Initializes the module</p>
+<pre class="source">
+AbstractModule(this.fragmentId, this.config, { String id }) { //TODO id required?
+ _templateId = new UniqueId(ID_PREFIX).build();
+ _context = new ModuleContext(this);
+ _id = id;
+
+ onInit(new InitEventArgs(this.config));
+}
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="author">
+<button class="show-code">Code</button>
+final String         <strong>author</strong> <a class="anchor-link"
+            href="#author"
+            title="Permalink to AbstractModule.author">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+String get author =&gt; _author;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="company">
+<button class="show-code">Code</button>
+final String         <strong>company</strong> <a class="anchor-link"
+            href="#company"
+            title="Permalink to AbstractModule.company">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+String get company =&gt; _company;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="config">
+<button class="show-code">Code</button>
+final Map&lt;String, Object&gt;         <strong>config</strong> <a class="anchor-link"
+            href="#config"
+            title="Permalink to AbstractModule.config">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+final Map&lt;String, Object&gt; config
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="context">
+<button class="show-code">Code</button>
+final <a href="../lib.core/ModuleContext.html">ModuleContext</a>         <strong>context</strong> <a class="anchor-link"
+            href="#context"
+            title="Permalink to AbstractModule.context">#</a>
+        </h4>
+        <div class="doc">
+<p>Gets the module context, used
+to get the current displayed
+page and to communicate with
+other modules.</p>
+<pre class="source">
+ModuleContext get context {
+ return _context;
+}
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="eMail">
+<button class="show-code">Code</button>
+final String         <strong>eMail</strong> <a class="anchor-link"
+            href="#eMail"
+            title="Permalink to AbstractModule.eMail">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+String get eMail =&gt; _eMail;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="fragmentId">
+<button class="show-code">Code</button>
+final String         <strong>fragmentId</strong> <a class="anchor-link"
+            href="#fragmentId"
+            title="Permalink to AbstractModule.fragmentId">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+final String fragmentId
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="id">
+<button class="show-code">Code</button>
+final String         <strong>id</strong> <a class="anchor-link"
+            href="#id"
+            title="Permalink to AbstractModule.id">#</a>
+        </h4>
+        <div class="doc">
+<p>Gets the name of the module.</p>
+<pre class="source">
+String get id {
+ return _id;
+}
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="ID_PREFIX">
+<button class="show-code">Code</button>
+final String         <strong>ID_PREFIX</strong> <a class="anchor-link"
+            href="#ID_PREFIX"
+            title="Permalink to AbstractModule.ID_PREFIX">#</a>
+        </h4>
+        <div class="doc">
+<p>Prefix used for the node ID</p>
+<pre class="source">
+final String ID_PREFIX = "module"
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="page">
+<button class="show-code">Code</button>
+final <a href="../lib.core/Page.html">Page</a>         <strong>page</strong> <a class="anchor-link"
+            href="#page"
+            title="Permalink to AbstractModule.page">#</a>
+        </h4>
+        <div class="doc">
+<p>Gets the parent page of the module.</p>
+<pre class="source">
+Page get page {
+ return null; //TODO implement
+}
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="templateId">
+<button class="show-code">Code</button>
+final String         <strong>templateId</strong> <a class="anchor-link"
+            href="#templateId"
+            title="Permalink to AbstractModule.templateId">#</a>
+        </h4>
+        <div class="doc">
+<p>Gets the ID of the template of the module.</p>
+<pre class="source">
+String get templateId {
+ return _templateId;
+}
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="version">
+<button class="show-code">Code</button>
+final String         <strong>version</strong> <a class="anchor-link"
+            href="#version"
+            title="Permalink to AbstractModule.version">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+String get version =&gt; _version;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="website">
+<button class="show-code">Code</button>
+final String         <strong>website</strong> <a class="anchor-link"
+            href="#website"
+            title="Permalink to AbstractModule.website">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+String get website =&gt; _website;
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="add">
+<button class="show-code">Code</button>
+void <strong>add</strong>() <a class="anchor-link" href="#add"
+              title="Permalink to AbstractModule.add">#</a></h4>
+<div class="doc">
+<p>Adds the template of the module to DOM.</p>
+<pre class="source">
+void add() {
+ onBeforeAdd();
+
+ //TODO add template to DOM
+
+ onAdded();
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="onAdded">
+<button class="show-code">Code</button>
+void <strong>onAdded</strong>() <a class="anchor-link" href="#onAdded"
+              title="Permalink to AbstractModule.onAdded">#</a></h4>
+<div class="doc">
+<p>This event handler is invoked when the template
+of the module is completely added to DOM.</p>
+<pre class="source">
+void onAdded() {
+ //does nothing, but can be overridden to handle this event
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="onBeforeAdd">
+<button class="show-code">Code</button>
+void <strong>onBeforeAdd</strong>() <a class="anchor-link" href="#onBeforeAdd"
+              title="Permalink to AbstractModule.onBeforeAdd">#</a></h4>
+<div class="doc">
+<p>This event handler is invoked when the module will be created,
+but before the template of the module is added to the DOM.</p>
+<pre class="source">
+void onBeforeAdd() {
+ //does nothing, but can be overridden to handle this event
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="onBeforeRemove">
+<button class="show-code">Code</button>
+void <strong>onBeforeRemove</strong>() <a class="anchor-link" href="#onBeforeRemove"
+              title="Permalink to AbstractModule.onBeforeRemove">#</a></h4>
+<div class="doc">
+<p>This event handler is invoked when the module
+will be destroyed but before the template
+is removed from DOM.</p>
+<pre class="source">
+void onBeforeRemove() {
+ //does nothing, but can be overridden to handle this event
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="onInit">
+abstract void <strong>onInit</strong>(<a href="../lib.core.eventArgs/InitEventArgs.html">InitEventArgs</a> args) <a class="anchor-link" href="#onInit"
+              title="Permalink to AbstractModule.onInit">#</a></h4>
+<div class="doc">
+<p>This init function is called once when the module
+is initialized on app start.</p>
+</div>
+</div>
+<div class="method"><h4 id="onLoadingStateChanged">
+<button class="show-code">Code</button>
+void <strong>onLoadingStateChanged</strong>(<a href="../lib.core.eventArgs/LoadingStateChangedEventArgs.html">LoadingStateChangedEventArgs</a> args) <a class="anchor-link" href="#onLoadingStateChanged"
+              title="Permalink to AbstractModule.onLoadingStateChanged">#</a></h4>
+<div class="doc">
+<pre class="source">
+void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
+
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="onRemoved">
+<button class="show-code">Code</button>
+void <strong>onRemoved</strong>() <a class="anchor-link" href="#onRemoved"
+              title="Permalink to AbstractModule.onRemoved">#</a></h4>
+<div class="doc">
+<p>This event handler is invoked when the template
+of the module is completely removed from DOM.</p>
+<pre class="source">
+void onRemoved() {
+ //does nothing, but can be overridden to handle this event
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="onRequestCompleted">
+<button class="show-code">Code</button>
+void <strong>onRequestCompleted</strong>(<a href="../lib.core.eventArgs/RequestCompletedEventArgs.html">RequestCompletedEventArgs</a> args) <a class="anchor-link" href="#onRequestCompleted"
+              title="Permalink to AbstractModule.onRequestCompleted">#</a></h4>
+<div class="doc">
+<p>This event handler is invoked whenever a request
+is completed in case the request was successful but
+also when an error occurred.</p>
+<pre class="source">
+void onRequestCompleted(RequestCompletedEventArgs args) {
+ //does nothing, but can be overridden to handle this event
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="remove">
+<button class="show-code">Code</button>
+void <strong>remove</strong>() <a class="anchor-link" href="#remove"
+              title="Permalink to AbstractModule.remove">#</a></h4>
+<div class="doc">
+<p>Removes the template of the module from DOM.</p>
+<pre class="source">
+void remove() {
+ onBeforeRemove();
+
+ //TODO remove template from DOM
+
+ onRemoved();
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2014-02-24 23:49:04.989</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

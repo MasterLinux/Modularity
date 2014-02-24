@@ -2,19 +2,19 @@
         <html>
         <head>
                 <meta charset="utf-8">
-        <title>EventArgs class / lib.core.event Library / Dart Documentation</title>
+        <title>SignalEventArgs class / lib.core.event Library / Dart Documentation</title>
         <link rel="stylesheet" type="text/css"
             href="../styles.css">
         <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
         <link rel="shortcut icon" href="../favicon.ico">
         
         </head>
-        <body data-library="lib.core.event" data-type="EventArgs">
+        <body data-library="lib.core.event" data-type="SignalEventArgs">
         <div class="page">
         <div class="header">
           <a href="../index.html"><div class="logo"></div></a>
           <a href="../index.html">Dart Documentation</a>
-         &rsaquo; <a href="../lib.core.event.html">lib.core.event</a> &rsaquo; <a href="../lib.core.event/EventArgs.html">EventArgs</a>        <div id="search-box">
+         &rsaquo; <a href="../lib.core.event.html">lib.core.event</a> &rsaquo; <a href="../lib.core.event/SignalEventArgs.html">SignalEventArgs</a>        <div id="search-box">
           <input type="search" name="q" id="q" autocomplete="off"
               class="search-input" placeholder="Search API">
         </div>
@@ -26,7 +26,7 @@
         
 </div>
 <div class="content">
-        <h2><strong>EventArgs</strong>
+        <h2><strong>SignalEventArgs</strong>
           class
         </h2>
         
@@ -58,14 +58,14 @@
  }
 </code></pre>
 <pre class="source">
-class EventArgs {
+class SignalEventArgs { //TODO extends EventArgs
  Map&lt;String, dynamic&gt; _args;
 
  /**
   * Initializes the event args with the
   * help of a map of [arguments].
   */
- EventArgs.from(Map&lt;String, dynamic&gt; arguments) {
+ SignalEventArgs.from(Map&lt;String, dynamic&gt; arguments) {
    _args = arguments;
 
    if(_args == null) {
@@ -97,14 +97,14 @@ class EventArgs {
 <h3>Constructors</h3>
 <div class="method"><h4 id="from">
 <button class="show-code">Code</button>
-new <strong>EventArgs.from</strong>(Map&lt;String, dynamic&gt; arguments) <a class="anchor-link" href="#from"
-              title="Permalink to EventArgs.EventArgs.from">#</a></h4>
+new <strong>SignalEventArgs.from</strong>(Map&lt;String, dynamic&gt; arguments) <a class="anchor-link" href="#from"
+              title="Permalink to SignalEventArgs.SignalEventArgs.from">#</a></h4>
 <div class="doc">
 <p>Initializes the event args with the
 help of a map of 
 <span class="param">arguments</span>.</p>
 <pre class="source">
-EventArgs.from(Map&lt;String, dynamic&gt; arguments) {
+SignalEventArgs.from(Map&lt;String, dynamic&gt; arguments) {
  _args = arguments;
 
  if(_args == null) {
@@ -120,7 +120,7 @@ EventArgs.from(Map&lt;String, dynamic&gt; arguments) {
 <div class="method"><h4 id="[]">
 <button class="show-code">Code</button>
 Object <strong>operator []</strong>(String name) <a class="anchor-link" href="#[]"
-              title="Permalink to EventArgs.operator []">#</a></h4>
+              title="Permalink to SignalEventArgs.operator []">#</a></h4>
 <div class="doc">
 <p>Gets an argument by its 
 <span class="param">name</span> or
@@ -140,7 +140,7 @@ Object operator [](String name) {
 <div class="method"><h4 id="hasArgument">
 <button class="show-code">Code</button>
 bool <strong>hasArgument</strong>(String name) <a class="anchor-link" href="#hasArgument"
-              title="Permalink to EventArgs.hasArgument">#</a></h4>
+              title="Permalink to SignalEventArgs.hasArgument">#</a></h4>
 <div class="doc">
 <p>Returns true if this event arguments contains
 an argument with the given 
@@ -157,7 +157,7 @@ bool hasArgument(String name) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2014-02-04 23:10:34.212</div>
+          <div>This page was generated at 2014-02-24 23:49:05.161</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
