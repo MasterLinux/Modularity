@@ -1,4 +1,4 @@
-part of lib.core;
+part of lib.core.exception;
 
 class MissingNavigationParameterException implements Exception {
   final String name;

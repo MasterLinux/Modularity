@@ -124,7 +124,7 @@ class AnnotatedModule extends AbstractModule {
 
         //get onInit annotation
         var annotation = methodMirror.metadata.firstWhere(
-          (meta) => meta.hasReflectee && meta.reflectee is _OnInit,
+          (meta) => meta.hasReflectee && meta.reflectee is OnInitAnnotation,
           orElse: () => null
         );
 
@@ -149,7 +149,7 @@ class AnnotatedModule extends AbstractModule {
    */
   void _invokeOnBeforeAddHandler(ClassMirror classMirror, InstanceMirror instanceMirror) {
     _invokeHandlerWhere(
-      (meta) => meta.hasReflectee && meta.reflectee is _OnBeforeAdd,
+      (meta) => meta.hasReflectee && meta.reflectee is OnBeforeAddAnnotation,
       classMirror, instanceMirror
     );
   }
@@ -164,7 +164,7 @@ class AnnotatedModule extends AbstractModule {
    */
   void _invokeOnAddedHandler(ClassMirror classMirror, InstanceMirror instanceMirror) {
     _invokeHandlerWhere(
-        (meta) => meta.hasReflectee && meta.reflectee is _OnAdded,
+        (meta) => meta.hasReflectee && meta.reflectee is OnAddedAnnotation,
         classMirror, instanceMirror
     );
   }
@@ -179,7 +179,7 @@ class AnnotatedModule extends AbstractModule {
    */
   void _invokeOnBeforeRemoveHandler(ClassMirror classMirror, InstanceMirror instanceMirror) {
     _invokeHandlerWhere(
-        (meta) => meta.hasReflectee && meta.reflectee is _OnBeforeRemove,
+        (meta) => meta.hasReflectee && meta.reflectee is OnBeforeRemoveAnnotation,
         classMirror, instanceMirror
     );
   }
@@ -194,7 +194,7 @@ class AnnotatedModule extends AbstractModule {
    */
   void _invokeOnRemovedHandler(ClassMirror classMirror, InstanceMirror instanceMirror) {
     _invokeHandlerWhere(
-        (meta) => meta.hasReflectee && meta.reflectee is _OnRemoved,
+        (meta) => meta.hasReflectee && meta.reflectee is OnRemovedAnnotation,
         classMirror, instanceMirror
     );
   }

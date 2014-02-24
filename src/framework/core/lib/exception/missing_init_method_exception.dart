@@ -1,4 +1,4 @@
-part of lib.core;
+part of lib.core.exception;
 
 class MissingInitMethodException implements Exception {
   final String moduleName;
