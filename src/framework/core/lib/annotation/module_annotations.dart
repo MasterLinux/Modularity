@@ -75,7 +75,7 @@ class OnRequestCompleted {
   final String requestId;
   final bool isErrorHandler;
 
-  const OnRequestCompleted([this.requestId, this.isErrorHandler = false]);
+  const OnRequestCompleted({this.requestId, this.isErrorHandler: false});
 
   bool get isDefault => requestId == null;
 }
