@@ -1,7 +1,7 @@
 part of lib.core;
 
 abstract class AbstractModule {
-  final Map<String, dynamic> config;
+  final Map<String, Object> config;
   final String fragmentId;
   ModuleContext _context;
   String _templateId;

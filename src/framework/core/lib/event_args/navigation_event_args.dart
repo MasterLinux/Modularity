@@ -1,4 +1,4 @@
-part of lib.core;
+part of lib.core.eventArgs;
 
 class NavigationEventArgs implements EventArgs {
   final Map<String, dynamic> parameter;

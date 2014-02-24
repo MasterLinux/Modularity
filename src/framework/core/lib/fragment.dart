@@ -16,16 +16,16 @@ class Fragment {
 
   //TODO implement ID getter
 
-  void _loadModules(List<ModuleConfig> moduleConfig) { //TODO use ModuleDefinition instead of String
+  void _loadModules(List<ConfigModuleModel> moduleConfig) {
 
     //creates all modules of this fragment
-    for(var config in moduleConfig) {
+    for(var model in moduleConfig) {
       _modules.add(
           new AnnotatedModule(
-            config.libraryName,
-            config.moduleName,
+            model.libraryName,
+            model.moduleName,
             _id,
-            config.config
+            model.config
           )
       );
     }

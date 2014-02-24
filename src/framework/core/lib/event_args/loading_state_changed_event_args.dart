@@ -1,4 +1,4 @@
-part of lib.core;
+part of lib.core.eventArgs;
 
 class LoadingStateChangedEventArgs implements EventArgs {
   final bool isLoading;

@@ -7,7 +7,7 @@ class AnnotatedModule extends AbstractModule {
   final String moduleLibrary;
   final String moduleName;
 
-  AnnotatedModule(this.moduleLibrary, this.moduleName, String fragmentId, Map<String, dynamic> config)
+  AnnotatedModule(this.moduleLibrary, this.moduleName, String fragmentId, Map<String, Object> config)
     : super(fragmentId, config);
 
   /**

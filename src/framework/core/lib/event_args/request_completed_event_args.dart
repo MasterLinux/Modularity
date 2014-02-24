@@ -1,4 +1,4 @@
-part of lib.core;
+part of lib.core.eventArgs;
 
 class RequestCompletedEventArgs<T> implements EventArgs {
   final String requestId;

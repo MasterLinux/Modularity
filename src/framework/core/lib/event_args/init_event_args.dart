@@ -1,7 +1,7 @@
-part of lib.core;
+part of lib.core.eventArgs;
 
 class InitEventArgs implements EventArgs {
-  final Map<String, dynamic> config;
+  final Map<String, Object> config;
 
   InitEventArgs(this.config);
 }
