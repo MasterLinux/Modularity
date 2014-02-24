@@ -56,8 +56,8 @@ part 'on_request_completed.dart';
 /**
  * Annotation which marks a class as module.
  * Each module requires a version number with
- * the following pattern: "{int}.{int}.[int}"
- * like "1.0.0".
+ * the following pattern: [{int}.{int}.{int}]
+ * like ["1.0.0"].
  *
  * example usage:
  *
@@ -72,11 +72,35 @@ part 'on_request_completed.dart';
  *     class ExampleModuleWithOptionalAuthorInfo { ... }
  */
 class Module {
+
+  /**
+   * Gets the author name of the module.
+   */
   final String author;
+
+  /**
+   * Gets the company name of the author.
+   */
   final String company;
+
+  /**
+   * Gets the e-mail of the author.
+   */
   final String eMail;
+
+  /**
+   * Gets the website of the author.
+   */
   final String website;
+
+  /**
+   * Gets the version number of the module.
+   */
   final String version;
 
+  /**
+   * Initializes the [@Module] annotation.
+   */
   const Module(this.version, {this.author, this.company, this.eMail, this.website});
+
 }

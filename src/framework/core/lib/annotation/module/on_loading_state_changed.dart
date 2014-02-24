@@ -6,7 +6,7 @@ part of lib.core.annotation.module;
  *
  * example usage:
  *
- *     //is invoked when the app starts or stops to load
+ *     //is invoked when the app starts and stops to load
  *     @OnLoadingStateChanged()
  *     void onLoadingStateChangedEventHandler(LoadingStateChangedEventArgs args) { ... }
  *
@@ -20,9 +20,22 @@ part of lib.core.annotation.module;
  *
  */
 class OnLoadingStateChanged {
+
+  /**
+   * Flag which indicates whether the function marked with this
+   * annotation is used as error handler or not.
+   */
   final bool isLoading;
 
+  /**
+   * Initializes the [@OnLoadingStateChanged] annotation.
+   */
   const OnLoadingStateChanged({this.isLoading});
 
+  /**
+   * Flag which indicates whether the function
+   * is used as default event handler, so the function
+   * is invoked whenever the application starts and stops to load.
+   */
   bool get isDefault => isLoading == null;
 }

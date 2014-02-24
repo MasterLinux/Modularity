@@ -12,6 +12,11 @@ part of lib.core.annotation.module;
  */
 const Object OnBeforeAdd = const OnBeforeAddAnnotation();
 
+/**
+ * This class is used by the [@OnBeforeAdd] annotation and
+ * must not used directly. See [OnBeforeAdd] annotation
+ * for more information.
+ */
 class OnBeforeAddAnnotation {
   const OnBeforeAddAnnotation();
 }

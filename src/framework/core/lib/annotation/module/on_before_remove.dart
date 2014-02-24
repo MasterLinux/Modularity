@@ -12,6 +12,11 @@ part of lib.core.annotation.module;
  */
 const Object OnBeforeRemove = const OnBeforeRemoveAnnotation();
 
+/**
+ * This class is used by the [@OnBeforeRemove] annotation and
+ * must not used directly. See [OnBeforeRemove] annotation
+ * for more information.
+ */
 class OnBeforeRemoveAnnotation {
   const OnBeforeRemoveAnnotation();
 }

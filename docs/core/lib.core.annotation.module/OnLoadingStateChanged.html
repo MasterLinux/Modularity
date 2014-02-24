@@ -35,7 +35,7 @@
 <p>The <code>@OnLoadingStateChanged</code> annotation is used to mark a function
 as event handler for the onLoadingStateChanged event of a module.</p>
 <p>example usage:</p>
-<pre><code>//is invoked when the app starts or stops to load
+<pre><code>//is invoked when the app starts and stops to load
 @OnLoadingStateChanged()
 void onLoadingStateChangedEventHandler(LoadingStateChangedEventArgs args) { ... }
 
@@ -49,10 +49,23 @@ void onLoadingStoppedEventHandler(LoadingStateChangedEventArgs args) { ... }
 </code></pre>
 <pre class="source">
 class OnLoadingStateChanged {
+
+ /**
+  * Flag which indicates whether the function marked with this
+  * annotation is used as error handler or not.
+  */
  final bool isLoading;
 
+ /**
+  * Initializes the [@OnLoadingStateChanged] annotation.
+  */
  const OnLoadingStateChanged({this.isLoading});
 
+ /**
+  * Flag which indicates whether the function
+  * is used as default event handler, so the function
+  * is invoked whenever the application starts and stops to load.
+  */
  bool get isDefault =&gt; isLoading == null;
 }
 </pre>
@@ -64,12 +77,7 @@ class OnLoadingStateChanged {
 const <strong>OnLoadingStateChanged</strong>({bool isLoading}) <a class="anchor-link" href="#"
               title="Permalink to OnLoadingStateChanged.OnLoadingStateChanged">#</a></h4>
 <div class="doc">
-<div class="inherited">
-<p>Creates a new <code>Object</code> instance.</p>
-<p><code>Object</code> instances have no meaningful state, and are only useful
-through their identity. An <code>Object</code> instance is equal to itself
-only.</p>
-<div class="docs-inherited-from">docs inherited from Object </div></div>
+<p>Initializes the <code>@OnLoadingStateChanged</code> annotation.</p>
 <pre class="source">
 const OnLoadingStateChanged({this.isLoading});
 </pre>
@@ -85,6 +93,9 @@ final bool         <strong>isDefault</strong> <a class="anchor-link"
             title="Permalink to OnLoadingStateChanged.isDefault">#</a>
         </h4>
         <div class="doc">
+<p>Flag which indicates whether the function
+is used as default event handler, so the function
+is invoked whenever the application starts and stops to load.</p>
 <pre class="source">
 bool get isDefault =&gt; isLoading == null;
 </pre>
@@ -97,6 +108,8 @@ final bool         <strong>isLoading</strong> <a class="anchor-link"
             title="Permalink to OnLoadingStateChanged.isLoading">#</a>
         </h4>
         <div class="doc">
+<p>Flag which indicates whether the function marked with this
+annotation is used as error handler or not.</p>
 <pre class="source">
 final bool isLoading
 </pre>
@@ -107,7 +120,7 @@ final bool isLoading
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2014-02-24 23:49:05.091</div>
+          <div>This page was generated at 2014-02-25 00:18:22.388</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

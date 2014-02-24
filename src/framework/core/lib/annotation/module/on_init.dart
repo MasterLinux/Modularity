@@ -18,6 +18,11 @@ part of lib.core.annotation.module;
  */
 const Object OnInit = const OnInitAnnotation();
 
+/**
+ * This class is used by the [@OnInit] annotation and
+ * must not used directly. See [OnInit] annotation
+ * for more information.
+ */
 class OnInitAnnotation {
   const OnInitAnnotation();
 }

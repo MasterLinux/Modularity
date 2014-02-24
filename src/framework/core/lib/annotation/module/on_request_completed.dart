@@ -20,10 +20,27 @@ part of lib.core.annotation.module;
  *
  */
 class OnRequestCompleted {
+
+  /**
+   * ID of the request to listen for completion.
+   */
   final String requestId;
+
+  /**
+   * Flag which indicates whether the function marked with this annotation
+   * is used as error handler or not.
+   */
   final bool isErrorHandler;
 
+  /**
+   * Initializes the [@OnRequestCompleted] annotation.
+   */
   const OnRequestCompleted({this.requestId, this.isErrorHandler: false});
 
+  /**
+   * Flag which indicates whether the function marked with this annotation
+   * is a default handler which is invoked whenever the request is
+   * completed with and without error.
+   */
   bool get isDefault => requestId == null;
 }

@@ -49,11 +49,28 @@ void onNewsRequestErrorEventHandler(RequestCompletedEventArgs args) { ... }
 </code></pre>
 <pre class="source">
 class OnRequestCompleted {
+
+ /**
+  * ID of the request to listen for completion.
+  */
  final String requestId;
+
+ /**
+  * Flag which indicates whether the function marked with this annotation
+  * is used as error handler or not.
+  */
  final bool isErrorHandler;
 
+ /**
+  * Initializes the [@OnRequestCompleted] annotation.
+  */
  const OnRequestCompleted({this.requestId, this.isErrorHandler: false});
 
+ /**
+  * Flag which indicates whether the function marked with this annotation
+  * is a default handler which is invoked whenever the request is
+  * completed with and without error.
+  */
  bool get isDefault =&gt; requestId == null;
 }
 </pre>
@@ -65,12 +82,7 @@ class OnRequestCompleted {
 const <strong>OnRequestCompleted</strong>({String requestId, bool isErrorHandler: false}) <a class="anchor-link" href="#"
               title="Permalink to OnRequestCompleted.OnRequestCompleted">#</a></h4>
 <div class="doc">
-<div class="inherited">
-<p>Creates a new <code>Object</code> instance.</p>
-<p><code>Object</code> instances have no meaningful state, and are only useful
-through their identity. An <code>Object</code> instance is equal to itself
-only.</p>
-<div class="docs-inherited-from">docs inherited from Object </div></div>
+<p>Initializes the <code>@OnRequestCompleted</code> annotation.</p>
 <pre class="source">
 const OnRequestCompleted({this.requestId, this.isErrorHandler: false});
 </pre>
@@ -86,6 +98,9 @@ final bool         <strong>isDefault</strong> <a class="anchor-link"
             title="Permalink to OnRequestCompleted.isDefault">#</a>
         </h4>
         <div class="doc">
+<p>Flag which indicates whether the function marked with this annotation
+is a default handler which is invoked whenever the request is
+completed with and without error.</p>
 <pre class="source">
 bool get isDefault =&gt; requestId == null;
 </pre>
@@ -98,6 +113,8 @@ final bool         <strong>isErrorHandler</strong> <a class="anchor-link"
             title="Permalink to OnRequestCompleted.isErrorHandler">#</a>
         </h4>
         <div class="doc">
+<p>Flag which indicates whether the function marked with this annotation
+is used as error handler or not.</p>
 <pre class="source">
 final bool isErrorHandler
 </pre>
@@ -110,6 +127,7 @@ final String         <strong>requestId</strong> <a class="anchor-link"
             title="Permalink to OnRequestCompleted.requestId">#</a>
         </h4>
         <div class="doc">
+<p>ID of the request to listen for completion.</p>
 <pre class="source">
 final String requestId
 </pre>
@@ -120,7 +138,7 @@ final String requestId
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2014-02-24 23:49:05.068</div>
+          <div>This page was generated at 2014-02-25 00:18:22.365</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

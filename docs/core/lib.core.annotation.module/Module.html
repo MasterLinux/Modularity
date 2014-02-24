@@ -34,8 +34,8 @@
 <div class="doc">
 <p>Annotation which marks a class as module.
 Each module requires a version number with
-the following pattern: "{int}.{int}.[int}"
-like "1.0.0".</p>
+the following pattern: <code>{int}.{int}.{int}</code>
+like <code>"1.0.0"</code>.</p>
 <p>example usage:</p>
 <pre><code>@Module("1.0.0")
 class ExampleModule { ... }
@@ -49,13 +49,37 @@ class ExampleModuleWithOptionalAuthorInfo { ... }
 </code></pre>
 <pre class="source">
 class Module {
+
+ /**
+  * Gets the author name of the module.
+  */
  final String author;
+
+ /**
+  * Gets the company name of the author.
+  */
  final String company;
+
+ /**
+  * Gets the e-mail of the author.
+  */
  final String eMail;
+
+ /**
+  * Gets the website of the author.
+  */
  final String website;
+
+ /**
+  * Gets the version number of the module.
+  */
  final String version;
 
+ /**
+  * Initializes the [@Module] annotation.
+  */
  const Module(this.version, {this.author, this.company, this.eMail, this.website});
+
 }
 </pre>
 </div>
@@ -66,12 +90,7 @@ class Module {
 const <strong>Module</strong>(String version, {String author, String company, String eMail, String website}) <a class="anchor-link" href="#"
               title="Permalink to Module.Module">#</a></h4>
 <div class="doc">
-<div class="inherited">
-<p>Creates a new <code>Object</code> instance.</p>
-<p><code>Object</code> instances have no meaningful state, and are only useful
-through their identity. An <code>Object</code> instance is equal to itself
-only.</p>
-<div class="docs-inherited-from">docs inherited from Object </div></div>
+<p>Initializes the <code>@Module</code> annotation.</p>
 <pre class="source">
 const Module(this.version, {this.author, this.company, this.eMail, this.website});
 </pre>
@@ -87,6 +106,7 @@ final String         <strong>author</strong> <a class="anchor-link"
             title="Permalink to Module.author">#</a>
         </h4>
         <div class="doc">
+<p>Gets the author name of the module.</p>
 <pre class="source">
 final String author
 </pre>
@@ -99,6 +119,7 @@ final String         <strong>company</strong> <a class="anchor-link"
             title="Permalink to Module.company">#</a>
         </h4>
         <div class="doc">
+<p>Gets the company name of the author.</p>
 <pre class="source">
 final String company
 </pre>
@@ -111,6 +132,7 @@ final String         <strong>eMail</strong> <a class="anchor-link"
             title="Permalink to Module.eMail">#</a>
         </h4>
         <div class="doc">
+<p>Gets the e-mail of the author.</p>
 <pre class="source">
 final String eMail
 </pre>
@@ -123,6 +145,7 @@ final String         <strong>version</strong> <a class="anchor-link"
             title="Permalink to Module.version">#</a>
         </h4>
         <div class="doc">
+<p>Gets the version number of the module.</p>
 <pre class="source">
 final String version
 </pre>
@@ -135,6 +158,7 @@ final String         <strong>website</strong> <a class="anchor-link"
             title="Permalink to Module.website">#</a>
         </h4>
         <div class="doc">
+<p>Gets the website of the author.</p>
 <pre class="source">
 final String website
 </pre>
@@ -145,7 +169,7 @@ final String website
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2014-02-24 23:49:05.136</div>
+          <div>This page was generated at 2014-02-25 00:18:22.433</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

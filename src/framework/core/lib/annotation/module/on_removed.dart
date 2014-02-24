@@ -12,6 +12,11 @@ part of lib.core.annotation.module;
  */
 const Object OnRemoved = const OnRemovedAnnotation();
 
+/**
+ * This class is used by the [@OnRemoved] annotation and
+ * must not used directly. See [OnRemoved] annotation
+ * for more information.
+ */
 class OnRemovedAnnotation {
   const OnRemovedAnnotation();
 }
