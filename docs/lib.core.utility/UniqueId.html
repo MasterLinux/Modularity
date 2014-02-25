@@ -1,0 +1,138 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>UniqueId class / lib.core.utility Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="lib.core.utility" data-type="UniqueId">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../lib.core.utility.html">lib.core.utility</a> &rsaquo; <a href="../lib.core.utility/UniqueId.html">UniqueId</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>UniqueId</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<pre class="source">
+class UniqueId {
+ static Map&lt;String, UniqueId&gt; _cache;
+ String _prefix;
+ int _prevId;
+
+ /**
+  * Gets an unique ID generator of
+  * a specific [prefix].
+  */
+ factory UniqueId(String prefix) {
+   if(_cache == null) {
+     _cache = &lt;String, UniqueId&gt;{};
+   }
+
+   if(_cache.containsKey(prefix)) {
+     return _cache[prefix];
+   } else {
+     final uniqueId = new UniqueId._internal(prefix);
+     _cache[prefix] = uniqueId;
+     return uniqueId;
+   }
+ }
+
+ /**
+  * Initializes a new instance of the
+  * unique ID generator with the help
+  * of a specific [prefix].
+  */
+ UniqueId._internal(String prefix) {
+   _prefix = prefix;
+   _prevId = 0;
+ }
+
+ /**
+  * Builds and gets an unique ID. Each time
+  * this function is called a new ID is generated,
+  * so it isn't possible to get the same ID twice.
+  */
+ String build() {
+   var id = '${_prefix}_${_prevId}';
+   ++_prevId;
+   return id;
+ }
+}
+</pre>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="">
+<button class="show-code">Code</button>
+factory <strong>UniqueId</strong>(String prefix) <a class="anchor-link" href="#"
+              title="Permalink to UniqueId.UniqueId">#</a></h4>
+<div class="doc">
+<p>Gets an unique ID generator of
+a specific 
+<span class="param">prefix</span>.</p>
+<pre class="source">
+factory UniqueId(String prefix) {
+ if(_cache == null) {
+   _cache = &lt;String, UniqueId&gt;{};
+ }
+
+ if(_cache.containsKey(prefix)) {
+   return _cache[prefix];
+ } else {
+   final uniqueId = new UniqueId._internal(prefix);
+   _cache[prefix] = uniqueId;
+   return uniqueId;
+ }
+}
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="build">
+<button class="show-code">Code</button>
+String <strong>build</strong>() <a class="anchor-link" href="#build"
+              title="Permalink to UniqueId.build">#</a></h4>
+<div class="doc">
+<p>Builds and gets an unique ID. Each time
+this function is called a new ID is generated,
+so it isn't possible to get the same ID twice.</p>
+<pre class="source">
+String build() {
+ var id = '${_prefix}_${_prevId}';
+ ++_prevId;
+ return id;
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2014-02-25 17:55:19.442</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

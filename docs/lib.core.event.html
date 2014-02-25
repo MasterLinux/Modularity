@@ -1,0 +1,161 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>lib.core.event Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="favicon.ico">
+        
+        </head>
+        <body data-library="lib.core.event">
+        <div class="page">
+        <div class="header">
+          <a href="index.html"><div class="logo"></div></a>
+          <a href="index.html">Dart Documentation</a>
+         &rsaquo; <a href="lib.core.event.html">lib.core.event</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+<h2><strong>lib.core.event</strong> library</h2>
+<div class="doc"><p>Library to allow many to many relationships
+between objects. So it is possible
+to send messages from one object to
+another with the help of custom signals.</p>
+<p>best practices:
+TODO add description</p>
+<p>example usage:</p>
+<pre><code>class JsonReader {
+    //a signal is a static constant with the class name as
+    //prefix followed by the specific signal name and
+    //separated by an underscore. For example "ClassName_SignalName"
+    final String SIGNAL_ON_COMPLETED = "JsonReader_onCompleted";
+
+    //reads a json from file and emits the onCompleted signal
+    String readFrom(String path) {
+        //emit onCompleted signal
+        Connect
+            .signal(SIGNAL_ON_COMPLETED)
+            .emit(new EventArgs.from({
+                "isCompleted": false
+            }));
+
+        //read JSON file
+        var json = file.read(path);
+
+        //emit onCompleted signal
+        Connect
+            .signal(SIGNAL_ON_COMPLETED)
+            .emit(new EventArgs.from({
+                "isCompleted": true
+            }));
+
+        return json;
+    }
+}
+
+class LoadingIndicator {
+    Slot _onLoadedCompletedSlot;
+
+    LoadingIndicator() {
+
+        //create new slot which hides or shows this
+        //loading indicator on emitting signal
+        _onLoadedCompletedSlot = new Slot((eventArgs) {
+
+            //check whether required argument exist
+            var hasIsCompleted = args.hasArgument("isCompleted");
+
+            if(hasIsCompleted) {
+                //get and cast argument
+                var isCompleted = args["isCompleted"] as bool;
+
+                if(isCompleted) {
+                    //hide loading indicator
+                } else {
+                    //show loading indicator
+                }
+            }
+        });
+    }
+
+    void create() {
+        Connect
+            .signal(JsonReader.SIGNAL_ON_COMPLETED)
+            .to(_onLoadedCompletedSlot);
+    }
+
+    void destroy() {
+        Disconnect
+            .signal(JsonReader.SIGNAL_ON_COMPLETED)
+            .from(_onLoadedCompletedSlot);
+    }
+
+}
+
+//run example
+void main() {
+    var loadingIndicator = new LoadingIndicator();
+    var jsonReader = new JsonReader();
+
+    //initialize loading indicator
+    loadingIndicator.create();
+
+    //get JSON
+    jsonReader.readFrom("/path/to/file.json");
+
+    //desctruct loading indicator
+    loadingIndicator.destroy();
+}
+</code></pre></div>
+<div>
+<h3>Classes</h3>
+          <div class="type">
+          <h4>
+            <a href="lib.core.event/Connect.html"><strong>Connect</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="lib.core.event/Disconnect.html"><strong>Disconnect</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="lib.core.event/EventManager.html"><strong>EventManager</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="lib.core.event/SignalEventArgs.html"><strong>SignalEventArgs</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="lib.core.event/Slot.html"><strong>Slot</strong></a>
+          </h4>
+          </div>
+          
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2014-02-25 17:55:19.193</div>
+        </div>
+        <script async src="client-live-nav.js"></script>
+        </body></html>
+        

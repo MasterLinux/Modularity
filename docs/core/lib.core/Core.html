@@ -1,79 +1,0 @@
-        <!DOCTYPE html>
-        <html>
-        <head>
-                <meta charset="utf-8">
-        <title>Core class / lib.core Library / Dart Documentation</title>
-        <link rel="stylesheet" type="text/css"
-            href="../styles.css">
-        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
-        <link rel="shortcut icon" href="../favicon.ico">
-        
-        </head>
-        <body data-library="lib.core" data-type="Core">
-        <div class="page">
-        <div class="header">
-          <a href="../index.html"><div class="logo"></div></a>
-          <a href="../index.html">Dart Documentation</a>
-         &rsaquo; <a href="../lib.core.html">lib.core</a> &rsaquo; <a href="../lib.core/Core.html">Core</a>        <div id="search-box">
-          <input type="search" name="q" id="q" autocomplete="off"
-              class="search-input" placeholder="Search API">
-        </div>
-        
-      </div>
-      <div class="drop-down" id="drop-down"></div>
-      
-        <div class="nav">
-        
-</div>
-<div class="content">
-        <h2><strong>Core</strong>
-          class
-        </h2>
-        
-<button id="show-inherited" class="show-inherited">Hide inherited</button>
-<div class="doc">
-<pre class="source">
-class Core {  Core() {  }  void tests() {    var module = new AnnotatedModule(        "lib.core", "TestModule",        "fragment_id", {          "test": null        });    module.add();    module.onRequestCompleted(new RequestCompletedEventArgs("news", 200, null, isErrorOccurred: true));    module.onRequestCompleted(new RequestCompletedEventArgs("news", 200, null));    module.onRequestCompleted(new RequestCompletedEventArgs("lol", 200, null, isErrorOccurred: true));    module.onLoadingStateChanged(new LoadingStateChangedEventArgs(true));    module.onLoadingStateChanged(new LoadingStateChangedEventArgs(false));    module.remove();  }}
-</pre>
-</div>
-<div>
-<h3>Constructors</h3>
-<div class="method"><h4 id="">
-<button class="show-code">Code</button>
-new <strong>Core</strong>() <a class="anchor-link" href="#"
-              title="Permalink to Core.Core">#</a></h4>
-<div class="doc">
-<div class="inherited">
-<p>Creates a new <code>Object</code> instance.</p>
-<p><code>Object</code> instances have no meaningful state, and are only useful
-through their identity. An <code>Object</code> instance is equal to itself
-only.</p>
-<div class="docs-inherited-from">docs inherited from Object </div></div>
-<pre class="source">
-Core() {  }
-</pre>
-</div>
-</div>
-</div>
-<div>
-<h3>Methods</h3>
-<div class="method"><h4 id="tests">
-<button class="show-code">Code</button>
-void <strong>tests</strong>() <a class="anchor-link" href="#tests"
-              title="Permalink to Core.tests">#</a></h4>
-<div class="doc">
-<pre class="source">
-void tests() {    var module = new AnnotatedModule(        "lib.core", "TestModule",        "fragment_id", {          "test": null        });    module.add();    module.onRequestCompleted(new RequestCompletedEventArgs("news", 200, null, isErrorOccurred: true));    module.onRequestCompleted(new RequestCompletedEventArgs("news", 200, null));    module.onRequestCompleted(new RequestCompletedEventArgs("lol", 200, null, isErrorOccurred: true));    module.onLoadingStateChanged(new LoadingStateChangedEventArgs(true));    module.onLoadingStateChanged(new LoadingStateChangedEventArgs(false));    module.remove();  }
-</pre>
-</div>
-</div>
-</div>
-        </div>
-        <div class="clear"></div>
-        </div>
-        <div class="footer">
-          <div>This page was generated at 2014-02-25 00:18:22.345</div>
-        </div>
-        <script async src="../client-live-nav.js"></script>
-        </body></html>
-        

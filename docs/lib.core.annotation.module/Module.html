@@ -1,0 +1,176 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Module class / lib.core.annotation.module Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="lib.core.annotation.module" data-type="Module">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../lib.core.annotation.module.html">lib.core.annotation.module</a> &rsaquo; <a href="../lib.core.annotation.module/Module.html">Module</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>Module</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>Annotation which marks a class as module.
+Each module requires a version number with
+the following pattern: <code>{int}.{int}.{int}</code>
+like <code>"1.0.0"</code>.</p>
+<p>example usage:</p>
+<pre><code>@Module("1.0.0")
+class ExampleModule { ... }
+
+@Module("1.0.0",
+    author: "Author name",
+    company: "Company name",
+    eMail: "example@email.com",
+    website: "http://www.example.com")
+class ExampleModuleWithOptionalAuthorInfo { ... }
+</code></pre>
+<pre class="source">
+class Module {
+
+ /**
+  * Gets the author name of the module.
+  */
+ final String author;
+
+ /**
+  * Gets the company name of the author.
+  */
+ final String company;
+
+ /**
+  * Gets the e-mail of the author.
+  */
+ final String eMail;
+
+ /**
+  * Gets the website of the author.
+  */
+ final String website;
+
+ /**
+  * Gets the version number of the module.
+  */
+ final String version;
+
+ /**
+  * Initializes the [@Module] annotation.
+  */
+ const Module(this.version, {this.author, this.company, this.eMail, this.website});
+
+}
+</pre>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="">
+<button class="show-code">Code</button>
+const <strong>Module</strong>(String version, {String author, String company, String eMail, String website}) <a class="anchor-link" href="#"
+              title="Permalink to Module.Module">#</a></h4>
+<div class="doc">
+<p>Initializes the <code>@Module</code> annotation.</p>
+<pre class="source">
+const Module(this.version, {this.author, this.company, this.eMail, this.website});
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="author">
+<button class="show-code">Code</button>
+final String         <strong>author</strong> <a class="anchor-link"
+            href="#author"
+            title="Permalink to Module.author">#</a>
+        </h4>
+        <div class="doc">
+<p>Gets the author name of the module.</p>
+<pre class="source">
+final String author
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="company">
+<button class="show-code">Code</button>
+final String         <strong>company</strong> <a class="anchor-link"
+            href="#company"
+            title="Permalink to Module.company">#</a>
+        </h4>
+        <div class="doc">
+<p>Gets the company name of the author.</p>
+<pre class="source">
+final String company
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="eMail">
+<button class="show-code">Code</button>
+final String         <strong>eMail</strong> <a class="anchor-link"
+            href="#eMail"
+            title="Permalink to Module.eMail">#</a>
+        </h4>
+        <div class="doc">
+<p>Gets the e-mail of the author.</p>
+<pre class="source">
+final String eMail
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="version">
+<button class="show-code">Code</button>
+final String         <strong>version</strong> <a class="anchor-link"
+            href="#version"
+            title="Permalink to Module.version">#</a>
+        </h4>
+        <div class="doc">
+<p>Gets the version number of the module.</p>
+<pre class="source">
+final String version
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="website">
+<button class="show-code">Code</button>
+final String         <strong>website</strong> <a class="anchor-link"
+            href="#website"
+            title="Permalink to Module.website">#</a>
+        </h4>
+        <div class="doc">
+<p>Gets the website of the author.</p>
+<pre class="source">
+final String website
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2014-02-25 17:55:19.185</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

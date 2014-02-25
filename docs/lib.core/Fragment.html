@@ -1,0 +1,254 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Fragment class / lib.core Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="lib.core" data-type="Fragment">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../lib.core.html">lib.core</a> &rsaquo; <a href="../lib.core/Fragment.html">Fragment</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>Fragment</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<pre class="source">
+class Fragment {
+ List&lt;AbstractModule&gt; _modules;
+ String _id;
+
+ /**
+  * Prefix used for the node ID
+  */
+ final String ID_PREFIX = "fragment";
+
+ /**
+  * Initializes the fragment.
+  */
+ Fragment() {
+   _id = new UniqueId(ID_PREFIX).build();
+   _modules = [];
+ }
+
+ /**
+  * Gets the unique ID of the fragment.
+  * This ID is used as node ID.
+  */
+ String get id =&gt; _id;
+
+ /**
+  * Loads all modules with the help
+  * of the config.
+  */
+ void _loadModules(List&lt;ConfigModuleModel&gt; modules) {
+
+   //creates all modules of this fragment
+   for(var model in modules) {
+     _modules.add(
+         new AnnotatedModule(
+           model.libraryName,
+           model.moduleName,
+           _id,
+           model.config
+         )
+     );
+   }
+ }
+
+ /**
+  * Adds the fragment and all its
+  * modules to DOM.
+  */
+ void add() {
+   //TODO add fragment template
+
+   for(var module in _modules) {
+     module.add();
+   }
+ }
+
+ /**
+  * Remove the fragment and all its
+  * modules from DOM.
+  */
+ void remove() {
+   for(var module in _modules) {
+     module.remove();
+   }
+
+   //TODO remove fragment template
+ }
+
+ /**
+  * This event handler is invoked whenever a request
+  * is completed in case the request was successful but
+  * also when an error occurred.
+  */
+ void onRequestCompleted(RequestCompletedEventArgs args) {
+   //TODO allow to catch this event to manipulate fragment -&gt; via config? or via callback?
+
+   for(var module in _modules) {
+     module.onRequestCompleted(args);
+   }
+ }
+
+ void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
+   //TODO allow to catch this event to manipulate fragment
+
+   for(var module in _modules) {
+     module.onLoadingStateChanged(args);
+   }
+ }
+}
+</pre>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="">
+<button class="show-code">Code</button>
+new <strong>Fragment</strong>() <a class="anchor-link" href="#"
+              title="Permalink to Fragment.Fragment">#</a></h4>
+<div class="doc">
+<p>Initializes the fragment.</p>
+<pre class="source">
+Fragment() {
+ _id = new UniqueId(ID_PREFIX).build();
+ _modules = [];
+}
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="id">
+<button class="show-code">Code</button>
+final String         <strong>id</strong> <a class="anchor-link"
+            href="#id"
+            title="Permalink to Fragment.id">#</a>
+        </h4>
+        <div class="doc">
+<p>Gets the unique ID of the fragment.
+This ID is used as node ID.</p>
+<pre class="source">
+String get id =&gt; _id;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="ID_PREFIX">
+<button class="show-code">Code</button>
+final String         <strong>ID_PREFIX</strong> <a class="anchor-link"
+            href="#ID_PREFIX"
+            title="Permalink to Fragment.ID_PREFIX">#</a>
+        </h4>
+        <div class="doc">
+<p>Prefix used for the node ID</p>
+<pre class="source">
+final String ID_PREFIX = "fragment"
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="add">
+<button class="show-code">Code</button>
+void <strong>add</strong>() <a class="anchor-link" href="#add"
+              title="Permalink to Fragment.add">#</a></h4>
+<div class="doc">
+<p>Adds the fragment and all its
+modules to DOM.</p>
+<pre class="source">
+void add() {
+ //TODO add fragment template
+
+ for(var module in _modules) {
+   module.add();
+ }
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="onLoadingStateChanged">
+<button class="show-code">Code</button>
+void <strong>onLoadingStateChanged</strong>(<a href="../lib.core.eventArgs/LoadingStateChangedEventArgs.html">LoadingStateChangedEventArgs</a> args) <a class="anchor-link" href="#onLoadingStateChanged"
+              title="Permalink to Fragment.onLoadingStateChanged">#</a></h4>
+<div class="doc">
+<pre class="source">
+void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
+ //TODO allow to catch this event to manipulate fragment
+
+ for(var module in _modules) {
+   module.onLoadingStateChanged(args);
+ }
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="onRequestCompleted">
+<button class="show-code">Code</button>
+void <strong>onRequestCompleted</strong>(<a href="../lib.core.eventArgs/RequestCompletedEventArgs.html">RequestCompletedEventArgs</a> args) <a class="anchor-link" href="#onRequestCompleted"
+              title="Permalink to Fragment.onRequestCompleted">#</a></h4>
+<div class="doc">
+<p>This event handler is invoked whenever a request
+is completed in case the request was successful but
+also when an error occurred.</p>
+<pre class="source">
+void onRequestCompleted(RequestCompletedEventArgs args) {
+ //TODO allow to catch this event to manipulate fragment -&gt; via config? or via callback?
+
+ for(var module in _modules) {
+   module.onRequestCompleted(args);
+ }
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="remove">
+<button class="show-code">Code</button>
+void <strong>remove</strong>() <a class="anchor-link" href="#remove"
+              title="Permalink to Fragment.remove">#</a></h4>
+<div class="doc">
+<p>Remove the fragment and all its
+modules from DOM.</p>
+<pre class="source">
+void remove() {
+ for(var module in _modules) {
+   module.remove();
+ }
+
+ //TODO remove fragment template
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2014-02-25 17:55:19.051</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

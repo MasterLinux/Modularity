@@ -1,0 +1,228 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>lib.core.annotation.module Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="favicon.ico">
+        
+        </head>
+        <body data-library="lib.core.annotation.module">
+        <div class="page">
+        <div class="header">
+          <a href="index.html"><div class="logo"></div></a>
+          <a href="index.html">Dart Documentation</a>
+         &rsaquo; <a href="lib.core.annotation.module.html">lib.core.annotation.module</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+<h2><strong>lib.core.annotation.module</strong> library</h2>
+<div class="doc"><p>Collection of annotations for
+creating modules.</p>
+<p>example implementation of a module:</p>
+<pre><code>library myLib.module;
+
+@Module("1.3.37")
+class ExampleModule {
+
+    @OnInit
+    void initModule(ModuleContext context, InitEventArgs args) { ... }
+
+    @OnBeforeAdd
+    void onBeforeAddEventHandler() { ... }
+
+    @OnAdded
+    void onAddedEventHandler() { ... }
+
+    @OnBeforeRemove
+    void onBeforeRemoveEventHandler() { ... }
+
+    @OnRemoved
+    void onRemovedEventHandler() { ... }
+
+    @OnLoadingStateChanged(isLoading: true)
+    void onLoadingStartedEventHandler(LoadingStateChangedEventArgs args) { ... }
+
+    @OnRequestCompleted(requestId: "news", isErrorHandler: true)
+    void onNewsRequestErrorEventHandler(RequestCompletedEventArgs args) { ... }
+}
+</code></pre>
+<p>example instantiation of the example module:</p>
+<pre><code>var exampleModule =
+    new AnnotatedModule(
+        "myLib.module",
+        "ExampleModule",
+        "fragment_id",{
+            "exampleConfigKey": true
+        }
+    );
+</code></pre></div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="OnAdded">
+<button class="show-code">Code</button>
+const Object         <strong>OnAdded</strong> <a class="anchor-link"
+            href="#OnAdded"
+            title="Permalink to OnAdded">#</a>
+        </h4>
+        <div class="doc">
+<p>The <code>@OnAdded</code> annotation is used to mark a function
+as event handler for the onAdded event of a module.</p>
+<p>example usage:</p>
+<pre><code>@OnAdded
+void onAddedEventHandler() { ... }
+</code></pre>
+<pre class="source">
+const Object OnAdded = const OnAddedAnnotation()
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="OnBeforeAdd">
+<button class="show-code">Code</button>
+const Object         <strong>OnBeforeAdd</strong> <a class="anchor-link"
+            href="#OnBeforeAdd"
+            title="Permalink to OnBeforeAdd">#</a>
+        </h4>
+        <div class="doc">
+<p>The <code>@OnBeforeAdd</code> annotation is used to mark a function
+as event handler for the onBeforeAdd event of a module.</p>
+<p>example usage:</p>
+<pre><code>@OnBeforeAdd
+void onBeforeAddEventHandler() { ... }
+</code></pre>
+<pre class="source">
+const Object OnBeforeAdd = const OnBeforeAddAnnotation()
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="OnBeforeRemove">
+<button class="show-code">Code</button>
+const Object         <strong>OnBeforeRemove</strong> <a class="anchor-link"
+            href="#OnBeforeRemove"
+            title="Permalink to OnBeforeRemove">#</a>
+        </h4>
+        <div class="doc">
+<p>The <code>@OnBeforeRemove</code> annotation is used to mark a function
+as event handler for the onBeforeRemove event of a module.</p>
+<p>example usage:</p>
+<pre><code>@OnBeforeRemove
+void onBeforeRemoveEventHandler() { ... }
+</code></pre>
+<pre class="source">
+const Object OnBeforeRemove = const OnBeforeRemoveAnnotation()
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="OnInit">
+<button class="show-code">Code</button>
+const Object         <strong>OnInit</strong> <a class="anchor-link"
+            href="#OnInit"
+            title="Permalink to OnInit">#</a>
+        </h4>
+        <div class="doc">
+<p>Annotation which marks a function
+as init function of a module. A module
+must contain one init function.
+In addition an init function is just
+invoked once when the module is initialized
+on application start.</p>
+<p>example usage:</p>
+<pre><code>@OnInit
+void init(ModuleContext context, InitEventArgs args) {
+    //do something important
+}
+</code></pre>
+<pre class="source">
+const Object OnInit = const OnInitAnnotation()
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="OnRemoved">
+<button class="show-code">Code</button>
+const Object         <strong>OnRemoved</strong> <a class="anchor-link"
+            href="#OnRemoved"
+            title="Permalink to OnRemoved">#</a>
+        </h4>
+        <div class="doc">
+<p>The <code>@OnRemoved</code> annotation is used to mark a function
+as event handler for the onRemoved event of a module.</p>
+<p>example usage:</p>
+<pre><code>@OnRemoved
+void onRemovedEventHandler() { ... }
+</code></pre>
+<pre class="source">
+const Object OnRemoved = const OnRemovedAnnotation()
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Classes</h3>
+          <div class="type">
+          <h4>
+            <a href="lib.core.annotation.module/Module.html"><strong>Module</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="lib.core.annotation.module/OnAddedAnnotation.html"><strong>OnAddedAnnotation</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="lib.core.annotation.module/OnBeforeAddAnnotation.html"><strong>OnBeforeAddAnnotation</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="lib.core.annotation.module/OnBeforeRemoveAnnotation.html"><strong>OnBeforeRemoveAnnotation</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="lib.core.annotation.module/OnInitAnnotation.html"><strong>OnInitAnnotation</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="lib.core.annotation.module/OnLoadingStateChanged.html"><strong>OnLoadingStateChanged</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="lib.core.annotation.module/OnRemovedAnnotation.html"><strong>OnRemovedAnnotation</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="lib.core.annotation.module/OnRequestCompleted.html"><strong>OnRequestCompleted</strong></a>
+          </h4>
+          </div>
+          
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2014-02-25 17:55:19.108</div>
+        </div>
+        <script async src="client-live-nav.js"></script>
+        </body></html>
+        
