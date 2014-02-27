@@ -3,12 +3,40 @@ part of lib.core;
 class AnnotatedModule extends AbstractModule {
   ClassMirror _reflectedClass;
   InstanceMirror _instance;
+  final String _name;
+  final String _lib;
+  String _author;
+  String _company;
+  String _eMail;
+  String _website;
+  String _version;
 
-  final String moduleLibrary;
-  final String moduleName;
-
-  AnnotatedModule(this.moduleLibrary, this.moduleName, Fragment fragment, Map<String, Object> config)
+  /**
+   * Initializes the module with the help
+   * of a class which uses the module annotations.
+   */
+  AnnotatedModule(this._lib, this._name, Fragment fragment, Map<String, Object> config)
     : super(fragment, config);
+
+  /**
+   * Gets the library of the module.
+   */
+  String get lib => _lib;
+
+  /**
+   * Gets the name of the module.
+   */
+  String get name => _name;
+
+  String get company => _company;
+
+  String get eMail => _eMail;
+
+  String get website => _website;
+
+  String get version => _version;
+
+  String get author => _author;
 
   /**
    * Invokes all event handler which are passed the given [test].
@@ -74,7 +102,7 @@ class AnnotatedModule extends AbstractModule {
 
   @override
   void onInit(InitEventArgs args) {
-    _reflectedClass = _getReflectedClass(moduleLibrary, moduleName);
+    _reflectedClass = _getReflectedClass(lib, name);
 
     var metadata = _reflectedClass.metadata;
     var annotation = metadata.firstWhere(
@@ -86,17 +114,17 @@ class AnnotatedModule extends AbstractModule {
     _instance = _reflectedClass.newInstance(const Symbol(''), []);
 
     //get module information for registration
-    if(annotation != null && (_id = moduleName) != null) {
+    if(annotation != null && name != null) {
       _setModuleInfo(annotation.reflectee as Module);
 
       //try to invoke onInit handler of module, if handler doesn't exists throw exception
       if(!_tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
-        throw new MissingInitMethodException(_id);
+        throw new MissingInitMethodException(name);
       }
     }
 
     //if name is missing throw exception
-    else if(annotation != null && _id == null) {
+    else if(annotation != null && name == null) {
       throw new MissingModuleIdException();
     }
 
