@@ -2,7 +2,7 @@ part of lib.core;
 
 abstract class AbstractModule {
   final Map<String, Object> config;
-  final String fragmentId;
+  final Fragment fragment;
   ModuleContext _context;
   String _templateId;
   String _id;
@@ -22,7 +22,7 @@ abstract class AbstractModule {
   /**
    * Initializes the module
    */
-  AbstractModule(this.fragmentId, this.config, { String id }) { //TODO id required?
+  AbstractModule(this.fragment, this.config, { String id }) { //TODO id required?
     _templateId = new UniqueId(ID_PREFIX).build();
     _context = new ModuleContext(this);
     _id = id;
@@ -42,13 +42,6 @@ abstract class AbstractModule {
    */
   String get templateId {
     return _templateId;
-  }
-
-  /**
-   * Gets the parent page of the module.
-   */
-  Page get page {
-    return null; //TODO implement
   }
 
   /**

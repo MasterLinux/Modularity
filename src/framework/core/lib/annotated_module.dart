@@ -7,8 +7,8 @@ class AnnotatedModule extends AbstractModule {
   final String moduleLibrary;
   final String moduleName;
 
-  AnnotatedModule(this.moduleLibrary, this.moduleName, String fragmentId, Map<String, Object> config)
-    : super(fragmentId, config);
+  AnnotatedModule(this.moduleLibrary, this.moduleName, Fragment fragment, Map<String, Object> config)
+    : super(fragment, config);
 
   /**
    * Invokes all event handler which are passed the given [test].

@@ -2,17 +2,33 @@ part of lib.core;
 
 class Fragment {
   List<AbstractModule> _modules;
+  String _title;
   String _id;
 
   /**
-   * Prefix used for the node ID
+   * Prefix used for the node ID.
    */
   final String ID_PREFIX = "fragment";
 
   /**
+   * List of modules of the fragment.
+   */
+  final List<ConfigModuleModel> modules;
+
+  /**
+   * Gets the parent page of the fragment.
+   */
+  final Page page;
+
+  /**
+   * Gets the title of the fragment.
+   */
+  final String title;
+
+  /**
    * Initializes the fragment.
    */
-  Fragment() {
+  Fragment(this.page, this.title, this.modules) {
     _id = new UniqueId(ID_PREFIX).build();
     _modules = [];
   }
@@ -35,7 +51,7 @@ class Fragment {
           new AnnotatedModule(
             model.libraryName,
             model.moduleName,
-            _id,
+            this,
             model.config
           )
       );

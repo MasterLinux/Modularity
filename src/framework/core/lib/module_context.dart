@@ -11,7 +11,12 @@ class ModuleContext {
    * the title of the page or other information about
    * the page.
    */
-  Page get page =>  module.page;
+  Page get page =>  module.fragment.page;
+
+  /**
+   * Gets the parent fragment of the module.
+   */
+  Fragment get fragment => module.fragment;
 
   /**
    * Gets the version of the module.
