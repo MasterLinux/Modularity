@@ -1,4 +1,4 @@
-part of lib.core.event;
+part of lib.core.utility.connect;
 
 /**
  * Represents an event handler or callback
@@ -37,6 +37,14 @@ class Slot {
    * of the emitted signal.
    */
   Future run(SignalEventArgs args) {
-    return new Future(() => _handler(args));
+    var completer = new Completer();
+
+    //run handler
+    new Future(() {
+      _handler(args);
+      completer.complete();
+    });
+
+    return completer.future;
   }
 }

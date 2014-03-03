@@ -13,7 +13,7 @@
  *         //a signal is a static constant with the class name as
  *         //prefix followed by the specific signal name and
  *         //separated by an underscore. For example "ClassName_SignalName"
- *         final String SIGNAL_ON_COMPLETED = "JsonReader_onCompleted";
+ *         static const String SIGNAL_ON_COMPLETED = "JsonReader_onCompleted";
  *
  *         //reads a json from file and emits the onCompleted signal
  *         String readFrom(String path) {
@@ -93,14 +93,78 @@
  *     }
  *
  */
-library lib.core.event;
+library lib.core.utility.connect;
 
 import 'dart:mirrors';
 import 'dart:async';
 import 'dart:isolate';
 
 part 'slot.dart';
-part 'connect.dart';
 part 'disconnect.dart';
 part 'signal_event_args.dart';
 part 'event_manager.dart';
+
+/**
+ * Connects a specific signal to many
+ * slots which will be invoked when
+ * this signal is emitted.
+ *
+ * example usage:
+ *
+ *     //create new example class which contains a slot
+ *     var exampleClass = new ExampleClass();
+ *
+ *     //connect the loaded signal to a slot
+ *     Connect
+ *         .signal("loaded")
+ *         .to(exampleClass.onLoadedSlot);
+ *
+ *     //emit signal
+ *     Connect
+ *         .signal("loaded")
+ *         .emit(
+ *             new EventArgs.from({
+ *                 ...
+ *             })
+ *         );
+ */
+class Connect {
+  _EventManager _manager;
+
+  /**
+   * Gets or creates a new instance
+   * of this connect helper listening
+   * to a specific [signal].
+   */
+  static Connect signal(String signal) {
+    return new Connect._internal(signal);
+  }
+
+  /**
+   * Initializes the connect helper
+   * listening to a specific [signal].
+   */
+  Connect._internal(String signal) {
+    _manager = new _EventManager(signal);
+  }
+
+  /**
+   * Connects a specific [Slot] to the
+   * signal of this connect helper.
+   */
+  Connect to(Slot slot) {
+    _manager + slot;
+    return this;
+  }
+
+  /**
+   * Invokes all slots connected to
+   * the signal of this connect helper.
+   * The [EventArgs] contains all required
+   * event data.
+   * //TODO comment return Future
+   */
+  Future emit(SignalEventArgs args) {
+    return _manager.emit(args);
+  }
+}

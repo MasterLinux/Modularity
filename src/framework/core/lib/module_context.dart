@@ -58,10 +58,11 @@ class ModuleContext {
 
   /**
    * Sends a message to other modules.
+   * //TODO comment return Future
    */
-  void send(String signal, SignalEventArgs args) {
+  Future send(String signal, SignalEventArgs args) {
     //emit signal
-    Connect
+    return Connect
       .signal(signal)
       .emit(args);
   }
@@ -69,7 +70,7 @@ class ModuleContext {
   /**
    * Add slot to receive messages from other modules
    */
-  void receive(String signal, Slot slot) {
+  void listen(String signal, Slot slot) {
     Connect
       .signal(signal)
       .to(slot);

@@ -18,14 +18,8 @@ class AnnotatedModule extends AbstractModule {
   AnnotatedModule(this._lib, this._name, Fragment fragment, Map<String, Object> config)
     : super(fragment, config);
 
-  /**
-   * Gets the library of the module.
-   */
   String get lib => _lib;
 
-  /**
-   * Gets the name of the module.
-   */
   String get name => _name;
 
   String get company => _company;

@@ -1,4 +1,4 @@
-part of lib.core.event;
+part of lib.core.utility.connect;
 
 /**
  * Provides data of an event

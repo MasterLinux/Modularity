@@ -1,4 +1,4 @@
-part of lib.core.event;
+part of lib.core.utility.connect;
 
 /**
  * Disconnects a specific signal from a slot.
@@ -15,7 +15,7 @@ part of lib.core.event;
  *
  */
 class Disconnect {
-  EventManager _manager;
+  _EventManager _manager;
 
   /**
    * Gets or creates a new instance
@@ -32,7 +32,7 @@ class Disconnect {
    * with the help of a specific [signal].
    */
   Disconnect._internal(String signal) {
-    _manager = new EventManager(signal);
+    _manager = new _EventManager(signal);
   }
 
   /**

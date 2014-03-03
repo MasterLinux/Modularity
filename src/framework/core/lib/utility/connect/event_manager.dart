@@ -1,4 +1,4 @@
-part of lib.core.event;
+part of lib.core.utility.connect;
 
 /**
  * An event manager used to create many to many
@@ -15,7 +15,7 @@ part of lib.core.event;
  *      var exampleClass = new ExampleClass();
  *
  *      //create new manager instance
- *      var manager = new EventManager("loaded");
+ *      var manager = new _EventManager("loaded");
  *
  *      //subscribe slot
  *      manager + exampleClass.onLoadedSlot;
@@ -31,9 +31,9 @@ part of lib.core.event;
  *      manager - exampleClass.onLoadedSlot;
  *
  */
-class EventManager {
+class _EventManager {
   final String _signal;
-  static Map<String, EventManager> _cache;
+  static Map<String, _EventManager> _cache;
   List<Slot> _slots;
 
   /**
@@ -41,7 +41,7 @@ class EventManager {
    * of this event manager listening
    * to a specific [signal].
    */
-  factory EventManager(String signal) {
+  factory _EventManager(String signal) {
     if(_cache == null) {
       _cache = {};
     }
@@ -50,7 +50,7 @@ class EventManager {
       return _cache[signal];
 
     } else {
-      final connect = new EventManager._internal(signal);
+      final connect = new _EventManager._internal(signal);
       _cache[signal] = connect;
       return connect;
     }
@@ -60,8 +60,8 @@ class EventManager {
    * Initializes the event manager
    * listening to a specific [signal].
    */
-  EventManager._internal(this._signal) {
-    _slots = new List<Function>();
+  _EventManager._internal(this._signal) {
+    _slots = <Slot>[];
   }
 
   /**
@@ -78,12 +78,13 @@ class EventManager {
    * event manager and invokes
    * each subscribed slot
    * asynchronously.
+   * //TODO comment return Future
    */
   Future emit(SignalEventArgs args) {
     var slots = new List<Slot>.from(_slots);
 
-    return Future.forEach(slots, (Slot slot) {
-      slot.run(args);
+    return Future.forEach(slots, (slot) {
+      return slot.run(args);
     });
   }
 
