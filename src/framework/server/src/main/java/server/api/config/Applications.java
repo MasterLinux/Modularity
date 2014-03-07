@@ -32,7 +32,7 @@ public class Applications extends BaseResource {
         ApplicationModel application;
         for(int i=0; i<60; i++) {
             application = new ApplicationModel();
-            application.setName("application_" + i);
+            application.setName("application_" + i + "_" + metaParam.getEmbed());
             application.setId(i);
 
             objects.add(application);

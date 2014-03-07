@@ -2,9 +2,10 @@ part of lib.core;
 
 class Page {
   Map<String, dynamic> _navigationParameter;
+  final List<ConfigPageModel> pages;
+  final String title;
 
-  Page() {
-  }
+  Page(this.title, this.pages);
 
   void navigate() {
 
