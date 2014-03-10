@@ -2,9 +2,10 @@ library lib.core.model;
 
 part 'meta_model.dart';
 part 'config_model.dart';
-part 'config_page_model.dart';
-part 'config_fragment_model.dart';
-part 'config_module_model.dart';
+part 'config_applications_model.dart';
+part 'config_pages_model.dart';
+part 'config_fragments_model.dart';
+part 'config_modules_model.dart';
 
 /**
  * Base implementation of a model.
