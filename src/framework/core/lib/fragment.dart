@@ -11,11 +11,6 @@ class Fragment {
   final String ID_PREFIX = "fragment";
 
   /**
-   * List of modules of the fragment.
-   */
-  final List<ConfigModuleModel> modules;
-
-  /**
    * Gets the parent page of the fragment.
    */
   final Page page;
@@ -28,9 +23,9 @@ class Fragment {
   /**
    * Initializes the fragment.
    */
-  Fragment(this.page, this.title, this.modules) {
+  Fragment(this.page, this.title, modules) {
     _id = new UniqueId(ID_PREFIX).build();
-    _modules = [];
+    _loadModules(modules);
   }
 
   /**
@@ -43,16 +38,17 @@ class Fragment {
    * Loads all modules with the help
    * of the config.
    */
-  void _loadModules(List<ConfigModuleModel> modules) {
+  void _loadModules(ConfigModulesModel modulesConfig) {
+    _modules = [];
 
     //creates all modules of this fragment
-    for(var model in modules) {
+    for(var module in modulesConfig.objects) {
       _modules.add(
           new AnnotatedModule(
-            model.libraryName,
-            model.moduleName,
+            module.lib,
+            module.name,
             this,
-            model.config
+            module.config
           )
       );
     }

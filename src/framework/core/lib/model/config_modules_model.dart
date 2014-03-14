@@ -1,7 +1,9 @@
 part of lib.core.model;
 
-class ConfigModuleModel {
-  String libraryName;
-  String moduleName;
+class ConfigModulesModel extends Model<ConfigModuleModel> {}
+
+class ConfigModuleModel extends ObjectModel {
+  String lib; //TODO rename?
+  String name;
   Map<String, Object> config;
 }
