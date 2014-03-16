@@ -12,13 +12,10 @@ class ConfigApplicationModel extends ObjectModel {
   String name;
   String version;
   String author;
-  ConfigApplicationDefaultModel defaults; //TODO rename?
-  //ConfigTextsModel texts; //TODO implement
+  String startUri;
+  String defaultLanguage;
+  ConfigResourcesModel resources;
   ConfigPagesModel pages;
   //ConfigTasksModel tasks; //TODO implement
 }
 
-class ConfigApplicationDefaultModel {
-  String fragment;
-  String page;
-}
