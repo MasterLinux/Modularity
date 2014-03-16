@@ -2,9 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import server.model.BaseModel;
-import server.model.ResponseModel;
-import server.model.config.ApplicationModel;
+import server.model.BaseObjectModel;
+import server.model.BaseResourceModel;
 import server.parameter.MetaBeanParam;
 import server.util.ResponseBuilder;
 
@@ -27,8 +26,8 @@ public class BaseResource {
      * @param <T>
      * @return
      */
-    protected <T extends BaseModel> String buildResponse(MetaBeanParam metaParam, ArrayList<T> objects) {
-        ResponseModel<T> response = new ResponseBuilder<T>()
+    protected <T extends BaseObjectModel> String buildResponse(MetaBeanParam metaParam, ArrayList<T> objects) {
+        BaseResourceModel<T> response = new ResponseBuilder<T>()
                 .setResourceUri(uriInfo.getRequestUri())
                 .setLimit(metaParam.getLimit())
                 .setOffset(metaParam.getOffset())

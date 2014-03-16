@@ -3,17 +3,11 @@ package server.api.config;
 import server.BaseResource;
 import server.model.config.ApplicationModel;
 import server.parameter.MetaBeanParam;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import server.model.ResponseModel;
-import server.util.ResponseBuilder;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 
 /**

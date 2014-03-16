@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Christoph on 02.02.14.
  */
-public class ResponseModel<T extends BaseModel> {
+public class BaseResourceModel<T extends BaseObjectModel> {
     private ResponseMetaModel meta;
     private List<T> objects;
 

@@ -1,10 +1,10 @@
 package server.model;
 
 /**
- * Base implementation of a server.model
+ * Base implementation of an object model
  * @author Christoph Grundmann
  */
-public class BaseModel {
+public class BaseObjectModel {
     private int id;
     private String resourceUri;
 

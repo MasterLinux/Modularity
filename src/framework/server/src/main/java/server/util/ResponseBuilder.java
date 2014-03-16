@@ -1,8 +1,8 @@
 package server.util;
 
-import server.model.BaseModel;
+import server.model.BaseObjectModel;
+import server.model.BaseResourceModel;
 import server.model.ResponseMetaModel;
-import server.model.ResponseModel;
 
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by Christoph on 02.02.14.
  */
-public class ResponseBuilder<T extends BaseModel> {
+public class ResponseBuilder<T extends BaseObjectModel> {
     private int defaultOffset = -1;
     private int defaultLimit = -1;
     private int offset = -1;
@@ -59,9 +59,9 @@ public class ResponseBuilder<T extends BaseModel> {
      * Builds the response server.model
      * @return The response server.model
      */
-    public ResponseModel<T> build() {
+    public BaseResourceModel<T> build() {
         boolean hasNext, hasPrevious;
-        ResponseModel<T> response;
+        BaseResourceModel<T> response;
         List<T> objects = getObjects();
         URI uri = getResourceUri();
         int page, start, end,
@@ -106,7 +106,7 @@ public class ResponseBuilder<T extends BaseModel> {
         );
 
         //set response
-        response = new ResponseModel<T>();
+        response = new BaseResourceModel<T>();
         response.setObjects(filteredObjects);
         response.setMeta(meta);
 
