@@ -17,11 +17,11 @@ public class MetaBeanParam {
     public MetaBeanParam(
             @QueryParam("limit") @DefaultValue("20") int limit,
             @QueryParam("offset") @DefaultValue("0") int offset,
-            @QueryParam("embed") String embed
+            @QueryParam("embed") @DefaultValue("null") String embed
     ) {
         this.limit = limit;
         this.offset = offset;
-        this.embed = parseEmbedValue(embed);
+        this.embed = new LinkedList<EmbedParameter>();//parseEmbedValue(embed); //TODO use parser
     }
 
     /**

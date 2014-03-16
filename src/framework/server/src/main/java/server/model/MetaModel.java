@@ -3,7 +3,7 @@ package server.model;
 /**
  * Created by Christoph on 02.02.14.
  */
-public class ResponseMetaModel {
+public class MetaModel {
     private int offset;
     private int limit;
     private int filteredCount;

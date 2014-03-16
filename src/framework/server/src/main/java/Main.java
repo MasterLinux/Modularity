@@ -17,7 +17,7 @@ public class Main {
      */
     public static void main(String[] args)
     {
-        final Server server = new Server(URI.create("https://127.0.0.1:9090"));
+        final Server server = new Server(URI.create("https://127.0.0.1:9080"));
 
         //register shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {

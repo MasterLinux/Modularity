@@ -13,7 +13,7 @@ import java.util.ArrayList;
 /**
  * Created by Christoph on 01.02.14.
  */
-@Path("/applications")
+@Path("/config/applications")
 public class Applications extends BaseResource {
 
     @GET

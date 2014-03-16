@@ -2,7 +2,7 @@ package server.util;
 
 import server.model.BaseObjectModel;
 import server.model.BaseResourceModel;
-import server.model.ResponseMetaModel;
+import server.model.MetaModel;
 
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
@@ -69,7 +69,7 @@ public class ResponseBuilder<T extends BaseObjectModel> {
                 limit = getLimit(),
                 size = objects.size();
         List<T> filteredObjects;
-        ResponseMetaModel meta;
+        MetaModel meta;
 
         //calc page
         page = offset + 1;
@@ -125,12 +125,12 @@ public class ResponseBuilder<T extends BaseObjectModel> {
      *
      * @return The required server.model
      */
-    private ResponseMetaModel getMetaModel(
+    private MetaModel getMetaModel(
             int limit, int offset, int size,
             List<T> filteredObjects,
             String prevUri, String nextUri
     ) {
-        ResponseMetaModel meta = new ResponseMetaModel();
+        MetaModel meta = new MetaModel();
         meta.setFilteredCount(filteredObjects.size());
         meta.setTotalCount(size);
         meta.setOffset(offset);
