@@ -10,6 +10,7 @@ import server.util.ResponseBuilder;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by masterlinux on 2/12/14.
@@ -26,7 +27,7 @@ public class BaseResource {
      * @param <T>
      * @return
      */
-    protected <T extends BaseObjectModel> String buildResponse(MetaBeanParam metaParam, ArrayList<T> objects) {
+    protected <T extends BaseObjectModel> String buildResponse(MetaBeanParam metaParam, List<T> objects) {
         BaseResourceModel<T> response = new ResponseBuilder<T>()
                 .setResourceUri(uriInfo.getRequestUri())
                 .setLimit(metaParam.getLimit())

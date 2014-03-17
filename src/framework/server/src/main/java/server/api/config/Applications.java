@@ -1,6 +1,7 @@
 package server.api.config;
 
 import server.BaseResource;
+import server.data.dao.ApplicationsDAO;
 import server.model.config.ApplicationModel;
 import server.parameter.MetaBeanParam;
 
@@ -21,17 +22,6 @@ public class Applications extends BaseResource {
     public String getApplications(
             @BeanParam MetaBeanParam metaParam
     ) {
-        ArrayList<ApplicationModel> objects = new ArrayList<ApplicationModel>();
-
-        ApplicationModel application;
-        for(int i=0; i<60; i++) {
-            application = new ApplicationModel();
-            application.setName("application_" + i + "_" + metaParam.getEmbed());
-            application.setId(i);
-
-            objects.add(application);
-        }
-
-        return buildResponse(metaParam, objects);
+        return buildResponse(metaParam, ApplicationsDAO.getInstance().get());
     }
 }
