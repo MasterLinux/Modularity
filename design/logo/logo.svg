@@ -50,17 +50,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4"
-     inkscape:cx="386.6014"
-     inkscape:cy="703.12571"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="199.07884"
+     inkscape:cy="960.74284"
      inkscape:document-units="px"
-     inkscape:current-layer="layer6"
+     inkscape:current-layer="layer2"
      showgrid="false"
-     inkscape:window-width="1680"
-     inkscape:window-height="997"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1" />
+     inkscape:window-width="884"
+     inkscape:window-height="453"
+     inkscape:window-x="295"
+     inkscape:window-y="350"
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -168,16 +168,16 @@
        id="path2991-5-1-5-38" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#1b676b;fill-opacity:1;stroke:none;font-family:Sans;stroke-opacity:1;stroke-width:1.13838408000000000"
-       x="330"
-       y="124.50505"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#1b676b;fill-opacity:1;stroke:none;font-family:Sans"
+       x="331.40826"
+       y="120.54566"
        id="text4319"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4321"
-         x="330"
-         y="124.50505"
-         style="font-size:56px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#1b676b;fill-opacity:1;font-family:Calibri;-inkscape-font-specification:Calibri;stroke:none;stroke-opacity:1;stroke-width:1.13838408000000000">Publicize</tspan></text>
+         x="331.40826"
+         y="120.54566"
+         style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#1b676b;fill-opacity:1;stroke:none;font-family:Liberation Serif;-inkscape-font-specification:Liberation Serif">Publicize</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"

@@ -3,27 +3,145 @@
 <head>
     <title></title>
 
+    <link href='http://fonts.googleapis.com/css?family=Carrois+Gothic+SC' rel='stylesheet' type='text/css'>
+
     <style type="text/css">
-        .Menu {
-            height: 200px;
-        }
-        .Right {
-            background: red;
-            height: 100%;
+        * {
+            margin: 0;
+            padding: 0;
         }
 
-        .Left {
+        body {
+            font-family: 'Carrois Gothic SC', sans-serif;
+        }
+
+        .Menu {
+
+        }
+
+        .Menu .Right {
+
+        }
+
+        .Menu .Right .Content {
+            padding: 0 10px;
+            -webkit-column-count: 2;
+        }
+
+        .Menu .Left {
             float: left;
-            width: 120px;
-            height: 100%;
-            background: yellow;
+            width: 150px;
+        }
+
+        .Menu .Left ul {
+            list-style: none;
+        }
+
+        .Menu .Left li {
+            font-size: 15px;
+            padding: 10px 5px;
+            border-bottom: 1px solid #1B676B;
+            cursor: pointer;
+        }
+
+        .Menu .Left li:hover {
+            color: #EAFDE6;
+            background: #519548;
+        }
+
+        .Menu .Left li:last-child {
+            border-bottom: none;
+        }
+
+        .Menu .Left li.selected {
+            color: #EAFDE6;
+            background: #1B676B;
+            border-bottom: none;
+            cursor: default;
+        }
+
+        .Header {
+            padding: 20px 0;
+        }
+
+        .Header .Icon {
+            margin-left: 10px;
+            width: 254px;
+            height: 64px;
+            background: url("images/logo_first.png") no-repeat;
+        }
+
+        .Footer {
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            font-size: 10px;
+            margin-top: 10px;
+            color: #EAFDE6;
+            background: #1B676B;
+        }
+
+        .Footer .Copyright {
+            padding: 5px 50px 5px 10px;
+            float: left;
+        }
+
+        .Footer ul {
+            list-style: none;
+        }
+
+        .Footer li {
+            padding: 5px 10px;
+            border-right: 1px solid #1B676B;
+            cursor: pointer;
+            float: left;
+        }
+
+        .Footer li:hover {
+            color: #EAFDE6;
+            background: #519548;
+        }
+
+        .Footer li:last-child {
+            border-right: none;
+        }
+
+        .Footer li.selected {
+            color: #EAFDE6;
+            background: #1B676B;
+            border-bottom: none;
+            cursor: default;
         }
     </style>
 </head>
 <body>
+    <div class="Header">
+        <div class="Icon"></div>
+    </div>
     <div class="Menu">
-        <div class="Left"></div>
-        <div class="Right"></div>
+        <div class="Left">
+            <ul>
+                <li>Startseite</li>
+                <li class="selected">Features</li>
+                <li>Referenzen</li>
+                <li>Impressum</li>
+            </ul>
+        </div>
+        <div class="Right">
+            <div class="Content">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+                Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,</div>
+        </div>
+    </div>
+    <div class="Footer">
+        <div class="Copyright">Copyright aPuerto gmbH</div>
+        <ul>
+            <li>Startseite</li>
+            <li class="selected">Features</li>
+            <li>Referenzen</li>
+            <li>Impressum</li>
+        </ul>
+        <div style="clear: both"></div>
     </div>
     <script type="application/dart" src="../lib/core.dart"></script>
 </body>
