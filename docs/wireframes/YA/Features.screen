@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model:Screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://wireframesketcher.com/1.0/model.ecore" xmlns:o="http://wireframesketcher.com/1.0/model/overrides">
+  <widgets xsi:type="model:Master" id="1" x="16" y="16" measuredWidth="859" measuredHeight="545">
+    <screen xsi:type="model:Screen" href="Home.screen#/"/>
+    <overrides>
+      <widgetChanges xsi:type="o:Insert" newIndex="26">
+        <object xsi:type="model:Icon" x="39" y="195" width="12" height="15" icon="bulb (large)"/>
+      </widgetChanges>
+      <widgetChanges xsi:type="o:Insert" newIndex="26">
+        <object xsi:type="model:Icon" x="39" y="165" width="12" height="15" icon="bulb (large)"/>
+      </widgetChanges>
+      <widgetChanges xsi:type="o:Insert" newIndex="26">
+        <object xsi:type="model:Icon" x="40" y="137" width="12" height="15" icon="bulb (large)"/>
+      </widgetChanges>
+      <widgetChanges xsi:type="o:Insert" newIndex="26">
+        <object xsi:type="model:HLine" x="16" y="155" width="169" foreground="#666666"/>
+      </widgetChanges>
+      <widgetChanges xsi:type="o:Insert" newIndex="26">
+        <object xsi:type="model:HLine" x="16" y="185" width="169" foreground="#666666"/>
+      </widgetChanges>
+      <widgetChanges xsi:type="o:Insert" newIndex="26">
+        <object xsi:type="model:HLine" x="16" y="232" width="169"/>
+      </widgetChanges>
+      <widgetChanges xsi:type="o:Insert" newIndex="26">
+        <object xsi:type="model:Label" x="56" y="195" text="Content Management">
+          <font size="10px"/>
+        </object>
+      </widgetChanges>
+      <widgetChanges xsi:type="o:Insert" newIndex="26">
+        <object xsi:type="model:Label" x="56" y="164" text="Content Management">
+          <font size="10px"/>
+        </object>
+      </widgetChanges>
+      <widgetChanges xsi:type="o:Insert" newIndex="26">
+        <object xsi:type="model:Label" x="56" y="136" text="Content Management">
+          <font size="10px"/>
+        </object>
+      </widgetChanges>
+      <widgetChanges xsi:type="o:Delete" ref="69"/>
+      <widgetChanges xsi:type="o:Delete" ref="68"/>
+      <widgetChanges xsi:type="o:Delete" ref="61"/>
+      <widgetChanges xsi:type="o:Delete" ref="60"/>
+      <widgetChanges xsi:type="o:Delete" ref="59"/>
+      <widgetChanges xsi:type="o:Delete" ref="58"/>
+      <widgetChanges xsi:type="o:Delete" ref="57"/>
+      <widgetChanges xsi:type="o:Delete" ref="56"/>
+      <widgetChanges xsi:type="o:Delete" ref="55"/>
+      <widgetChanges xsi:type="o:Delete" ref="54"/>
+      <widgetChanges xsi:type="o:Delete" ref="53"/>
+      <widgetChanges xsi:type="o:Delete" ref="52"/>
+      <widgetChanges xsi:type="o:Delete" ref="49"/>
+      <widgetChanges xsi:type="o:Delete" ref="46"/>
+      <widgets ref="15" x="26"/>
+      <widgets ref="17" x="0"/>
+      <widgets ref="15">
+        <widgetChanges xsi:type="o:Delete" ref="16"/>
+      </widgets>
+      <widgets ref="18" y="245"/>
+      <widgets ref="21" y="285"/>
+      <widgets ref="45" x="202" y="19"/>
+      <widgets ref="34" x="202" y="91"/>
+      <widgets ref="35" x="443" y="91"/>
+      <widgets ref="40" x="674" y="91"/>
+      <widgets ref="62" y="325"/>
+      <widgets ref="65" y="364"/>
+    </overrides>
+  </widgets>
+  <hRuler/>
+  <vRuler/>
+  <font size="12px"/>
+</model:Screen>
