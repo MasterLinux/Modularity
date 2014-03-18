@@ -1,1 +1,0 @@
-{"name":"dart:","description":"Dart System Libraries","libraries":[{"refId":"lib.core"},{"refId":"lib.core.annotation.module"},{"refId":"lib.core.event"},{"refId":"lib.core.eventArgs"},{"refId":"lib.core.exception"},{"refId":"lib.core.model"},{"refId":"lib.core.utility"}],"revision":"0","location":"0","dependencies":[]}

@@ -1,4 +1,4 @@
-part of lib.core;
+//part of lib.core;
 
 class Config {
   Uri _applicationsUri;
@@ -7,11 +7,11 @@ class Config {
   Uri _modulesUri;
   Uri _textsUri;
 
-  const _RESOURCE_APPLICATIONS = "/applications";
-  const _RESOURCE_PAGES = "/pages";
-  const _RESOURCE_FRAGMENTS = "/fragments";
-  const _RESOURCE_MODULES = "/modules";
-  const _RESOURCE_TEXTS = "/texts";
+  static const _RESOURCE_APPLICATIONS = "/applications";
+  static const _RESOURCE_PAGES = "/pages";
+  static const _RESOURCE_FRAGMENTS = "/fragments";
+  static const _RESOURCE_MODULES = "/modules";
+  static const _RESOURCE_TEXTS = "/texts";
 
   /**
    * initializes the server.api.config with

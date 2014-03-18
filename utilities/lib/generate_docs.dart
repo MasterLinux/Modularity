@@ -11,7 +11,7 @@ class DocBuilder {
   List<String> _dartDocs;
   List<String> _javaDocs;
 
-  static const DEFAULT_OUTPUT_PATH = "docs";
+  static const DEFAULT_OUTPUT_PATH = "docs/core";
   static const DEFAULT_OUTPUT_JAVA_PATH = "java";
   static const DEFAULT_OUTPUT_DART_PATH = "dart";
 
@@ -60,10 +60,18 @@ class DocBuilder {
 
     for(var path in _dartDocs) {
       //run dartdoc process
+      /* deprecated command
       Process.run('dartdoc', ['--out', outputPath, path],  workingDirectory: '../../', runInShell: true).then((result) {
         stdout.write(result.stdout);
         stderr.write(result.stderr);
       });
+      */
+
+      Process.run('docgen', ['--out', outputPath, "--package-root", "src/framework/core/packages/", path],  workingDirectory: '../../', runInShell: true).then((result) {
+        stdout.write(result.stdout);
+        stderr.write(result.stderr);
+      });
+
     }
   }
 
