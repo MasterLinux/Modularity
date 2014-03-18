@@ -19,6 +19,11 @@
             -webkit-box-sizing: border-box;
         }
 
+        input {
+            -webkit-appearance: none;
+            border-radius: 0;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -93,9 +98,10 @@
 
         .Header .Search input {
             box-shadow: none !important;
-            background: none;
+            background: transparent;
             float: left;
             height: 25px;
+            border: none;
             border-bottom: 1px solid #1B676B;
             outline: none;
         }
