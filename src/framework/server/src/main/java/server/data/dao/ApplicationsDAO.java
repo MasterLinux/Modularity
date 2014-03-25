@@ -107,6 +107,8 @@ public class ApplicationsDAO {
                     } while (result.next());
                 }
 
+                statement.close();
+
             } catch (SQLException e) {
                 e.printStackTrace(); //TODO add error handling
             }
@@ -141,9 +143,10 @@ public class ApplicationsDAO {
                 statement.setInt(5, userId);
 
                 //try to execute statement
-                if(statement.execute()) {
-                    return true;
-                }
+                statement.execute();
+                statement.close();
+
+                return true;
 
             } catch (SQLException e) {
                 e.printStackTrace(); //TODO add error handling

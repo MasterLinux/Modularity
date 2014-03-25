@@ -111,6 +111,7 @@ public class UserDAO {
      */
     public boolean add(String username, String prename, String surname, Date birthday, String street, String city, String country, String houseNumber, String postalCode) {
         MySQLDatabase db = MySQLDatabase.getInstance();
+        boolean isAdded = false;
 
         if(db.isConnected()) {
             try {
@@ -126,9 +127,9 @@ public class UserDAO {
                 statement.setString(9, postalCode);
 
                 //try to execute statement
-                if(statement.execute()) {
-                    return true;
-                }
+                isAdded = statement.execute();
+
+                statement.close();
 
             } catch (SQLException e) {
                 e.printStackTrace(); //TODO add error handling
@@ -137,6 +138,6 @@ public class UserDAO {
             //TODO add error handling -> logging?
         }
 
-        return false;
+        return isAdded;
     }
 }
