@@ -9,9 +9,9 @@ import server.model.BaseObjectModel;
 public class ApplicationModel extends BaseObjectModel {
     private String name;
     private String version;
-    private String author;
+    private String author; //TODO get user model instead?
     private String startUri;
-    private String defaultLanguage;
+    private String language;
     private ResourcesModel resources;
     private PagesModel pages;
     private TasksModel tasks;
@@ -48,12 +48,12 @@ public class ApplicationModel extends BaseObjectModel {
         this.startUri = startUri;
     }
 
-    public String getDefaultLanguage() {
-        return defaultLanguage;
+    public String getLanguage() {
+        return language;
     }
 
-    public void setDefaultLanguage(String defaultLanguage) {
-        this.defaultLanguage = defaultLanguage;
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public ResourcesModel getResources() {

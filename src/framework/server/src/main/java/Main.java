@@ -1,4 +1,5 @@
 import server.Server;
+import server.data.MySQLDatabase;
 
 import java.io.IOException;
 import java.net.URI;
@@ -17,13 +18,24 @@ public class Main {
      */
     public static void main(String[] args)
     {
-        final Server server = new Server(URI.create("https://127.0.0.1:9080"));
+        final Server server = new Server(URI.create("http://127.0.0.1:9080"));
+
+        //TODO remove MySQL server connection
+        MySQLDatabase.getInstance()
+                .setAddress("localhost", "3306")
+                .setDatabaseName("publicize")
+                .setLogin("root", null)
+                .connect();
 
         //register shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
                 logger.info("Stopping server");
+
+                //TODO remove MySQL server disconnection
+                MySQLDatabase.getInstance().disconnect();
+
                 server.stop();
             }
         }, "shutdownHook"));
