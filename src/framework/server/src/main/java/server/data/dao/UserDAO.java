@@ -1,10 +1,14 @@
 package server.data.dao;
 
 import server.data.MySQLDatabase;
+import server.model.config.UserModel;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A data access object (DAO) to get or add users
@@ -21,7 +25,7 @@ public class UserDAO {
     /**
      * Statement to select a specific user by its ID
      */
-//    private static final String SQL_SELECT_BY_ID = "SELECT name, version, start_uri, language FROM application WHERE id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT id, username, prename, surname, birthday, street, house_number, city, postal_code, country FROM user WHERE id = ?";
 
     //column names
     private static final String COLUMN_ID = "id";
@@ -56,62 +60,71 @@ public class UserDAO {
     }
 
 
-//    /**
-//     * Gets an user by its ID
-//     * @param id The ID of the user
-//     * @return The user or an emtpy list if not exists
-//     */
-//    public List<ApplicationModel> get(int id) {
-//        List<ApplicationModel> applications = new ArrayList<ApplicationModel>();
-//        MySQLDatabase db = MySQLDatabase.getInstance();
-//
-//        if(db.isConnected()) {
-//            try {
-//                PreparedStatement statement = db.getConnection().prepareStatement(SQL_SELECT_BY_ID);
-//                statement.setInt(1, id);
-//
-//                ResultSet result = statement.executeQuery();
-//
-//                if(result.first()) {
-//                    ApplicationModel application;
-//
-//                    do {
-//                        application = new ApplicationModel();
-//                        application.setName(result.getString(COLUMN_NAME));
-//                        application.setVersion(result.getString(COLUMN_VERSION));
-//                        application.setStartUri(result.getString(COLUMN_START_URI));
-//                        application.setLanguage(result.getString(COLUMN_LANGUAGE));
-//                        //TODO set other values
-//
-//                        applications.add(application);
-//
-//                    } while (result.next());
-//                }
-//
-//            } catch (SQLException e) {
-//                e.printStackTrace(); //TODO add error handling
-//            }
-//        } else {
-//            //TODO add error handling -> logging?
-//        }
-//
-//        return applications;
-//    }
+    /**
+     * Gets an user by its ID
+     * @param id The ID of the user
+     * @return The user or an emtpy list if not exists
+     */
+    public List<UserModel> getById(int id) {
+        List<UserModel> users = new ArrayList<>();
+        MySQLDatabase db = MySQLDatabase.getInstance();
+
+        if(db.isConnected()) {
+            try {
+                PreparedStatement statement = db.getConnection().prepareStatement(SQL_SELECT_BY_ID);
+                statement.setInt(1, id);
+
+                ResultSet result = statement.executeQuery();
+
+                if(result.first()) {
+                    UserModel user;
+
+                    do {
+                        user = new UserModel();
+                        user.setId(result.getInt(COLUMN_ID));
+                        user.setUsername(result.getString(COLUMN_USERNAME));
+                        user.setPrename(result.getString(COLUMN_PRENAME));
+                        user.setSurname(result.getString(COLUMN_SURNAME));
+                        user.setBirthday(result.getString(COLUMN_BIRTHDAY)); //TODO getDate (SQLDate) and parse to string
+                        user.setStreet(result.getString(COLUMN_STREET));
+                        user.setHouseNumber(result.getString(COLUMN_HOUSE_NUMBER));
+                        user.setCity(result.getString(COLUMN_CITY));
+                        user.setPostalCode(result.getString(COLUMN_POSTAL_CODE));
+                        user.setCountry(result.getString(COLUMN_COUNTRY));
+                        //TODO set other values
+
+                        users.add(user);
+
+                    } while (result.next());
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace(); //TODO add error handling
+            }
+        } else {
+            //TODO add error handling -> logging?
+        }
+
+        return users;
+    }
 
     /**
      * Adds a new user
      *
-     * @param username
-     * @param prename
-     * @param surname
-     * @param birthday
-     * @param street
+     * @param username Login name of the user
+     * @param prename The prename of the user
+     * @param surname The surname of the user
+     * @param birthday The Birthday of the user
+     * @param street The street name of the user's home
+     * @param houseNumber The house number of the user's home
+     * @param city The city of the user's home
+     * @param postalCode The postal code of the user's home
+     * @param country The country of the user's home
      *
      * @return true when the user is added successfully, false otherwise
      */
     public boolean add(String username, String prename, String surname, Date birthday, String street, String city, String country, String houseNumber, String postalCode) {
         MySQLDatabase db = MySQLDatabase.getInstance();
-        boolean isAdded = false;
 
         if(db.isConnected()) {
             try {
@@ -127,9 +140,10 @@ public class UserDAO {
                 statement.setString(9, postalCode);
 
                 //try to execute statement
-                isAdded = statement.execute();
-
+                statement.execute();
                 statement.close();
+
+                return true;
 
             } catch (SQLException e) {
                 e.printStackTrace(); //TODO add error handling
@@ -138,6 +152,6 @@ public class UserDAO {
             //TODO add error handling -> logging?
         }
 
-        return isAdded;
+        return false;
     }
 }
