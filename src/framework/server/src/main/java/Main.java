@@ -28,16 +28,13 @@ public class Main {
                 .connect();
 
         //register shutdown hook
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                logger.info("Stopping server");
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            logger.info("Stopping server");
 
-                //TODO remove MySQL server disconnection
-                MySQLDatabase.getInstance().disconnect();
+            //TODO remove MySQL server disconnection
+            MySQLDatabase.getInstance().disconnect();
 
-                server.stop();
-            }
+            server.stop();
         }, "shutdownHook"));
 
         //try to start the server
@@ -46,14 +43,9 @@ public class Main {
             server.start();
             Thread.currentThread().join();
 
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             logger.warning("Stopping server");
             server.stop();
-
-        } catch (InterruptedException e) {
-            logger.warning("Stopping server");
-            server.stop();
-
         }
     }
 }

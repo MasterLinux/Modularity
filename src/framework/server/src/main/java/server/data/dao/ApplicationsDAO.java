@@ -3,11 +3,9 @@ package server.data.dao;
 import server.data.MySQLDatabase;
 import server.model.config.ApplicationModel;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +24,7 @@ public class ApplicationsDAO {
     /**
      * Statement to select a specific application by its ID
      */
-    private static final String SQL_SELECT_BY_ID = "SELECT name, version, start_uri, language FROM application WHERE id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT id, name, version, start_uri, language FROM application WHERE id = ?";
 
     //column names
     private static final String COLUMN_ID = "id";
@@ -40,27 +38,6 @@ public class ApplicationsDAO {
      */
     private ApplicationsDAO() {
         //does nothing
-
-        //TODO remove user creation
-        UserDAO.getInstance().add(
-                "TestUser",
-                "Heinz",
-                "Meier",
-                Date.valueOf(LocalDate.parse("2000-12-03")),
-                "TestStreet",
-                "TestCity",
-                "TestCountry",
-                "1337a",
-                "4711"
-        );
-
-        add(
-            "TestAppName",
-            "1.0.0 beta",
-            "home",
-            "de-De",
-            0
-        );
     }
 
     /**
@@ -80,8 +57,8 @@ public class ApplicationsDAO {
      * @param id The ID of the application
      * @return The application or an emtpy list if not exists
      */
-    public List<ApplicationModel> get(int id) {
-        List<ApplicationModel> applications = new ArrayList<ApplicationModel>();
+    public List<ApplicationModel> getById(int id) {
+        List<ApplicationModel> applications = new ArrayList<>();
         MySQLDatabase db = MySQLDatabase.getInstance();
 
         if(db.isConnected()) {
@@ -96,6 +73,7 @@ public class ApplicationsDAO {
 
                     do {
                         application = new ApplicationModel();
+                        application.setId(result.getInt(COLUMN_ID));
                         application.setName(result.getString(COLUMN_NAME));
                         application.setVersion(result.getString(COLUMN_VERSION));
                         application.setStartUri(result.getString(COLUMN_START_URI));
@@ -122,13 +100,13 @@ public class ApplicationsDAO {
     /**
      * Adds a new application
      *
-     * @param name
-     * @param version
-     * @param startUri
-     * @param language
-     * @param userId
+     * @param name Name of the application to add
+     * @param version Version number of the application
+     * @param startUri Page URI of the first page displayed
+     * @param language Language code of the default language
+     * @param userId ID of the user who owns this application
      *
-     * @return true when the application is added successfully, false otherwise
+     * @return <code>true</code> when the application is added successfully, <code>false</code> otherwise
      */
     public boolean add(String name, String version, String startUri, String language, int userId) {
         MySQLDatabase db = MySQLDatabase.getInstance();
