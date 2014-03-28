@@ -1,5 +1,6 @@
 package server.data.dao;
 
+import server.Server;
 import server.data.MySQLDatabase;
 import server.model.config.UserModel;
 
@@ -9,23 +10,32 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * A data access object (DAO) to get or add users
  * into the database.
  */
 public class UserDAO {
+    private static final Logger logger = Logger.getLogger(Server.class.getName());
     private static UserDAO instance;
 
     /**
      * Statement to insert a new user into the database
      */
-    private static final String SQL_INSERT = "INSERT INTO user (username, prename, surname, birthday, street, city, country, house_number, postal_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO user (username, prename, surname, birthday, street, house_number, postal_code, city, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     /**
      * Statement to select a specific user by its ID
      */
-    private static final String SQL_SELECT_BY_ID = "SELECT id, username, prename, surname, birthday, street, house_number, city, postal_code, country FROM user WHERE id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT id, username, prename, surname, birthday, street, house_number, postal_code, city, country FROM user WHERE id = ?";
+
+    /**
+     * Statement to select a specific user by its username
+     */
+    private static final String SQL_SELECT_BY_USERNAME = "SELECT id, username, prename, surname, birthday, street, house_number, postal_code, city, country FROM user WHERE username = ?";
+
+    private static final String SQL_COUNT_USER_BY_USERNAME = "SELECT COUNT(id) AS 'count' FROM user WHERE username = ?";
 
     //column names
     private static final String COLUMN_ID = "id";
@@ -59,6 +69,78 @@ public class UserDAO {
         return instance;
     }
 
+    /*
+    public boolean userExists(String username) {
+        MySQLDatabase db = MySQLDatabase.getInstance();
+
+        if(db.isConnected()) {
+            try {
+                PreparedStatement statement = db.getConnection().prepareStatement(SQL_COUNT_USER_BY_USERNAME);
+                statement.setString(1, username);
+
+                ResultSet result = statement.executeQuery();
+
+                if(result.first() && result.getInt("count") > 0) {
+                    return true;
+                }
+
+            } catch (SQLException e) {
+                //TODO add error handling
+            }
+        } else {
+            //TODO add error handling
+        }
+
+        return false;
+    }*/
+
+    /**
+     * Gets an user by its username
+     * @param name The username of the user to get
+     * @return The user or an emtpy list if not exists
+     */
+    public List<UserModel> getByUsername(String name) {
+        List<UserModel> users = new ArrayList<>();
+        MySQLDatabase db = MySQLDatabase.getInstance();
+
+        if(db.isConnected()) {
+            try {
+                PreparedStatement statement = db.getConnection().prepareStatement(SQL_SELECT_BY_USERNAME);
+                statement.setString(1, name);
+
+                ResultSet result = statement.executeQuery();
+
+                if(result.first()) {
+                    UserModel user;
+
+                    do {
+                        user = new UserModel();
+                        user.setId(result.getInt(COLUMN_ID));
+                        user.setUsername(result.getString(COLUMN_USERNAME));
+                        user.setPrename(result.getString(COLUMN_PRENAME));
+                        user.setSurname(result.getString(COLUMN_SURNAME));
+                        user.setBirthday(result.getDate(COLUMN_BIRTHDAY).toString());
+                        user.setStreet(result.getString(COLUMN_STREET));
+                        user.setHouseNumber(result.getString(COLUMN_HOUSE_NUMBER));
+                        user.setPostalCode(result.getString(COLUMN_POSTAL_CODE));
+                        user.setCity(result.getString(COLUMN_CITY));
+                        user.setCountry(result.getString(COLUMN_COUNTRY));
+                        //TODO set other values
+
+                        users.add(user);
+
+                    } while (result.next());
+                }
+
+            } catch (SQLException e) {
+                //TODO add error handling
+            }
+        } else {
+            //TODO add error handling
+        }
+
+        return users;
+    }
 
     /**
      * Gets an user by its ID
@@ -85,11 +167,11 @@ public class UserDAO {
                         user.setUsername(result.getString(COLUMN_USERNAME));
                         user.setPrename(result.getString(COLUMN_PRENAME));
                         user.setSurname(result.getString(COLUMN_SURNAME));
-                        user.setBirthday(result.getString(COLUMN_BIRTHDAY)); //TODO getDate (SQLDate) and parse to string
+                        user.setBirthday(result.getDate(COLUMN_BIRTHDAY).toString());
                         user.setStreet(result.getString(COLUMN_STREET));
                         user.setHouseNumber(result.getString(COLUMN_HOUSE_NUMBER));
-                        user.setCity(result.getString(COLUMN_CITY));
                         user.setPostalCode(result.getString(COLUMN_POSTAL_CODE));
+                        user.setCity(result.getString(COLUMN_CITY));
                         user.setCountry(result.getString(COLUMN_COUNTRY));
                         //TODO set other values
 
@@ -99,17 +181,17 @@ public class UserDAO {
                 }
 
             } catch (SQLException e) {
-                e.printStackTrace(); //TODO add error handling
+                //TODO add error handling
             }
         } else {
-            //TODO add error handling -> logging?
+            //TODO add error handling
         }
 
         return users;
     }
 
     /**
-     * Adds a new user
+     * Registers a new user
      *
      * @param username Login name of the user
      * @param prename The prename of the user
@@ -117,13 +199,13 @@ public class UserDAO {
      * @param birthday The Birthday of the user
      * @param street The street name of the user's home
      * @param houseNumber The house number of the user's home
-     * @param city The city of the user's home
      * @param postalCode The postal code of the user's home
+     * @param city The city of the user's home
      * @param country The country of the user's home
      *
-     * @return true when the user is added successfully, false otherwise
+     * @return <code>true</code> when the user is added successfully, <code>false</code> otherwise
      */
-    public boolean add(String username, String prename, String surname, Date birthday, String street, String city, String country, String houseNumber, String postalCode) {
+    public boolean register(String username, String prename, String surname, Date birthday, String street, String houseNumber, String postalCode, String city, String country) {
         MySQLDatabase db = MySQLDatabase.getInstance();
 
         if(db.isConnected()) {
@@ -134,10 +216,10 @@ public class UserDAO {
                 statement.setString(3, surname);
                 statement.setDate(4, birthday);
                 statement.setString(5, street);
-                statement.setString(6, city);
-                statement.setString(7, country);
-                statement.setString(8, houseNumber);
-                statement.setString(9, postalCode);
+                statement.setString(6, houseNumber);
+                statement.setString(7, postalCode);
+                statement.setString(8, city);
+                statement.setString(9, country);
 
                 //try to execute statement
                 statement.execute();
@@ -146,10 +228,10 @@ public class UserDAO {
                 return true;
 
             } catch (SQLException e) {
-                e.printStackTrace(); //TODO add error handling
+                logger.warning("Unable to add user to database, caused by a missing field."); //TODO use constant error messages
             }
         } else {
-            //TODO add error handling -> logging?
+            logger.warning("Unable to add user to database, because the database connection is not established."); //TODO use constant error messages
         }
 
         return false;
