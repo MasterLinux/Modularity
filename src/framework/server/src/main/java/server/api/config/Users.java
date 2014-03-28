@@ -6,6 +6,7 @@ import server.BaseResource;
 import server.data.dao.UserDAO;
 import server.model.config.UserModel;
 import server.parameter.MetaBeanParam;
+import server.parameter.SessionBeanParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -19,37 +20,72 @@ import java.util.List;
 @Path("/config/users")
 public class Users extends BaseResource {
 
+    /**
+     * Gets an user by its ID
+     *
+     * @param id The ID of the user to get
+     * @param session The session header for authentication
+     * @param meta Meta parameter to filter and querying
+     *
+     * @return The response as JSON string
+     */
     @GET
     @Path("/{id: [0-9]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getUserById(
             @PathParam("id") @DefaultValue("-1") int id,
-            @BeanParam MetaBeanParam metaParam
+            @BeanParam SessionBeanParam session,
+            @BeanParam MetaBeanParam meta
     ) {
-        return buildResponse(metaParam, UserDAO.getInstance().getById(id));
+        //check whether the user is allowed to use this API
+        if(!session.isAuthorized()) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+
+        return buildResponse(meta, UserDAO.getInstance().getById(session.getRole(), id));
     }
 
+    /**
+     * Gets an user by its username
+     *
+     * @param username The username of the user to get
+     * @param session The session header for authentication
+     * @param meta Meta parameter to filter and querying
+     *
+     * @return The response as JSON string
+     */
     @GET
     @Path("/{username: [a-zA-Z][a-zA-Z0-9-_]{3,}}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getUserByUsername(
             @PathParam("username") String username,
-            @BeanParam MetaBeanParam metaParam
+            @BeanParam SessionBeanParam session,
+            @BeanParam MetaBeanParam meta
     ) {
-        return buildResponse(metaParam, UserDAO.getInstance().getByUsername(username));
+        //check whether the user is allowed to use this API
+        if(!session.isAuthorized()) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+
+        return buildResponse(meta, UserDAO.getInstance().getByUsername(session.getRole(), username));
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<UserModel> getUsers(
+            @BeanParam SessionBeanParam session,
             @BeanParam MetaBeanParam meta
     ) {
-        return null;
+        //check whether the user is allowed to use this API
+        if(!session.isAuthorized()) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+
+        return null;// buildResponse(meta, UserDAO.getInstance().get(session.getRole(), username));
     }
 
     /**
      * Registers a new user
-     * @param id Authentication token of the user
      * @param body JSON which contains all information of the user to register
      *             <code>
      *             {
@@ -67,8 +103,7 @@ public class Users extends BaseResource {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addUser(
-            @HeaderParam("X-AUTH-TOKEN") @DefaultValue("-1") int id,
+    public Response registerUser(
             String body
     ) {
         try {

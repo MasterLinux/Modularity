@@ -2,6 +2,7 @@ package server.data.dao;
 
 import server.Server;
 import server.data.MySQLDatabase;
+import server.data.type.UserRole;
 import server.model.config.UserModel;
 
 import java.sql.Date;
@@ -35,7 +36,6 @@ public class UserDAO {
      */
     private static final String SQL_SELECT_BY_USERNAME = "SELECT id, username, prename, surname, birthday, street, house_number, postal_code, city, country FROM user WHERE username = ?";
 
-    private static final String SQL_COUNT_USER_BY_USERNAME = "SELECT COUNT(id) AS 'count' FROM user WHERE username = ?";
 
     //column names
     private static final String COLUMN_ID = "id";
@@ -69,39 +69,16 @@ public class UserDAO {
         return instance;
     }
 
-    /*
-    public boolean userExists(String username) {
-        MySQLDatabase db = MySQLDatabase.getInstance();
-
-        if(db.isConnected()) {
-            try {
-                PreparedStatement statement = db.getConnection().prepareStatement(SQL_COUNT_USER_BY_USERNAME);
-                statement.setString(1, username);
-
-                ResultSet result = statement.executeQuery();
-
-                if(result.first() && result.getInt("count") > 0) {
-                    return true;
-                }
-
-            } catch (SQLException e) {
-                //TODO add error handling
-            }
-        } else {
-            //TODO add error handling
-        }
-
-        return false;
-    }*/
-
     /**
      * Gets an user by its username
+     * @param userRole The role of the user, used as access level
      * @param name The username of the user to get
      * @return The user or an emtpy list if not exists
      */
-    public List<UserModel> getByUsername(String name) {
-        List<UserModel> users = new ArrayList<>();
+    public List<UserModel> getByUsername(UserRole userRole, String name) {
+        boolean hasFullAccess = userRole == UserRole.Administrator || userRole == UserRole.Owner;
         MySQLDatabase db = MySQLDatabase.getInstance();
+        List<UserModel> users = new ArrayList<>();
 
         if(db.isConnected()) {
             try {
@@ -119,12 +96,16 @@ public class UserDAO {
                         user.setUsername(result.getString(COLUMN_USERNAME));
                         user.setPrename(result.getString(COLUMN_PRENAME));
                         user.setSurname(result.getString(COLUMN_SURNAME));
-                        user.setBirthday(result.getDate(COLUMN_BIRTHDAY).toString());
-                        user.setStreet(result.getString(COLUMN_STREET));
-                        user.setHouseNumber(result.getString(COLUMN_HOUSE_NUMBER));
-                        user.setPostalCode(result.getString(COLUMN_POSTAL_CODE));
-                        user.setCity(result.getString(COLUMN_CITY));
-                        user.setCountry(result.getString(COLUMN_COUNTRY));
+
+                        //get another info just if the user has the right for full access
+                        if(hasFullAccess) {
+                            user.setBirthday(result.getDate(COLUMN_BIRTHDAY).toString());
+                            user.setStreet(result.getString(COLUMN_STREET));
+                            user.setHouseNumber(result.getString(COLUMN_HOUSE_NUMBER));
+                            user.setPostalCode(result.getString(COLUMN_POSTAL_CODE));
+                            user.setCity(result.getString(COLUMN_CITY));
+                            user.setCountry(result.getString(COLUMN_COUNTRY));
+                        }
                         //TODO set other values
 
                         users.add(user);
@@ -144,12 +125,14 @@ public class UserDAO {
 
     /**
      * Gets an user by its ID
+     * @param userRole The role of the user, used as access level
      * @param id The ID of the user
      * @return The user or an emtpy list if not exists
      */
-    public List<UserModel> getById(int id) {
-        List<UserModel> users = new ArrayList<>();
+    public List<UserModel> getById(UserRole userRole, int id) {
+        boolean hasFullAccess = userRole == UserRole.Administrator || userRole == UserRole.Owner;
         MySQLDatabase db = MySQLDatabase.getInstance();
+        List<UserModel> users = new ArrayList<>();
 
         if(db.isConnected()) {
             try {
@@ -167,12 +150,16 @@ public class UserDAO {
                         user.setUsername(result.getString(COLUMN_USERNAME));
                         user.setPrename(result.getString(COLUMN_PRENAME));
                         user.setSurname(result.getString(COLUMN_SURNAME));
-                        user.setBirthday(result.getDate(COLUMN_BIRTHDAY).toString());
-                        user.setStreet(result.getString(COLUMN_STREET));
-                        user.setHouseNumber(result.getString(COLUMN_HOUSE_NUMBER));
-                        user.setPostalCode(result.getString(COLUMN_POSTAL_CODE));
-                        user.setCity(result.getString(COLUMN_CITY));
-                        user.setCountry(result.getString(COLUMN_COUNTRY));
+
+                        //get another info just if the user has the right for full access
+                        if(hasFullAccess) {
+                            user.setBirthday(result.getDate(COLUMN_BIRTHDAY).toString());
+                            user.setStreet(result.getString(COLUMN_STREET));
+                            user.setHouseNumber(result.getString(COLUMN_HOUSE_NUMBER));
+                            user.setPostalCode(result.getString(COLUMN_POSTAL_CODE));
+                            user.setCity(result.getString(COLUMN_CITY));
+                            user.setCountry(result.getString(COLUMN_COUNTRY));
+                        }
                         //TODO set other values
 
                         users.add(user);
