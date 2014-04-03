@@ -9,7 +9,6 @@ import server.util.ResponseBuilder;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,6 +26,7 @@ public class BaseResource {
      * @param <T>
      * @return
      */
+    @Deprecated
     protected <T extends BaseObjectModel> String buildResponse(MetaBeanParam metaParam, List<T> objects) {
         BaseResourceModel<T> response = new ResponseBuilder<T>()
                 .setResourceUri(uriInfo.getRequestUri())

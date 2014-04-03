@@ -17,9 +17,9 @@ import java.util.logging.Logger;
  * A data access object (DAO) to get or add users
  * into the database.
  */
-public class UserDAO {
+public class UsersDAO {
     private static final Logger logger = Logger.getLogger(Server.class.getName());
-    private static UserDAO instance;
+    private static UsersDAO instance;
 
     /**
      * Statement to insert a new user into the database
@@ -53,7 +53,7 @@ public class UserDAO {
     /**
      * Initializes the data access object
      */
-    private UserDAO() {
+    private UsersDAO() {
         //does nothing
     }
 
@@ -61,9 +61,9 @@ public class UserDAO {
      * Gets the instance of this data access object
      * @return The instance of the data access object
      */
-    public static UserDAO getInstance() {
+    public static UsersDAO getInstance() {
         if(instance == null) {
-            instance = new UserDAO();
+            instance = new UsersDAO();
         }
 
         return instance;

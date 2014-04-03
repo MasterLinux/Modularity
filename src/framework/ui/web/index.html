@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link rel="import" href="../lib/tab_bar/publicize_tab_bar.html">
+    <link rel="import" href="../lib/tab_bar/publicize_tab_bar_item.html">
+
+    <script type="application/dart">export 'package:polymer/init.dart';</script>
+    <script src="packages/browser/dart.js"></script>
+</head>
+<body>
+    <publicize-tab-bar onSelectionChanged="{{click_listener}}">
+        <publicize-tab-bar-item uri="test">Tab 1</publicize-tab-bar-item>
+        <publicize-tab-bar-item isSelected="true" uri="test2">Tab 2</publicize-tab-bar-item>
+    </publicize-tab-bar>
+</body>
+</html>

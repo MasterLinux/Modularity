@@ -3,7 +3,7 @@ package server.api.config;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import server.BaseResource;
-import server.data.dao.UserDAO;
+import server.data.dao.UsersDAO;
 import server.model.config.UserModel;
 import server.parameter.MetaBeanParam;
 import server.parameter.SessionBeanParam;
@@ -42,7 +42,7 @@ public class Users extends BaseResource {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
 
-        return buildResponse(meta, UserDAO.getInstance().getById(session.getRole(), id));
+        return buildResponse(meta, UsersDAO.getInstance().getById(session.getRole(), id));
     }
 
     /**
@@ -67,7 +67,7 @@ public class Users extends BaseResource {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
 
-        return buildResponse(meta, UserDAO.getInstance().getByUsername(session.getRole(), username));
+        return buildResponse(meta, UsersDAO.getInstance().getByUsername(session.getRole(), username));
     }
 
     @GET
@@ -81,7 +81,7 @@ public class Users extends BaseResource {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
 
-        return null;// buildResponse(meta, UserDAO.getInstance().get(session.getRole(), username));
+        return null;// buildResponse(meta, UsersDAO.getInstance().get(session.getRole(), username));
     }
 
     /**
@@ -110,7 +110,7 @@ public class Users extends BaseResource {
             UserModel user = new Gson().fromJson(body, UserModel.class);
 
             //try to add a new user
-            if(!UserDAO.getInstance().register(
+            if(!UsersDAO.getInstance().register(
                     user.getUsername(),
                     user.getPrename(),
                     user.getSurname(),

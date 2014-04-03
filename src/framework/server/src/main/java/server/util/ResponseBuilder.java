@@ -12,6 +12,7 @@ import java.util.List;
 /**
  * Created by Christoph on 02.02.14.
  */
+@Deprecated
 public class ResponseBuilder<T extends BaseObjectModel> {
     private int defaultOffset = -1;
     private int defaultLimit = -1;
