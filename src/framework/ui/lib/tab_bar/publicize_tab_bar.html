@@ -1,18 +1,7 @@
 <polymer-element name="publicize-tab-bar">
     <template>
         <ul class="TabBar">
-            <template repeat="{{menuItem in menuItems}}">
-
-                <!-- render as selected menu item -->
-                <template if="{{menuItem.id == selection}}">
-                    <li class="MenuItem selected">{{menuItem.title}}</li>
-                </template>
-
-                <!-- render as unselected menu item -->
-                <template if="{{menuItem.id != selection}}">
-                    <li class="MenuItem">{{menuItem.title}}</li>
-                </template>
-            </template>
+            <content id="items" select="publicize-tab-bar-item"></content>
         </ul>
     </template>
     <script type="application/dart" src="publicize_tab_bar.dart"></script>
