@@ -3,7 +3,13 @@ Build_Ya_App
 
 A framework for building apps in a simple way :D
 
-Benötigte Dinge:
+###Projekt Beschreibung:
+System zum Erstellen von Unternehmens Webseiten auf Basis eines CMS. Welches möglichst einfach zu bedienen ist. Optimiert auf bestimmte Berufszweige, um so einfacher ein Zielgruppen-Orientiertes Produkt auf dem Markt bringen zu können.
+
+###Ziel
+Ein Produkt das auf neuste Technologien setzt. Welches leicht erweiterbar ist um später neue Zielgruppen hinzufügen zu können.
+
+###Benötigte Dinge:
 * Framework in Dart fertigstellen
   * Multilingual 
 * Backend in Java
@@ -21,10 +27,10 @@ Benötigte Dinge:
 * Dokumentation
   * Für Dritte optimiert 
 
-Allgemeine Dinge fürs Unternehmen:
+###Allgemeine Dinge fürs Unternehmen:
 * Unternehmens-Webseite
 
-Dinge die geklärt werden müssen
+###Dinge die geklärt werden müssen
 * Projektplanung
   * Wie gehen wir das Projekt an `?`
   * Nutzen wir Scrum? `Kommentar von Christoph: Ja Ja Ja :)`
