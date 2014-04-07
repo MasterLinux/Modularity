@@ -51,7 +51,8 @@ Ein Produkt das auf neuste Technologien setzt. Welches leicht erweiterbar ist um
   * Geräte `?`
   * Web `?`
 * Vermarktung 
-  
+  * Wie generieren wir Geld `?` -> `Ja Sven, ich meine natürlich €`
+  * Wie binden wir den Kunden `?`
 
 ###Wünsche (Christoph)
 * Eine Schnittstelle (API) die öffentlich ist
