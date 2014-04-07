@@ -4,7 +4,7 @@ Build_Ya_App
 A framework for building apps in a simple way :D
 
 ###Projekt Beschreibung:
-System zum Erstellen von Unternehmens Webseiten auf Basis eines CMS. Welches möglichst einfach zu bedienen ist. Optimiert auf bestimmte Berufszweige, um so einfacher ein Zielgruppen-Orientiertes Produkt auf dem Markt bringen zu können.
+System zum Erstellen von Unternehmens Webseiten (Mobile first) auf Basis eines CMS. Welches möglichst einfach zu bedienen ist. Optimiert auf bestimmte Berufszweige, um so einfacher ein Zielgruppen-Orientiertes Produkt auf dem Markt bringen zu können.
 
 ###Ziel
 Ein Produkt das auf neuste Technologien setzt. Welches leicht erweiterbar ist um später neue Zielgruppen hinzufügen zu können.
