@@ -53,3 +53,10 @@ Ein Produkt das auf neuste Technologien setzt. Welches leicht erweiterbar ist um
 * Vermarktung 
   
 
+###Wünsche (Christoph)
+* Eine Schnittstelle (API) die öffentlich ist
+* Das Framework später OpenSource machen
+  * Nicht die Module, nur das "Grundgerüst"
+* Eine öffentlich Dokumentation
+  * In Deutsch & Englisch 
+
