@@ -3,23 +3,31 @@ package server.parameter;
 import javax.ws.rs.HeaderParam;
 
 /**
- * Created by Christoph on 03.04.2014.
+ * Bean parameter used to check whether
+ * the consumer is authorized to
+ * use the API
+ *
+ * @author Christoph Grundmann
  */
 public class LoginBeanParam {
     private final String username;
     private final String password;
+    private final String appToken;
 
     /**
      * Initializes the login bean parameter
      * @param username The name of the user to login
      * @param password The password of the user to login
+     * @param appToken The token of the application
      */
     public LoginBeanParam(
-            @HeaderParam("X-USER-NAME") String username,
-            @HeaderParam("X-USER-PASSWORD") String password
+            @HeaderParam("X-USER-NAME") String username, //TODO implement BaseParam with all existing header as static final class member
+            @HeaderParam("X-USER-PASSWORD") String password,
+            @HeaderParam("X-APPLICATION-TOKEN") String appToken
     ) {
         this.username = username;
         this.password = password;
+        this.appToken = appToken;
     }
 
     /**
