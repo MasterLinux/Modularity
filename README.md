@@ -45,8 +45,10 @@ Ein Produkt das auf neuste Technologien setzt. Welches leicht erweiterbar ist um
 * Laufende Kosten
   * Server
   * Github Enterprise Account
-* Zweiter & Dritter Entwickler
+* Dritter Entwickler
   * Vollzeit `?`
+  * Auch am Wochenende erreichbar `?`
+  * Auch ab 18Uhr unter der Woche erreichbar `?` -> `Daily Scrum`
 * Zielplattform
   * Geräte `?`
   * Web `?`
