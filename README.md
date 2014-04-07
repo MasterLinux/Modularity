@@ -27,10 +27,10 @@ Allgemeine Dinge fürs Unternehmen:
 Dinge die geklärt werden müssen
 * Projektplanung
   * Wie gehen wir das Projekt an `?`
-  * Nutzen wir Scrumm? `Kommentar von Christoph: Ja Ja Ja :)`
-  * Wer spielt den Project Owner (PM)
+  * Nutzen wir Scrum? `Kommentar von Christoph: Ja Ja Ja :)`
 * Wer hat welche Rolle
   * CTO, etc
+  * Wer spielt den Project Owner (PM)
 * Welche Zielgruppe
   * Gastronomie `?`
 * Kosten 
