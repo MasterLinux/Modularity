@@ -1,0 +1,6 @@
+name: core
+dependencies:
+  browser: any
+  connect: any
+dev_dependencies:
+  unittest: any
