@@ -14,14 +14,30 @@ public class BaseResourceModel<T extends BaseObjectModel> {
 
     public MetaModel getMeta() { return meta; }
 
-    public void setMeta(MetaModel meta) { this.meta = meta; }
+    /**
+     * Sets the meta data of the response
+     *
+     * @param meta The meta data object
+     * @return Instance of this
+     */
+    public BaseResourceModel<T> setMeta(MetaModel meta) {
+        this.meta = meta;
+        return this;
+    }
 
     public List<T> getObjects() {
         return objects;
     }
 
-    public void setObjects(List<T> objects) {
+    /**
+     * Sets the result set of the response
+     *
+     * @param objects The result set
+     * @return Instance of this
+     */
+    public BaseResourceModel<T> setObjects(List<T> objects) {
         this.objects = objects;
+        return this;
     }
 
     /**

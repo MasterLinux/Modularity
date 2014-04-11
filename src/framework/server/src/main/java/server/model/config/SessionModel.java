@@ -8,7 +8,7 @@ import server.model.BaseObjectModel;
 public class SessionModel extends BaseObjectModel {
     private String lastLogin;
     private String expirationTime;
-    private String authToken;
+    private String authToken;     //TODO rename to secureToken?
 
     public String getLastLogin() {
         return lastLogin;

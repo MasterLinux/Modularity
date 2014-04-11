@@ -13,6 +13,7 @@ public class LoginBeanParam {
     private final String username;
     private final String password;
     private final String appToken;
+    private int userId;
 
     /**
      * Initializes the login bean parameter
@@ -38,14 +39,15 @@ public class LoginBeanParam {
      */
     public boolean isAuthorized() {
         //TODO implement
+
         return true;
     }
 
     /**
-     * Gets the username of the user
-     * @return The username of the user
+     * Gets the user ID of the user
+     * @return The ID of the user
      */
-    public String getUsername() {
-        return username;
+    public int getUserId() {
+        return userId;
     }
 }

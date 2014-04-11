@@ -1,6 +1,5 @@
 package server.api.config;
 
-import org.glassfish.grizzly.http.server.Session;
 import server.BaseResource;
 import server.data.dao.SessionsDAO;
 import server.parameter.LoginBeanParam;
@@ -31,6 +30,6 @@ public class Sessions extends BaseResource {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
 
-        return SessionsDAO.getInstance().getNewSession(login.getUsername()).toResponse();
+        return SessionsDAO.getInstance().createSession(login.getUserId()).toResponse();
     }
 }
