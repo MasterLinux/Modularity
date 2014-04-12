@@ -1,5 +1,7 @@
 package server.parameter;
 
+import server.security.Password;
+
 import javax.ws.rs.HeaderParam;
 
 /**
@@ -10,8 +12,8 @@ import javax.ws.rs.HeaderParam;
  * @author Christoph Grundmann
  */
 public class LoginBeanParam {
+    private final Password password;
     private final String username;
-    private final String password;
     private final String appToken;
     private int userId;
 
@@ -26,8 +28,8 @@ public class LoginBeanParam {
             @HeaderParam("X-USER-PASSWORD") String password,
             @HeaderParam("X-APPLICATION-TOKEN") String appToken
     ) {
-        this.username = username;
-        this.password = password;
+        this.password = new Password(password);
+        this.username = username; //TODO get user ID directly?
         this.appToken = appToken;
     }
 
