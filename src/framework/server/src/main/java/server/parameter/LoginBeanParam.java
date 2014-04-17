@@ -28,10 +28,12 @@ public class LoginBeanParam {
             @HeaderParam("X-USER-PASSWORD") String password,
             @HeaderParam("X-APPLICATION-TOKEN") String appToken
     ) {
-        this.password = new Password(password);
+        this.password = new Password(username, password, getClass().toGenericString());
         this.username = username; //TODO get user ID directly?
         this.appToken = appToken;
     }
+
+    //private void validateUser()
 
     /**
      * Checks whether the user is authorized to
