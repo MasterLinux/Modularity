@@ -3,7 +3,7 @@ package server.data.dao;
 import server.Server;
 import server.data.MySQLDatabase;
 import server.data.type.UserRole;
-import server.model.config.UserModel;
+import server.api.model.UserModel;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;

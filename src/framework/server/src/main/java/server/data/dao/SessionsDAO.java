@@ -1,8 +1,8 @@
 package server.data.dao;
 
 import server.data.MySQLDatabase;
-import server.model.config.SessionModel;
-import server.model.config.SessionsModel;
+import server.api.model.SessionModel;
+import server.api.model.SessionsModel;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

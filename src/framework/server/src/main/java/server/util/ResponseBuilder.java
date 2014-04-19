@@ -1,8 +1,8 @@
 package server.util;
 
-import server.model.BaseObjectModel;
-import server.model.BaseResourceModel;
-import server.model.MetaModel;
+import server.api.model.BaseObjectModel;
+import server.api.model.BaseResourceModel;
+import server.api.model.MetaModel;
 
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;

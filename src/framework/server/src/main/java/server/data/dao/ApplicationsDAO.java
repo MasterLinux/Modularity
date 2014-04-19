@@ -1,7 +1,7 @@
 package server.data.dao;
 
 import server.data.MySQLDatabase;
-import server.model.config.ApplicationModel;
+import server.api.model.config.ApplicationModel;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
