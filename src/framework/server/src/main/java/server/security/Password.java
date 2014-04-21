@@ -6,6 +6,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
 
 /**
  * Representation of a password. Used to avoid
@@ -144,5 +145,16 @@ public class Password {
     public String toString() {
         //TODO implement secure solution
         return super.toString();
+    }
+
+    /**
+     * Returns <code>true</code> if the secure token is
+     * <i>equal</i> to this password.
+     *
+     * @param secureToken The secure token to check for equality
+     * @return <code>true</code> if both are equal, <code>false</code> otherwise
+     */
+    public boolean equals(byte[] secureToken) {
+        return Arrays.equals(secureToken, this.secureToken);
     }
 }

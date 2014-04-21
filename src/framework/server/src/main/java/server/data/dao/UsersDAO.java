@@ -1,9 +1,9 @@
 package server.data.dao;
 
 import server.Server;
-import server.data.MySQLDatabase;
-import server.data.type.UserRole;
 import server.api.model.UserModel;
+import server.data.MySQLDatabase;
+import server.security.Password;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -24,7 +24,7 @@ public class UsersDAO {
     /**
      * Statement to insert a new user into the database
      */
-    private static final String SQL_INSERT = "INSERT INTO user (username, prename, surname, birthday, street, house_number, postal_code, city, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO user (username, prename, surname, birthday, street, house_number, postal_code, city, country, secure_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     /**
      * Statement to select a specific user by its ID
@@ -36,6 +36,10 @@ public class UsersDAO {
      */
     private static final String SQL_SELECT_BY_USERNAME = "SELECT id, username, prename, surname, birthday, street, house_number, postal_code, city, country FROM user WHERE username = ?";
 
+    /**
+     * Statement to select all required authorization data of a specific user by its ID
+     */
+    private static final String SQL_SELECT_FOR_AUTHORIZATION = "SELECT role, password FROM user WHERE id = ?";
 
     //column names
     private static final String COLUMN_ID = "id";
@@ -48,7 +52,8 @@ public class UsersDAO {
     private static final String COLUMN_COUNTRY = "country";
     private static final String COLUMN_HOUSE_NUMBER = "house_number";
     private static final String COLUMN_POSTAL_CODE = "postal_code";
-    private static final String COLUMN_PASSWORD = "password";
+    private static final String COLUMN_SECURE_TOKEN = "secure_token";
+    private static final String COLUMN_ROLE_ID = "role_id";
 
     /**
      * Initializes the data access object
@@ -71,12 +76,10 @@ public class UsersDAO {
 
     /**
      * Gets an user by its username
-     * @param userRole The role of the user, used as access level
      * @param name The username of the user to get
      * @return The user or an emtpy list if not exists
      */
-    public List<UserModel> getByUsername(UserRole userRole, String name) {
-        boolean hasFullAccess = userRole == UserRole.Administrator || userRole == UserRole.Owner;
+    public List<UserModel> getByUsername(String name) {
         MySQLDatabase db = MySQLDatabase.getInstance();
         List<UserModel> users = new ArrayList<>();
 
@@ -96,16 +99,12 @@ public class UsersDAO {
                         user.setUsername(result.getString(COLUMN_USERNAME));
                         user.setPrename(result.getString(COLUMN_PRENAME));
                         user.setSurname(result.getString(COLUMN_SURNAME));
-
-                        //get another info just if the user has the right for full access
-                        if(hasFullAccess) {
-                            user.setBirthday(result.getDate(COLUMN_BIRTHDAY).toString());
-                            user.setStreet(result.getString(COLUMN_STREET));
-                            user.setHouseNumber(result.getString(COLUMN_HOUSE_NUMBER));
-                            user.setPostalCode(result.getString(COLUMN_POSTAL_CODE));
-                            user.setCity(result.getString(COLUMN_CITY));
-                            user.setCountry(result.getString(COLUMN_COUNTRY));
-                        }
+                        user.setBirthday(result.getDate(COLUMN_BIRTHDAY).toString());
+                        user.setStreet(result.getString(COLUMN_STREET));
+                        user.setHouseNumber(result.getString(COLUMN_HOUSE_NUMBER));
+                        user.setPostalCode(result.getString(COLUMN_POSTAL_CODE));
+                        user.setCity(result.getString(COLUMN_CITY));
+                        user.setCountry(result.getString(COLUMN_COUNTRY));
                         //TODO set other values
 
                         users.add(user);
@@ -125,12 +124,10 @@ public class UsersDAO {
 
     /**
      * Gets an user by its ID
-     * @param userRole The role of the user, used as access level
      * @param id The ID of the user
      * @return The user or an emtpy list if not exists
      */
-    public List<UserModel> getById(UserRole userRole, int id) {
-        boolean hasFullAccess = userRole == UserRole.Administrator || userRole == UserRole.Owner;
+    public List<UserModel> getById(int id) {
         MySQLDatabase db = MySQLDatabase.getInstance();
         List<UserModel> users = new ArrayList<>();
 
@@ -150,16 +147,12 @@ public class UsersDAO {
                         user.setUsername(result.getString(COLUMN_USERNAME));
                         user.setPrename(result.getString(COLUMN_PRENAME));
                         user.setSurname(result.getString(COLUMN_SURNAME));
-
-                        //get another info just if the user has the right for full access
-                        if(hasFullAccess) {
-                            user.setBirthday(result.getDate(COLUMN_BIRTHDAY).toString());
-                            user.setStreet(result.getString(COLUMN_STREET));
-                            user.setHouseNumber(result.getString(COLUMN_HOUSE_NUMBER));
-                            user.setPostalCode(result.getString(COLUMN_POSTAL_CODE));
-                            user.setCity(result.getString(COLUMN_CITY));
-                            user.setCountry(result.getString(COLUMN_COUNTRY));
-                        }
+                        user.setBirthday(result.getDate(COLUMN_BIRTHDAY).toString());
+                        user.setStreet(result.getString(COLUMN_STREET));
+                        user.setHouseNumber(result.getString(COLUMN_HOUSE_NUMBER));
+                        user.setPostalCode(result.getString(COLUMN_POSTAL_CODE));
+                        user.setCity(result.getString(COLUMN_CITY));
+                        user.setCountry(result.getString(COLUMN_COUNTRY));
                         //TODO set other values
 
                         users.add(user);
@@ -192,7 +185,7 @@ public class UsersDAO {
      *
      * @return <code>true</code> when the user is added successfully, <code>false</code> otherwise
      */
-    public boolean register(String username, String prename, String surname, Date birthday, String street, String houseNumber, String postalCode, String city, String country) {
+    public boolean register(String username, String prename, String surname, Date birthday, String street, String houseNumber, String postalCode, String city, String country, Password password) {
         MySQLDatabase db = MySQLDatabase.getInstance();
 
         if(db.isConnected()) {
@@ -207,6 +200,7 @@ public class UsersDAO {
                 statement.setString(7, postalCode);
                 statement.setString(8, city);
                 statement.setString(9, country);
+                statement.setBytes(10, password.getSecureToken());
 
                 //try to execute statement
                 statement.execute();
@@ -219,6 +213,41 @@ public class UsersDAO {
             }
         } else {
             logger.warning("Unable to add user to database, because the database connection is not established."); //TODO use constant error messages
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets an user by its ID
+     * @param id The ID of the user
+     * @param password The password of the user to check for authorization
+     * @return <code>true</code> if the user is authorized
+     */
+    public boolean isAuthorized(int id, Password password) {
+        MySQLDatabase db = MySQLDatabase.getInstance();
+
+        if(db.isConnected()) {
+            try {
+                PreparedStatement statement = db.getConnection().prepareStatement(SQL_SELECT_FOR_AUTHORIZATION);
+                statement.setInt(1, id);
+
+                ResultSet result = statement.executeQuery();
+
+                if(result.first()) {
+                    byte[] secureToken = result.getBytes(COLUMN_SECURE_TOKEN);
+                    int roleId = result.getInt(COLUMN_ROLE_ID);
+
+                    if(password.equals(secureToken)) { //TODO check for role
+                        return true;
+                    }
+                }
+
+            } catch (SQLException e) {
+                //TODO add error handling
+            }
+        } else {
+            //TODO add error handling
         }
 
         return false;

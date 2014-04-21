@@ -6,6 +6,7 @@ import server.data.dao.UsersDAO;
 import server.api.model.UserModel;
 import server.api.parameter.MetaBeanParam;
 import server.api.parameter.SessionBeanParam;
+import server.security.Password;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -118,7 +119,12 @@ public class Users extends BaseResource {
                     user.getHouseNumber(),
                     user.getPostalCode(),
                     user.getCity(),
-                    user.getCountry())) {
+                    user.getCountry(),
+                    new Password(
+                            user.getUsername(),
+                            user.getPassword(),
+                            UserModel.class.toGenericString()
+                    ))) {
 
                 //throw exception on missing field
                 throw new WebApplicationException(Response.Status.BAD_REQUEST);

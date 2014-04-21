@@ -13,6 +13,7 @@ public class UserModel extends BaseObjectModel {
     private String city;
     private String postalCode;
     private String country;
+    private String password;
 
     public String getUsername() {
         return username;
@@ -85,4 +86,9 @@ public class UserModel extends BaseObjectModel {
     public void setCountry(String country) {
         this.country = country;
     }
+
+    public String getPassword() {
+        return password;
+    }
+
 }
