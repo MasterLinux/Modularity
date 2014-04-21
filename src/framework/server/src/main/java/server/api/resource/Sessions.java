@@ -29,6 +29,6 @@ public class Sessions extends BaseResource {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
 
-        return SessionsDAO.getInstance().createSession(login.getUserId()).toResponse();
+        return SessionsDAO.getInstance().createSession(login.getUserId(), -1).toResponse(); //TODO handle application id
     }
 }

@@ -52,4 +52,12 @@ public class BaseResourceModel<T extends BaseObjectModel> {
 
         return gson.toJson(this, getClass());
     }
+
+    /**
+     * Checks whether the result set is empty
+     * @return <code>true</code> if the response has no items, <code>false</code> otherwise
+     */
+    public boolean isEmpty() {
+        return objects == null || objects.isEmpty();
+    }
 }
