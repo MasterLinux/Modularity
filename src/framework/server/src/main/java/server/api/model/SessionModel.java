@@ -7,6 +7,8 @@ public class SessionModel extends BaseObjectModel {
     private String lastLogin;
     private String expirationTime;
     private String authToken;     //TODO rename to secureToken?
+    private int userId;
+    private int applicationId;
 
     public String getLastLogin() {
         return lastLogin;
@@ -30,5 +32,21 @@ public class SessionModel extends BaseObjectModel {
 
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(int applicationId) {
+        this.applicationId = applicationId;
     }
 }

@@ -4,6 +4,7 @@ import server.data.MySQLDatabase;
 import server.api.model.SessionModel;
 import server.api.model.SessionsModel;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +19,7 @@ public class SessionsDAO extends BaseDAO {
     private static final Logger logger = Logger.getLogger(SessionsDAO.class.getName());
     private static SessionsDAO instance;
 
-    private static final String SQL_SELECT_BY_USER_ID = "SELECT id, application_id, last_login, expiration_time, auth_token FROM session WHERE user_id = ?";
+    private static final String SQL_SELECT_BY_USER_ID = "SELECT id, last_login, expiration_time, auth_token FROM session WHERE user_id = ? AND application_id = ?";
 
     /**
      * Statement to insert a new application into the database
@@ -61,26 +62,42 @@ public class SessionsDAO extends BaseDAO {
      * @param userId The ID of the user
      * @return The session or a closed session on error
      */
+    public SessionsModel createSession(int userId) {
+        return createSession(userId, -1); //TODO use constant instead of -1
+    }
+
+    /**
+     * Creates a new session for a specific
+     * application and user. If an already open
+     * session exists than this session will
+     * be returned.
+     *
+     * @param userId The ID of the user
+     * @param applicationId The ID of the application
+     * @return The session or a closed session on error
+     */
     public SessionsModel createSession(int userId, int applicationId) {
         MySQLDatabase db = MySQLDatabase.getInstance();
-        List<SessionModel> sessions = new ArrayList<>(1);
-        SessionsModel response = new SessionsModel();
+        SessionsModel session;
 
-        //close session if already open
-        if(!getSession(userId, applicationId).isEmpty()) {
-            closeSession(userId, applicationId);
-        }
-
-        if(db.isConnected()) {
+        //return already opened session
+        if((session = getSession(userId, applicationId)).isEmpty() && db.isConnected()) {
             try {
+                Date timeNow = getDate();
+
                 PreparedStatement statement = db.getConnection().prepareStatement(SQL_INSERT);
                 statement.setInt(1, userId);
+                statement.setInt(2, applicationId);
+                statement.setDate(3, timeNow);
+                statement.setDate(4, timeNow); //TODO add one day -> expiration time
+                statement.setString(5, "auth_token"); //TODO generate auth token
 
-                ResultSet result = statement.executeQuery();
+                //try to execute statement
+                statement.execute();
+                statement.close();
 
-                if(result.first()) {
-
-                }
+                //get new created session
+                session = getSession(userId, applicationId);
 
             } catch (SQLException e) {
                 //TODO add error handling
@@ -89,7 +106,12 @@ public class SessionsDAO extends BaseDAO {
             //TODO add error handling
         }
 
-        return (SessionsModel) response.setObjects(sessions);
+        return session;
+    }
+
+    private Date getDate() {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        return new Date(cal.getTimeInMillis());
     }
 
     /**
@@ -107,16 +129,19 @@ public class SessionsDAO extends BaseDAO {
             try {
                 PreparedStatement statement = db.getConnection().prepareStatement(SQL_SELECT_BY_USER_ID);
                 statement.setInt(1, userId);
+                statement.setInt(2, applicationId);
 
                 ResultSet result = statement.executeQuery();
 
                 if(result.first()) {
                     SessionModel session = new SessionModel();
 
-                    session.setExpirationTime(result.getString(COLUMN_EXPIRATION_TIME));
-                    session.setLastLogin(result.getString(COLUMN_LAST_LOGIN));
+                    session.setExpirationTime(result.getDate(COLUMN_EXPIRATION_TIME).toString());
+                    session.setLastLogin(result.getDate(COLUMN_LAST_LOGIN).toString());
                     session.setAuthToken(result.getString(COLUMN_AUTH_TOKEN));
                     session.setId(result.getInt(COLUMN_ID));
+                    session.setApplicationId(applicationId);
+                    session.setUserId(userId);
 
                     sessions.add(session);
                 }
