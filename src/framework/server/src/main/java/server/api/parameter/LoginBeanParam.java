@@ -17,7 +17,6 @@ import java.util.List;
  */
 public class LoginBeanParam {
     private final Password password;
-    private final String appToken; //TODO implement app token
     private int userId;
 
     private static final int UNKNOWN_USER_ID = -1;
@@ -26,16 +25,13 @@ public class LoginBeanParam {
      * Initializes the login bean parameter
      * @param username The name of the user to login
      * @param password The password of the user to login
-     * @param appToken The token of the application
      */
     public LoginBeanParam(
             @HeaderParam(Api.HEADER_USER_NAME) String username,
-            @HeaderParam(Api.HEADER_USER_PASSWORD) String password,
-            @HeaderParam(Api.HEADER_APPLICATION_TOKEN) String appToken
+            @HeaderParam(Api.HEADER_USER_PASSWORD) String password
     ) {
         this.password = new Password(username, password, UserModel.class.toGenericString());
         this.userId = getUserId(username);
-        this.appToken = appToken;
     }
 
     /**

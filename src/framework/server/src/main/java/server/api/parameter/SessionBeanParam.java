@@ -1,6 +1,5 @@
 package server.api.parameter;
 
-import server.data.type.UserRole;
 import server.util.StringUtility;
 
 import javax.ws.rs.DefaultValue;
@@ -12,51 +11,19 @@ import javax.ws.rs.HeaderParam;
  */
 public class SessionBeanParam {
     private int userId;
-    private UserRole role;
     private String token;
 
     /**
      * Initialises the session bean parameter
      * @param userId ID of the user
-     * @param role Role which defines the access level. Like "admin" or "customer"
      * @param token The authentication token
      */
     public SessionBeanParam(
             @HeaderParam("X-USER-ID") @DefaultValue("-1") int userId,
-            @HeaderParam("X-USER-ROLE") String role,
             @HeaderParam("X-AUTH-TOKEN") String token
     ) {
         this.userId = userId;
         this.token = token;
-        this.role = getUserRole(role);
-    }
-
-    /**
-     * Gets the role of the user who requested the resource
-     * @param role The role as string
-     * @return The role as UserRole representation
-     */
-    private UserRole getUserRole(String role) {
-        role = StringUtility.IsNullOrEmpty(role) ? "unauthorized" : role;
-        UserRole r;
-
-        switch (role)  {
-            case "customer":
-                if(isOwner()) {
-                    r = UserRole.Owner;
-                } else {
-                    r = UserRole.Customer;
-                }
-                break;
-            case "admin":
-                r = UserRole.Administrator;
-                break;
-            default:
-                r = UserRole.Unauthorized;
-                break;
-        }
-
-        return r;
     }
 
     /**
@@ -79,13 +46,5 @@ public class SessionBeanParam {
         }
 
         return false;
-    }
-
-    /**
-     * Gets the role of the user
-     * @return The user role of the user
-     */
-    public UserRole getRole() {
-        return role;
     }
 }

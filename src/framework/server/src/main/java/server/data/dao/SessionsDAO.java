@@ -19,17 +19,16 @@ public class SessionsDAO extends BaseDAO {
     private static final Logger logger = Logger.getLogger(SessionsDAO.class.getName());
     private static SessionsDAO instance;
 
-    private static final String SQL_SELECT_BY_USER_ID = "SELECT id, last_login, expiration_time, auth_token FROM session WHERE user_id = ? AND application_id = ?";
+    private static final String SQL_SELECT_BY_USER_ID = "SELECT id, user_id, last_login, expiration_time, auth_token FROM session WHERE user_id = ?";
 
     /**
      * Statement to insert a new application into the database
      */
-    private static final String SQL_INSERT = "INSERT INTO session (user_id, application_id, last_login, expiration_time, auth_token) VALUES (?, ?, ?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO session (user_id, last_login, expiration_time, auth_token) VALUES (?, ?, ?, ?)";
 
     //column names
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_USER_ID = "user_id";
-    private static final String COLUMN_APPLICATION_ID = "application_id";
     private static final String COLUMN_LAST_LOGIN = "last_login";
     private static final String COLUMN_EXPIRATION_TIME = "expiration_time";
     private static final String COLUMN_AUTH_TOKEN = "auth_token";
@@ -54,50 +53,35 @@ public class SessionsDAO extends BaseDAO {
     }
 
     /**
-     * Creates a new session for the user with
-     * the given user ID. If an already open
-     * session exists than this session will
-     * be closed.
-     *
-     * @param userId The ID of the user
-     * @return The session or a closed session on error
-     */
-    public SessionsModel createSession(int userId) {
-        return createSession(userId, -1); //TODO use constant instead of -1
-    }
-
-    /**
      * Creates a new session for a specific
      * application and user. If an already open
      * session exists than this session will
      * be returned.
      *
-     * @param userId The ID of the user
-     * @param applicationId The ID of the application
+     * @param userId The ID of the user of the required session
      * @return The session or a closed session on error
      */
-    public SessionsModel createSession(int userId, int applicationId) {
+    public SessionsModel createSession(int userId) {
         MySQLDatabase db = MySQLDatabase.getInstance();
         SessionsModel session;
 
         //return already opened session
-        if((session = getSession(userId, applicationId)).isEmpty() && db.isConnected()) {
+        if((session = getSession(userId)).isEmpty() && db.isConnected()) { //TODO check whether the session isn't expired, if so create a new one
             try {
                 Date timeNow = getDate();
 
                 PreparedStatement statement = db.getConnection().prepareStatement(SQL_INSERT);
                 statement.setInt(1, userId);
-                statement.setInt(2, applicationId);
-                statement.setDate(3, timeNow);
-                statement.setDate(4, timeNow); //TODO add one day -> expiration time
-                statement.setString(5, "auth_token"); //TODO generate auth token
+                statement.setDate(2, timeNow);
+                statement.setDate(3, timeNow); //TODO add one day -> expiration time
+                statement.setString(4, "auth_token"); //TODO generate auth token
 
                 //try to execute statement
                 statement.execute();
                 statement.close();
 
                 //get new created session
-                session = getSession(userId, applicationId);
+                session = getSession(userId);
 
             } catch (SQLException e) {
                 //TODO add error handling
@@ -120,7 +104,7 @@ public class SessionsDAO extends BaseDAO {
      * @param userId ID of the user
      * @return The session of the user or null if not exists
      */
-    public SessionsModel getSession(int userId, int applicationId) {
+    public SessionsModel getSession(int userId) {
         MySQLDatabase db = MySQLDatabase.getInstance();
         List<SessionModel> sessions = new ArrayList<>(1);
         SessionsModel response = new SessionsModel();
@@ -129,7 +113,6 @@ public class SessionsDAO extends BaseDAO {
             try {
                 PreparedStatement statement = db.getConnection().prepareStatement(SQL_SELECT_BY_USER_ID);
                 statement.setInt(1, userId);
-                statement.setInt(2, applicationId);
 
                 ResultSet result = statement.executeQuery();
 
@@ -139,9 +122,8 @@ public class SessionsDAO extends BaseDAO {
                     session.setExpirationTime(result.getDate(COLUMN_EXPIRATION_TIME).toString());
                     session.setLastLogin(result.getDate(COLUMN_LAST_LOGIN).toString());
                     session.setAuthToken(result.getString(COLUMN_AUTH_TOKEN));
+                    session.setUserId(result.getInt(COLUMN_USER_ID));
                     session.setId(result.getInt(COLUMN_ID));
-                    session.setApplicationId(applicationId);
-                    session.setUserId(userId);
 
                     sessions.add(session);
                 }
@@ -161,8 +143,9 @@ public class SessionsDAO extends BaseDAO {
      *
      * @param userId The ID of the user
      * @return <code>true</code> if the session is successfully closed, <code>false</code> otherwise
+     * //TODO return closed session
      */
-    public boolean closeSession(int userId, int applicationId) {
+    public boolean closeSession(int userId) {
         return true;
     }
 }

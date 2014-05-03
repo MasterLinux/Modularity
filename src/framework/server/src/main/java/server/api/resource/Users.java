@@ -2,16 +2,15 @@ package server.api.resource;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import server.data.dao.UsersDAO;
 import server.api.model.UserModel;
 import server.api.parameter.MetaBeanParam;
 import server.api.parameter.SessionBeanParam;
+import server.data.dao.UsersDAO;
 import server.security.Password;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.Date;
 import java.util.List;
 
 /**
@@ -42,7 +41,7 @@ public class Users extends BaseResource {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
 
-        return buildResponse(meta, UsersDAO.getInstance().getById(session.getRole(), id));
+        return buildResponse(meta, UsersDAO.getInstance().getById(id));
     }
 
     /**
@@ -67,7 +66,7 @@ public class Users extends BaseResource {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
 
-        return buildResponse(meta, UsersDAO.getInstance().getByUsername(session.getRole(), username));
+        return buildResponse(meta, UsersDAO.getInstance().getByUsername(username));
     }
 
     @GET
@@ -112,19 +111,19 @@ public class Users extends BaseResource {
             //try to add a new user
             if(!UsersDAO.getInstance().register(
                     user.getUsername(),
-                    user.getPrename(),
-                    user.getSurname(),
-                    Date.valueOf(user.getBirthday()),
-                    user.getStreet(),
-                    user.getHouseNumber(),
-                    user.getPostalCode(),
-                    user.getCity(),
-                    user.getCountry(),
                     new Password(
                             user.getUsername(),
                             user.getPassword(),
                             UserModel.class.toGenericString()
-                    ))) {
+                    ),
+                    user.getPrename(),
+                    user.getSurname(),
+                    user.getBirthdayDate(),
+                    user.getStreet(),
+                    user.getHouseNumber(),
+                    user.getPostalCode(),
+                    user.getCity(),
+                    user.getCountry())) {
 
                 //throw exception on missing field
                 throw new WebApplicationException(Response.Status.BAD_REQUEST);

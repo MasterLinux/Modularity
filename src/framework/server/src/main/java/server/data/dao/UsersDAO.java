@@ -1,14 +1,12 @@
 package server.data.dao;
 
+import org.apache.http.util.TextUtils;
 import server.Server;
 import server.api.model.UserModel;
 import server.data.MySQLDatabase;
 import server.security.Password;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -24,7 +22,7 @@ public class UsersDAO {
     /**
      * Statement to insert a new user into the database
      */
-    private static final String SQL_INSERT = "INSERT INTO user (username, prename, surname, birthday, street, house_number, postal_code, city, country, secure_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO user (username, secure_token, prename, surname, birthday, street, house_number, postal_code, city, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     /**
      * Statement to select a specific user by its ID
@@ -39,7 +37,7 @@ public class UsersDAO {
     /**
      * Statement to select all required authorization data of a specific user by its ID
      */
-    private static final String SQL_SELECT_FOR_AUTHORIZATION = "SELECT role, password FROM user WHERE id = ?";
+    private static final String SQL_SELECT_FOR_AUTHORIZATION = "SELECT secure_token FROM user WHERE id = ?";
 
     //column names
     private static final String COLUMN_ID = "id";
@@ -53,7 +51,6 @@ public class UsersDAO {
     private static final String COLUMN_HOUSE_NUMBER = "house_number";
     private static final String COLUMN_POSTAL_CODE = "postal_code";
     private static final String COLUMN_SECURE_TOKEN = "secure_token";
-    private static final String COLUMN_ROLE_ID = "role_id";
 
     /**
      * Initializes the data access object
@@ -99,7 +96,7 @@ public class UsersDAO {
                         user.setUsername(result.getString(COLUMN_USERNAME));
                         user.setPrename(result.getString(COLUMN_PRENAME));
                         user.setSurname(result.getString(COLUMN_SURNAME));
-                        user.setBirthday(result.getDate(COLUMN_BIRTHDAY).toString());
+                        user.setBirthdayDate(result.getDate(COLUMN_BIRTHDAY));
                         user.setStreet(result.getString(COLUMN_STREET));
                         user.setHouseNumber(result.getString(COLUMN_HOUSE_NUMBER));
                         user.setPostalCode(result.getString(COLUMN_POSTAL_CODE));
@@ -147,7 +144,7 @@ public class UsersDAO {
                         user.setUsername(result.getString(COLUMN_USERNAME));
                         user.setPrename(result.getString(COLUMN_PRENAME));
                         user.setSurname(result.getString(COLUMN_SURNAME));
-                        user.setBirthday(result.getDate(COLUMN_BIRTHDAY).toString());
+                        user.setBirthdayDate(result.getDate(COLUMN_BIRTHDAY));
                         user.setStreet(result.getString(COLUMN_STREET));
                         user.setHouseNumber(result.getString(COLUMN_HOUSE_NUMBER));
                         user.setPostalCode(result.getString(COLUMN_POSTAL_CODE));
@@ -185,22 +182,26 @@ public class UsersDAO {
      *
      * @return <code>true</code> when the user is added successfully, <code>false</code> otherwise
      */
-    public boolean register(String username, String prename, String surname, Date birthday, String street, String houseNumber, String postalCode, String city, String country, Password password) {
+    public boolean register(String username, Password password, String prename, String surname, Date birthday, String street, String houseNumber, String postalCode, String city, String country) {
         MySQLDatabase db = MySQLDatabase.getInstance();
 
         if(db.isConnected()) {
             try {
                 PreparedStatement statement = db.getConnection().prepareStatement(SQL_INSERT);
+
+                //required fields
                 statement.setString(1, username);
-                statement.setString(2, prename);
-                statement.setString(3, surname);
-                statement.setDate(4, birthday);
-                statement.setString(5, street);
-                statement.setString(6, houseNumber);
-                statement.setString(7, postalCode);
-                statement.setString(8, city);
-                statement.setString(9, country);
-                statement.setBytes(10, password.getSecureToken());
+                statement.setBytes(2, password.getSecureToken());
+
+                //optional fields
+                setOptionalField(3, prename, statement);
+                setOptionalField(4, surname, statement);
+                setOptionalField(5, birthday, statement);
+                setOptionalField(6, street, statement);
+                setOptionalField(7, houseNumber, statement);
+                setOptionalField(8, postalCode, statement);
+                setOptionalField(9, city, statement);
+                setOptionalField(10, country, statement);
 
                 //try to execute statement
                 statement.execute();
@@ -218,11 +219,28 @@ public class UsersDAO {
         return false;
     }
 
+    private void setOptionalField(int index, Date value, PreparedStatement statement) throws SQLException {
+        if(value == null) {
+            statement.setNull(index, Types.DATE);
+        } else {
+            statement.setDate(index, value);
+        }
+    }
+
+    private static void setOptionalField(int index, String value, PreparedStatement statement) throws SQLException {
+        if(TextUtils.isEmpty(value)) {
+            statement.setNull(index, Types.VARCHAR);
+        } else {
+            statement.setString(index, value);
+        }
+    }
+
     /**
-     * Gets an user by its ID
+     * Checks whether a specific user is authorized
+     *
      * @param id The ID of the user
      * @param password The password of the user to check for authorization
-     * @return <code>true</code> if the user is authorized
+     * @return <code>true</code> if the user is authorized, <code>false</code> otherwise
      */
     public boolean isAuthorized(int id, Password password) {
         MySQLDatabase db = MySQLDatabase.getInstance();
@@ -236,9 +254,8 @@ public class UsersDAO {
 
                 if(result.first()) {
                     byte[] secureToken = result.getBytes(COLUMN_SECURE_TOKEN);
-                    int roleId = result.getInt(COLUMN_ROLE_ID);
 
-                    if(password.equals(secureToken)) { //TODO check for role
+                    if(password.equals(secureToken)) {
                         return true;
                     }
                 }

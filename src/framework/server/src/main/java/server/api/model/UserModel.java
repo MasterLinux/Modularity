@@ -1,5 +1,9 @@
 package server.api.model;
 
+import org.apache.http.util.TextUtils;
+
+import java.sql.Date;
+
 /**
  * Representation of an user
  */
@@ -41,6 +45,14 @@ public class UserModel extends BaseObjectModel {
 
     public String getBirthday() {
         return birthday;
+    }
+
+    public Date getBirthdayDate() {
+        return TextUtils.isEmpty(birthday) ? null : Date.valueOf(birthday);
+    }
+
+    public void setBirthdayDate(Date birthdayDate) {
+        this.birthday = birthdayDate != null ? birthdayDate.toString() : null;
     }
 
     public void setBirthday(String birthday) {

@@ -25,7 +25,8 @@ public class Server {
         server = GrizzlyHttpServerFactory.createHttpServer(
                 this.uri,
                 new ResourceConfig()
-                        .packages("server.api.config")
+                        .packages("server.api.resource")
+                        .packages("server.api.resource.config")
         );
     }
 
