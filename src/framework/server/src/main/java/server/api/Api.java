@@ -6,5 +6,8 @@ package server.api;
 public class Api {
     public static final String HEADER_USER_NAME = "X-USER-NAME";
     public static final String HEADER_USER_PASSWORD = "X-USER-PASSWORD";
+    public static final String HEADER_AUTH_TOKEN = "X-AUTH-TOKEN";
+
+    @Deprecated
     public static final String HEADER_APPLICATION_TOKEN = "X-APPLICATION-TOKEN";
 }

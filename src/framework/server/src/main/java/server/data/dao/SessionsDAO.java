@@ -10,21 +10,42 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 
 /**
- * Created by Christoph on 03.04.2014.
+ * DAO to create, update and delete sessions.
+ *
+ * @author Christoph Grundmann
  */
 public class SessionsDAO extends BaseDAO {
     private static final Logger logger = Logger.getLogger(SessionsDAO.class.getName());
     private static SessionsDAO instance;
 
-    private static final String SQL_SELECT_BY_USER_ID = "SELECT id, user_id, last_login, expiration_time, auth_token FROM session WHERE user_id = ?";
+    /**
+     * Statement to select a specific session by the ID of the user who owns this session
+     */
+    private static final String SQL_SELECT_BY_USER_ID = "SELECT id, user_id, last_login, expiration_time, auth_token, is_expired FROM session WHERE user_id = ?";
 
     /**
-     * Statement to insert a new application into the database
+     * Statement to select a specific session by its ID
      */
-    private static final String SQL_INSERT = "INSERT INTO session (user_id, last_login, expiration_time, auth_token) VALUES (?, ?, ?, ?)";
+    private static final String SQL_SELECT_BY_ID = "SELECT id, user_id, last_login, expiration_time, auth_token, is_expired FROM session WHERE id = ?";
+
+    /**
+     * Statement to insert a new session into the database
+     */
+    private static final String SQL_INSERT = "INSERT INTO session (user_id, last_login, expiration_time, auth_token, is_expired) VALUES (?, ?, ?, ?, ?)";
+
+    /**
+     * Statement to update the expiration flag of a specific session
+     */
+    private static final String SQL_UPDATE_EXPIRATION_FLAG = "UPDATE session SET is_expired=? WHERE id=? AND auth_token=?";
+
+    /**
+     * Statement to update the authenticate token of a session of a specific user
+     */
+    private static final String SQL_UPDATE_AUTH_TOKEN = "UPDATE session SET is_expired=?, auth_token=? WHERE user_id=?";
 
     //column names
     private static final String COLUMN_ID = "id";
@@ -32,6 +53,7 @@ public class SessionsDAO extends BaseDAO {
     private static final String COLUMN_LAST_LOGIN = "last_login";
     private static final String COLUMN_EXPIRATION_TIME = "expiration_time";
     private static final String COLUMN_AUTH_TOKEN = "auth_token";
+    private static final String COLUMN_IS_EXPIRED = "is_expired";
 
     /**
      * Initializes the data access object
@@ -63,28 +85,42 @@ public class SessionsDAO extends BaseDAO {
      */
     public SessionsModel createSession(int userId) {
         MySQLDatabase db = MySQLDatabase.getInstance();
-        SessionsModel session;
+        SessionsModel session = getSessionByUserId(userId);
 
-        //return already opened session
-        if((session = getSession(userId)).isEmpty() && db.isConnected()) { //TODO check whether the session isn't expired, if so create a new one
-            try {
-                Date timeNow = getDate();
+        //check whether the session exists
+        boolean exists = !session.isEmpty();
 
-                PreparedStatement statement = db.getConnection().prepareStatement(SQL_INSERT);
-                statement.setInt(1, userId);
-                statement.setDate(2, timeNow);
-                statement.setDate(3, timeNow); //TODO add one day -> expiration time
-                statement.setString(4, "auth_token"); //TODO generate auth token
+        //check whether the session is expired
+        boolean isExpired = !exists || session.getObjects().get(0).isExpired();
 
-                //try to execute statement
-                statement.execute();
-                statement.close();
+        if(db.isConnected()) {
+            //refresh current session if exists
+            if (exists && isExpired) {
+                session = refreshSession(userId);
+            }
 
-                //get new created session
-                session = getSession(userId);
+            //otherwise create a new session
+            else if(!exists) {
+                try {
+                    Date timeNow = getDate();
 
-            } catch (SQLException e) {
-                //TODO add error handling
+                    PreparedStatement statement = db.getConnection().prepareStatement(SQL_INSERT);
+                    statement.setInt(1, userId);
+                    statement.setDate(2, timeNow);
+                    statement.setDate(3, timeNow); //TODO add one day -> expiration time
+                    statement.setString(4, buildAuthToken());
+                    statement.setBoolean(5, false);
+
+                    //try to execute statement
+                    statement.execute();
+                    statement.close();
+
+                    //get new created session
+                    session = getSessionByUserId(userId);
+
+                } catch (SQLException e) {
+                    //TODO add error handling
+                }
             }
         } else {
             //TODO add error handling
@@ -93,26 +129,71 @@ public class SessionsDAO extends BaseDAO {
         return session;
     }
 
-    private Date getDate() {
+    private SessionsModel refreshSession(int userId) {
+        MySQLDatabase db = MySQLDatabase.getInstance();
+        SessionsModel response = new SessionsModel(); //TODO create empty? SessionModel.empty();
+
+        if(db.isConnected()) {
+            try {
+                PreparedStatement statement = db.getConnection().prepareStatement(SQL_UPDATE_AUTH_TOKEN);
+                statement.setBoolean(1, false);
+                statement.setString(2, buildAuthToken());
+                statement.setInt(3, userId);
+
+                //try to execute statement
+                statement.execute();
+                statement.close();
+
+                //get updated session
+                response = getSessionByUserId(userId);
+
+            } catch (SQLException e) {
+                //TODO add error handling
+            }
+        } else {
+            //TODO add error handling
+        }
+
+        return response;
+    }
+
+    private String buildAuthToken() {
+        return "auth_token_" + new Random().nextDouble(); //TODO implement
+    }
+
+    private Date getDate() { //TODO move to util class
         java.util.Calendar cal = java.util.Calendar.getInstance();
         return new Date(cal.getTimeInMillis());
     }
 
     /**
-     * Gets a session of a specific user
+     * Gets a specific session
      *
-     * @param userId ID of the user
-     * @return The session of the user or null if not exists
+     * @param id ID of a user or the session
+     * @param type The type of the given ID
+     * @return The session
      */
-    public SessionsModel getSession(int userId) {
+    private SessionsModel getSession(int id, IdType type) {
         MySQLDatabase db = MySQLDatabase.getInstance();
         List<SessionModel> sessions = new ArrayList<>(1);
         SessionsModel response = new SessionsModel();
 
         if(db.isConnected()) {
             try {
-                PreparedStatement statement = db.getConnection().prepareStatement(SQL_SELECT_BY_USER_ID);
-                statement.setInt(1, userId);
+                PreparedStatement statement = null;
+
+                //select statement
+                switch (type) {
+                    case USER_ID:
+                        statement = db.getConnection().prepareStatement(SQL_SELECT_BY_USER_ID);
+                        break;
+
+                    case SESSION_ID:
+                        statement = db.getConnection().prepareStatement(SQL_SELECT_BY_ID);
+                        break;
+                }
+
+                statement.setInt(1, id);
 
                 ResultSet result = statement.executeQuery();
 
@@ -124,6 +205,7 @@ public class SessionsDAO extends BaseDAO {
                     session.setAuthToken(result.getString(COLUMN_AUTH_TOKEN));
                     session.setUserId(result.getInt(COLUMN_USER_ID));
                     session.setId(result.getInt(COLUMN_ID));
+                    session.setExpired(result.getBoolean(COLUMN_IS_EXPIRED));
 
                     sessions.add(session);
                 }
@@ -139,13 +221,66 @@ public class SessionsDAO extends BaseDAO {
     }
 
     /**
+     * Gets a session of a specific user
+     *
+     * @param id ID of the user who owns the session
+     * @return The session of the user with the given ID
+     */
+    public SessionsModel getSessionByUserId(int id) {
+        return getSession(id, IdType.USER_ID);
+    }
+
+    /**
+     * Gets a session by its ID
+     *
+     * @param id ID of the session to get
+     * @return The session
+     */
+    public SessionsModel getSessionById(int id) {
+        return getSession(id, IdType.SESSION_ID);
+    }
+
+    /**
      * Closes the session of a specific user
      *
-     * @param userId The ID of the user
+     * @param id The ID of the session to close
+     * @param authToken The token to authenticate for this action
      * @return <code>true</code> if the session is successfully closed, <code>false</code> otherwise
      * //TODO return closed session
      */
-    public boolean closeSession(int userId) {
-        return true;
+    public SessionsModel closeSession(int id, String authToken) {
+        MySQLDatabase db = MySQLDatabase.getInstance();
+        SessionsModel response = new SessionsModel();
+
+        if(db.isConnected()) {
+            try {
+                PreparedStatement statement = db.getConnection().prepareStatement(SQL_UPDATE_EXPIRATION_FLAG);
+                statement.setBoolean(1, true);
+                statement.setInt(2, id);
+                statement.setString(3, authToken);
+
+                //get updated session
+                if(statement.executeUpdate() > 0) {
+                    response = getSessionById(id);
+                }
+
+                statement.close();
+
+            } catch (SQLException e) {
+                //TODO add error handling
+            }
+        } else {
+            //TODO add error handling
+        }
+
+        return response;
+    }
+
+    /**
+     * Type of ID
+     */
+    private enum IdType {
+        USER_ID,
+        SESSION_ID
     }
 }

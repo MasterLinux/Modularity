@@ -7,6 +7,7 @@ public class SessionModel extends BaseObjectModel {
     private String lastLogin;
     private String expirationTime;
     private String authToken;     //TODO rename to secureToken?
+    private boolean isExpired;
     private int userId;
 
     public String getLastLogin() {
@@ -39,5 +40,13 @@ public class SessionModel extends BaseObjectModel {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public boolean isExpired() {
+        return isExpired;
+    }
+
+    public void setExpired(boolean isExpired) {
+        this.isExpired = isExpired;
     }
 }
