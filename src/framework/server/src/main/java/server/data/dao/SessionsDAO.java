@@ -4,6 +4,7 @@ import server.data.MySQLDatabase;
 import server.api.model.SessionModel;
 import server.api.model.SessionsModel;
 
+import javax.ws.rs.core.Response;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,9 +39,9 @@ public class SessionsDAO extends BaseDAO {
     private static final String SQL_INSERT = "INSERT INTO session (user_id, last_login, expiration_time, auth_token, is_expired) VALUES (?, ?, ?, ?, ?)";
 
     /**
-     * Statement to update the expiration flag of a specific session
+     * Statement to delete a specific session by its ID
      */
-    private static final String SQL_UPDATE_EXPIRATION_FLAG = "UPDATE session SET is_expired=? WHERE id=? AND auth_token=?";
+    private static final String SQL_DELETE_BY_ID = "DELETE FROM session WHERE id=? AND auth_token=?";
 
     /**
      * Statement to update the authenticate token of a session of a specific user
@@ -129,6 +130,12 @@ public class SessionsDAO extends BaseDAO {
         return session;
     }
 
+    /**
+     * Refreshes the session of a specific user
+     *
+     * @param userId ID of the user which session should be refreshed
+     * @return The refreshed session
+     */
     private SessionsModel refreshSession(int userId) {
         MySQLDatabase db = MySQLDatabase.getInstance();
         SessionsModel response = new SessionsModel(); //TODO create empty? SessionModel.empty();
@@ -241,36 +248,55 @@ public class SessionsDAO extends BaseDAO {
     }
 
     /**
-     * Closes the session of a specific user
+     * Closes and deletes the session of a specific user
      *
      * @param id The ID of the session to close
      * @param authToken The token to authenticate for this action
-     * @return <code>true</code> if the session is successfully closed, <code>false</code> otherwise
-     * //TODO return closed session
+     * @return The closed session or an empty response if session does not exists or the authentication fails
      */
     public SessionsModel closeSession(int id, String authToken) {
         MySQLDatabase db = MySQLDatabase.getInstance();
-        SessionsModel response = new SessionsModel();
+        SessionsModel response = this.getSessionById(id);
 
         if(db.isConnected()) {
-            try {
-                PreparedStatement statement = db.getConnection().prepareStatement(SQL_UPDATE_EXPIRATION_FLAG);
-                statement.setBoolean(1, true);
-                statement.setInt(2, id);
-                statement.setString(3, authToken);
+            if(!response.isEmpty()) {
+                try {
+                    PreparedStatement statement = db.getConnection().prepareStatement(SQL_DELETE_BY_ID);
+                    statement.setInt(1, id);
+                    statement.setString(2, authToken);
 
-                //get updated session
-                if(statement.executeUpdate() > 0) {
-                    response = getSessionById(id);
+                    //update expiration flag on success
+                    if(statement.executeUpdate() > 0) {
+                        response.getObjects().get(0).setExpired(true);
+                    }
+
+                    //otherwise the authorization has failed
+                    else {
+                        response.setHttpStatusCode(Response.Status.UNAUTHORIZED);
+                        response.setErrorOccurred(true);
+                    }
+
+                    statement.close();
                 }
 
-                statement.close();
+                //unknown SQL error
+                catch (SQLException e) {
+                    response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR);
+                    logger.warning(SQL_EXECUTION_ERROR + e.getMessage());
+                    response.setErrorOccurred(true);
+                }
 
-            } catch (SQLException e) {
-                //TODO add error handling
+            } else {
+                response.setHttpStatusCode(Response.Status.NOT_FOUND);
+                response.setErrorOccurred(true);
             }
-        } else {
-            //TODO add error handling
+        }
+
+        //database server is unreachable
+        else {
+            response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR);
+            logger.warning(DATABASE_CONNECTION_ERROR);
+            response.setErrorOccurred(true);
         }
 
         return response;

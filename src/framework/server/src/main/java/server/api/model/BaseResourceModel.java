@@ -3,15 +3,24 @@ package server.api.model;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Christoph on 02.02.14.
+ * Base implementation of a resource. Contains
+ * all functionality to create a response
+ *
+ * @author Christoph Grundmann
  */
 public class BaseResourceModel<T extends BaseObjectModel> {
-    private MetaModel meta;
-    private List<T> objects;
+    private List<T> objects = new ArrayList<>();
+    private MetaModel meta = new MetaModel();
 
+    /**
+     * Gets the meta data of the response
+     * @return The meta data
+     */
     public MetaModel getMeta() { return meta; }
 
     /**
@@ -20,11 +29,16 @@ public class BaseResourceModel<T extends BaseObjectModel> {
      * @param meta The meta data object
      * @return Instance of this
      */
+    @Deprecated
     public BaseResourceModel<T> setMeta(MetaModel meta) {
-        this.meta = meta;
+        //this.meta = meta;
         return this;
     }
 
+    /**
+     * Gets the result set of the response
+     * @return The result set
+     */
     public List<T> getObjects() {
         return objects;
     }
@@ -36,7 +50,8 @@ public class BaseResourceModel<T extends BaseObjectModel> {
      * @return Instance of this
      */
     public BaseResourceModel<T> setObjects(List<T> objects) {
-        this.objects = objects;
+        this.objects.clear();
+        this.objects.addAll(objects);
         return this;
     }
 
@@ -59,5 +74,21 @@ public class BaseResourceModel<T extends BaseObjectModel> {
      */
     public boolean isEmpty() {
         return objects == null || objects.isEmpty();
+    }
+
+    public void setHttpStatusCode(Response.Status httpStatusCode) {
+        meta.setHttpStatusCode(httpStatusCode);
+    }
+
+    public Response.Status getHttpStatusCode() {
+        return meta.getHttpStatusCode();
+    }
+
+    public void setErrorOccurred(boolean errorOccurred) {
+        meta.setErrorOccurred(errorOccurred);
+    }
+
+    public boolean isErrorOccurred() {
+        return meta.isErrorOccurred();
     }
 }

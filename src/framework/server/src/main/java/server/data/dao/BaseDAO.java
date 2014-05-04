@@ -1,8 +1,11 @@
 package server.data.dao;
 
 /**
- * Created by Christoph on 03.04.2014.
+ * Base implementation of a data access object (DAO)
+ *
+ * @author Christoph Grundmann
  */
 public class BaseDAO {
-
+    protected static final String DATABASE_CONNECTION_ERROR = "Database is unreachable";
+    protected static final String SQL_EXECUTION_ERROR = "Unable to execute SQL statement, caused by: ";
 }

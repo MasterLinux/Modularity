@@ -2,6 +2,7 @@ package server.api.resource;
 
 import org.apache.http.util.TextUtils;
 import server.api.Api;
+import server.api.model.SessionsModel;
 import server.api.parameter.LoginBeanParam;
 import server.data.dao.SessionsDAO;
 
@@ -75,10 +76,19 @@ public class Sessions extends BaseResource {
             @PathParam("id") @DefaultValue("-1") int sessionId,
             @HeaderParam(Api.HEADER_AUTH_TOKEN) String token
     ) {
+        //validate required parameter
         if(sessionId == -1 || TextUtils.isEmpty(token)) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
 
-        return SessionsDAO.getInstance().closeSession(sessionId, token).toResponse();
+        //close session
+        SessionsModel sessions = SessionsDAO.getInstance().closeSession(sessionId, token);
+
+        //throw exception on error
+        if(sessions.isErrorOccurred()) {
+           throw new WebApplicationException(sessions.getHttpStatusCode());
+        }
+
+        return sessions.toResponse();
     }
 }

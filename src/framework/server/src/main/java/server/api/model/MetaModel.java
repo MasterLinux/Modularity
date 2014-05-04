@@ -1,5 +1,7 @@
 package server.api.model;
 
+import javax.ws.rs.core.Response;
+
 /**
  * Created by Christoph on 02.02.14.
  */
@@ -10,6 +12,8 @@ public class MetaModel {
     private int totalCount;
     private String next;
     private String previous;
+    private Response.Status httpStatusCode;
+    private boolean errorOccurred;
 
     public int getOffset() {
         return offset;
@@ -57,5 +61,21 @@ public class MetaModel {
 
     public void setPrevious(String previous) {
         this.previous = previous;
+    }
+
+    public void setHttpStatusCode(Response.Status httpStatusCode) {
+        this.httpStatusCode = httpStatusCode;
+    }
+
+    public Response.Status getHttpStatusCode() {
+        return httpStatusCode;
+    }
+
+    public void setErrorOccurred(boolean errorOccurred) {
+        this.errorOccurred = errorOccurred;
+    }
+
+    public boolean isErrorOccurred() {
+        return errorOccurred;
     }
 }
