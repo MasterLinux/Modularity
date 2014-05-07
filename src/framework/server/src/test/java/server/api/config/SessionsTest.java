@@ -15,9 +15,24 @@ import javax.ws.rs.core.MediaType;
  */
 public class SessionsTest extends BaseApiTest {
 
-    @Test(expected = NotAuthorizedException.class)
+    @Test
     public void testGetIt() {
         UserModel model = UserMock.getRegisteredUserWithMinimumInfo();
+
+        String responseMsg = getTarget()
+                .path("sessions")
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Api.HEADER_USER_NAME, "MasterLinux")//model.getUsername())
+                .header(Api.HEADER_USER_PASSWORD, "qwertz")//model.getPassword())
+                .get(String.class);
+
+        Assert.assertEquals("Got it!", responseMsg);
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void testAuthorizationFailed() {
+        UserModel model = UserMock.getUnregisteredUser();
 
         String responseMsg = getTarget()
                 .path("sessions")

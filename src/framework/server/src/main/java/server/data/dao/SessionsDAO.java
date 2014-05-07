@@ -65,10 +65,11 @@ public class SessionsDAO extends BaseDAO {
 
     /**
      * Gets the instance of this data access object
+     *
      * @return The instance of the data access object
      */
     public static SessionsDAO getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new SessionsDAO();
         }
 
@@ -86,22 +87,22 @@ public class SessionsDAO extends BaseDAO {
      */
     public SessionsModel createSession(int userId) {
         MySQLDatabase db = MySQLDatabase.getInstance();
-        SessionsModel session = getSessionByUserId(userId);
+        SessionsModel response = getSessionByUserId(userId);
 
-        //check whether the session exists
-        boolean exists = !session.isEmpty();
+        //check whether the response exists
+        boolean exists = !response.isEmpty();
 
-        //check whether the session is expired
-        boolean isExpired = !exists || session.getObjects().get(0).isExpired();
+        //check whether the response is expired
+        boolean isExpired = !exists || response.getObjects().get(0).isExpired();
 
-        if(db.isConnected()) {
-            //refresh current session if exists
+        if (db.isConnected()) {
+            //refresh current response if exists
             if (exists && isExpired) {
-                session = refreshSession(userId);
+                response = refreshSession(userId);
             }
 
-            //otherwise create a new session
-            else if(!exists) {
+            //otherwise create a new response
+            else if (!exists) {
                 try {
                     Date timeNow = getDate();
 
@@ -112,22 +113,32 @@ public class SessionsDAO extends BaseDAO {
                     statement.setString(4, buildAuthToken());
                     statement.setBoolean(5, false);
 
-                    //try to execute statement
-                    statement.execute();
+                    //get new created response on success
+                    if (statement.executeUpdate() > 0) {
+                        response = getSessionByUserId(userId);
+                    }
+
+                    //session could not be created
+                    else {
+                        response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
+                                .setErrorOccurred(true);
+                    }
+
                     statement.close();
 
-                    //get new created session
-                    session = getSessionByUserId(userId);
-
                 } catch (SQLException e) {
-                    //TODO add error handling
+                    logger.warning(SQL_EXECUTION_ERROR + e.getMessage());
+                    response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
+                            .setErrorOccurred(true);
                 }
             }
         } else {
-            //TODO add error handling
+            logger.warning(DATABASE_CONNECTION_ERROR);
+            response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
+                    .setErrorOccurred(true);
         }
 
-        return session;
+        return response;
     }
 
     /**
@@ -138,27 +149,37 @@ public class SessionsDAO extends BaseDAO {
      */
     private SessionsModel refreshSession(int userId) {
         MySQLDatabase db = MySQLDatabase.getInstance();
-        SessionsModel response = new SessionsModel(); //TODO create empty? SessionModel.empty();
+        SessionsModel response = new SessionsModel();
 
-        if(db.isConnected()) {
+        if (db.isConnected()) {
             try {
                 PreparedStatement statement = db.getConnection().prepareStatement(SQL_UPDATE_AUTH_TOKEN);
                 statement.setBoolean(1, false);
                 statement.setString(2, buildAuthToken());
                 statement.setInt(3, userId);
 
-                //try to execute statement
-                statement.execute();
+                //get updated session on success
+                if (statement.executeUpdate() > 0) {
+                    response = getSessionByUserId(userId);
+                }
+
+                //session does not exist
+                else {
+                    response.setHttpStatusCode(Response.Status.NOT_FOUND)
+                            .setErrorOccurred(true);
+                }
+
                 statement.close();
 
-                //get updated session
-                response = getSessionByUserId(userId);
-
             } catch (SQLException e) {
-                //TODO add error handling
+                logger.warning(SQL_EXECUTION_ERROR + e.getMessage());
+                response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
+                        .setErrorOccurred(true);
             }
         } else {
-            //TODO add error handling
+            logger.warning(DATABASE_CONNECTION_ERROR);
+            response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
+                    .setErrorOccurred(true);
         }
 
         return response;
@@ -176,7 +197,7 @@ public class SessionsDAO extends BaseDAO {
     /**
      * Gets a specific session
      *
-     * @param id ID of a user or the session
+     * @param id   ID of a user or the session
      * @param type The type of the given ID
      * @return The session
      */
@@ -185,7 +206,7 @@ public class SessionsDAO extends BaseDAO {
         List<SessionModel> sessions = new ArrayList<>(1);
         SessionsModel response = new SessionsModel();
 
-        if(db.isConnected()) {
+        if (db.isConnected()) {
             try {
                 PreparedStatement statement = null;
 
@@ -204,7 +225,7 @@ public class SessionsDAO extends BaseDAO {
 
                 ResultSet result = statement.executeQuery();
 
-                if(result.first()) {
+                if (result.first()) {
                     SessionModel session = new SessionModel();
 
                     session.setExpirationTime(result.getDate(COLUMN_EXPIRATION_TIME).toString());
@@ -217,11 +238,21 @@ public class SessionsDAO extends BaseDAO {
                     sessions.add(session);
                 }
 
+                //session does not exist
+                else {
+                    response.setHttpStatusCode(Response.Status.NOT_FOUND)
+                            .setErrorOccurred(true);
+                }
+
             } catch (SQLException e) {
-                //TODO add error handling
+                logger.warning(SQL_EXECUTION_ERROR + e.getMessage());
+                response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
+                        .setErrorOccurred(true);
             }
         } else {
-            //TODO add error handling
+            logger.warning(DATABASE_CONNECTION_ERROR);
+            response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
+                    .setErrorOccurred(true);
         }
 
         return (SessionsModel) response.setObjects(sessions);
@@ -250,7 +281,7 @@ public class SessionsDAO extends BaseDAO {
     /**
      * Closes and deletes the session of a specific user
      *
-     * @param id The ID of the session to close
+     * @param id        The ID of the session to close
      * @param authToken The token to authenticate for this action
      * @return The closed session or an empty response if session does not exists or the authentication fails
      */
@@ -258,22 +289,25 @@ public class SessionsDAO extends BaseDAO {
         MySQLDatabase db = MySQLDatabase.getInstance();
         SessionsModel response = this.getSessionById(id);
 
-        if(db.isConnected()) {
-            if(!response.isEmpty()) {
+        if (db.isConnected()) {
+            if (!response.isEmpty()) {
                 try {
                     PreparedStatement statement = db.getConnection().prepareStatement(SQL_DELETE_BY_ID);
                     statement.setInt(1, id);
                     statement.setString(2, authToken);
 
                     //update expiration flag on success
-                    if(statement.executeUpdate() > 0) {
-                        response.getObjects().get(0).setExpired(true);
+                    if (statement.executeUpdate() > 0) {
+                        SessionModel session = response.getObjects().get(0);
+                        session.setAuthToken(null);
+                        session.setExpired(true);
                     }
 
                     //otherwise the authorization has failed
                     else {
-                        response.setHttpStatusCode(Response.Status.UNAUTHORIZED);
-                        response.setErrorOccurred(true);
+                        response = (SessionsModel) new SessionsModel()
+                                .setHttpStatusCode(Response.Status.UNAUTHORIZED)
+                                .setErrorOccurred(true);
                     }
 
                     statement.close();
@@ -281,22 +315,25 @@ public class SessionsDAO extends BaseDAO {
 
                 //unknown SQL error
                 catch (SQLException e) {
-                    response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR);
                     logger.warning(SQL_EXECUTION_ERROR + e.getMessage());
-                    response.setErrorOccurred(true);
+                    response = (SessionsModel) new SessionsModel()
+                            .setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
+                            .setErrorOccurred(true);
                 }
 
             } else {
-                response.setHttpStatusCode(Response.Status.NOT_FOUND);
-                response.setErrorOccurred(true);
+                response = (SessionsModel) new SessionsModel()
+                        .setHttpStatusCode(Response.Status.NOT_FOUND)
+                        .setErrorOccurred(true);
             }
         }
 
         //database server is unreachable
         else {
-            response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR);
             logger.warning(DATABASE_CONNECTION_ERROR);
-            response.setErrorOccurred(true);
+            response = (SessionsModel) new SessionsModel()
+                    .setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
+                    .setErrorOccurred(true);
         }
 
         return response;
