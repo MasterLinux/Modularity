@@ -1,46 +1,20 @@
 package server.api.config;
 
 import junit.framework.Assert;
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import java.net.URI;
+import server.api.BaseApiTest;
 
 /**
  * Created by Christoph on 01.02.14.
  */
-public class ApplicationsTest {
-    private HttpServer server;
-    private WebTarget target;
-
-    @Before
-    public void setUp() throws Exception {
-        ResourceConfig rc = new ResourceConfig().packages("config");
-        server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://localhost:9090"), rc);
-        server.start();
-
-        Client c = ClientBuilder.newClient();
-        target = c.target("http://localhost:9090");
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        server.shutdownNow();
-    }
+public class ApplicationsTest extends BaseApiTest {
 
     /**
      * Test to see that the message "Got it!" is sent in the response.
      */
     @Test
     public void testGetIt() {
-        String responseMsg = target.path("applications").queryParam("offset", "2").request().get(String.class);
+        String responseMsg = getTarget().path("config/applications").queryParam("offset", "2").request().get(String.class);
         Assert.assertEquals("Got it!", responseMsg);
     }
 }

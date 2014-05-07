@@ -17,6 +17,15 @@ public class BaseResourceModel<T extends BaseObjectModel> {
     private List<T> objects = new ArrayList<>();
     private MetaModel meta = new MetaModel();
 
+    public BaseResourceModel(Response.Status status, boolean error) {
+        setHttpStatusCode(status);
+        setErrorOccurred(error);
+    }
+
+    public BaseResourceModel() {
+        this(Response.Status.OK, false);
+    }
+
     /**
      * Gets the meta data of the response
      * @return The meta data
@@ -59,13 +68,18 @@ public class BaseResourceModel<T extends BaseObjectModel> {
      * Parses this resource to JSON
      * @return The JSON representation of this resource
      */
-    public String toResponse() {
+    public Response toResponse() {
         Gson gson = new GsonBuilder()
                 .disableHtmlEscaping()
                 .serializeNulls()
                 .create();
 
-        return gson.toJson(this, getClass());
+        String response = gson.toJson(this, getClass());
+
+        return Response
+                .status(getMeta().getHttpStatusCode())
+                .entity(response)
+                .build();
     }
 
     /**
@@ -76,16 +90,18 @@ public class BaseResourceModel<T extends BaseObjectModel> {
         return objects == null || objects.isEmpty();
     }
 
-    public void setHttpStatusCode(Response.Status httpStatusCode) {
+    public BaseResourceModel<T> setHttpStatusCode(Response.Status httpStatusCode) {
         meta.setHttpStatusCode(httpStatusCode);
+        return this;
     }
 
     public Response.Status getHttpStatusCode() {
         return meta.getHttpStatusCode();
     }
 
-    public void setErrorOccurred(boolean errorOccurred) {
+    public BaseResourceModel<T> setErrorOccurred(boolean errorOccurred) {
         meta.setErrorOccurred(errorOccurred);
+        return this;
     }
 
     public boolean isErrorOccurred() {
