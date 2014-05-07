@@ -31,7 +31,9 @@ public class Sessions extends BaseResource {
     ) {
         SessionsModel sessions;
 
-        if (!login.isAuthorized()) {
+        if(login.isBadRequest()) {
+            sessions = new SessionsModel(Response.Status.BAD_REQUEST, true);
+        } else if (!login.isAuthorized()) {
             sessions = new SessionsModel(Response.Status.UNAUTHORIZED, true);
         } else {
             sessions = SessionsDAO.getInstance().getSessionByUserId(login.getUserId());
@@ -53,7 +55,9 @@ public class Sessions extends BaseResource {
     ) {
         SessionsModel sessions;
 
-        if (!login.isAuthorized()) {
+        if(login.isBadRequest()) {
+            sessions = new SessionsModel(Response.Status.BAD_REQUEST, true);
+        } else if (!login.isAuthorized()) {
             sessions = new SessionsModel(Response.Status.UNAUTHORIZED, true);
         } else {
             sessions = SessionsDAO.getInstance().createSession(login.getUserId());

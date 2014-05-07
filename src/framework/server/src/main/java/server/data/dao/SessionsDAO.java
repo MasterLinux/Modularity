@@ -115,7 +115,8 @@ public class SessionsDAO extends BaseDAO {
 
                     //get new created response on success
                     if (statement.executeUpdate() > 0) {
-                        response = getSessionByUserId(userId);
+                        response = (SessionsModel) getSessionByUserId(userId)
+                                .setHttpStatusCode(Response.Status.CREATED);
                     }
 
                     //session could not be created

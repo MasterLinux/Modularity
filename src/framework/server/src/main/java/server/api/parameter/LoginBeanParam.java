@@ -1,5 +1,6 @@
 package server.api.parameter;
 
+import org.apache.http.util.TextUtils;
 import server.api.Api;
 import server.api.model.UserModel;
 import server.data.dao.UsersDAO;
@@ -17,7 +18,8 @@ import java.util.List;
  */
 public class LoginBeanParam {
     private final Password password;
-    private int userId;
+    private final boolean isBadRequest;
+    private final int userId;
 
     private static final int UNKNOWN_USER_ID = -1;
 
@@ -30,8 +32,15 @@ public class LoginBeanParam {
             @HeaderParam(Api.HEADER_USER_NAME) String username,
             @HeaderParam(Api.HEADER_USER_PASSWORD) String password
     ) {
-        this.password = new Password(username, password, UserModel.class.toGenericString());
-        this.userId = getUserId(username);
+        if(TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
+            this.isBadRequest = true;
+            this.password = null;
+            this.userId = UNKNOWN_USER_ID;
+        } else {
+            this.isBadRequest = false;
+            this.password = new Password(username, password, UserModel.class.toGenericString());
+            this.userId = getUserId(username);
+        }
     }
 
     /**
@@ -56,8 +65,18 @@ public class LoginBeanParam {
      * @return <code>true</code> if the user is authorized, <code>false</code> otherwise
      */
     public boolean isAuthorized() {
-        return userId != UNKNOWN_USER_ID &&
+        return !isBadRequest && userId != UNKNOWN_USER_ID &&
                 UsersDAO.getInstance().isAuthorized(userId, password);
+    }
+
+    /**
+     * Indicates whether all required
+     * request header are set
+     *
+     * @return <code>true</code> if a header is missing, <code>false</code> otherwise
+     */
+    public boolean isBadRequest() {
+        return isBadRequest;
     }
 
     /**
