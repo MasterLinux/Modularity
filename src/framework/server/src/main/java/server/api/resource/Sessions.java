@@ -93,14 +93,14 @@ public class Sessions extends BaseResource {
     @Path("/{id: [0-9]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response closeSessionById(
-            @PathParam("id") @DefaultValue("-1") int sessionId,
+            @PathParam("id") @DefaultValue(Api.DEFAULT_VALUE_UNSET_ID) int sessionId,
             @HeaderParam(Api.HEADER_AUTH_TOKEN) String token
     ) {
         SessionsModel sessions = new SessionsModel();
         Response.Status status = Response.Status.OK;
 
         //validate required parameter
-        if (sessionId == -1 || TextUtils.isEmpty(token)) {
+        if (Api.isIdUnset(sessionId) || TextUtils.isEmpty(token)) {
             status = Response.Status.BAD_REQUEST;
         } else {
             try {
