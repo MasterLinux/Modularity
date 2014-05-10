@@ -104,26 +104,4 @@ public class BaseResourceModel<T extends BaseObjectModel> {
     public boolean isEmpty() {
         return objects == null || objects.isEmpty();
     }
-
-    @Deprecated
-    public BaseResourceModel<T> setHttpStatusCode(Response.Status httpStatusCode) {
-        meta.setHttpStatusCode(httpStatusCode);
-        return this;
-    }
-
-    @Deprecated
-    public Response.Status getHttpStatusCode() {
-        return meta.getHttpStatusCode();
-    }
-
-    @Deprecated
-    public BaseResourceModel<T> setErrorOccurred(boolean errorOccurred) {
-        meta.setErrorOccurred(errorOccurred);
-        return this;
-    }
-
-    @Deprecated
-    public boolean isErrorOccurred() {
-        return meta.isErrorOccurred();
-    }
 }

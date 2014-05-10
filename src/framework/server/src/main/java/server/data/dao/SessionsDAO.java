@@ -1,14 +1,10 @@
 package server.data.dao;
 
-import server.data.MySQLDatabase;
 import server.api.model.SessionModel;
 import server.api.model.SessionsModel;
-import server.exception.DataSourceAuthorizationException;
-import server.exception.DataSourceDeletionException;
-import server.exception.DataSourceNotFoundException;
-import server.exception.DataSourceUnavailableException;
+import server.data.MySQLDatabase;
+import server.exception.*;
 
-import javax.ws.rs.core.Response;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -89,7 +85,11 @@ public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource a
      * @param userId The ID of the user of the required session
      * @return The session or a closed session on error
      */
-    public SessionsModel createSession(int userId) {
+    public SessionsModel createSession(int userId) throws
+            ServiceUnavailableException,
+            ResourceNotFoundException,
+            OperationException {
+
         MySQLDatabase db = MySQLDatabase.getInstance();
         SessionsModel response = getSessionByUserId(userId);
 
@@ -119,28 +119,29 @@ public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource a
 
                     //get new created response on success
                     if (statement.executeUpdate() > 0) {
-                        response = (SessionsModel) getSessionByUserId(userId)
-                                .setHttpStatusCode(Response.Status.CREATED);
+                        response = getSessionByUserId(userId);
                     }
 
                     //session could not be created
                     else {
-                        response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
-                                .setErrorOccurred(true);
+                        throw new OperationException(
+                                OperationException.ErrorCode.FAIL_TO_CREATE
+                        );
                     }
 
                     statement.close();
 
                 } catch (SQLException e) {
                     logger.warning(SQL_EXECUTION_ERROR + e.getMessage());
-                    response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
-                            .setErrorOccurred(true);
+
+                    throw new OperationException(
+                            OperationException.ErrorCode.FAIL_TO_CREATE
+                    );
                 }
             }
         } else {
             logger.warning(DATABASE_CONNECTION_ERROR);
-            response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
-                    .setErrorOccurred(true);
+            throw new ServiceUnavailableException();
         }
 
         return response;
@@ -152,9 +153,13 @@ public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource a
      * @param userId ID of the user which session should be refreshed
      * @return The refreshed session
      */
-    private SessionsModel refreshSession(int userId) {
+    private SessionsModel refreshSession(int userId) throws
+            ServiceUnavailableException,
+            ResourceNotFoundException,
+            OperationException {
+
         MySQLDatabase db = MySQLDatabase.getInstance();
-        SessionsModel response = new SessionsModel();
+        SessionsModel response;
 
         if (db.isConnected()) {
             try {
@@ -170,21 +175,21 @@ public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource a
 
                 //session does not exist
                 else {
-                    response.setHttpStatusCode(Response.Status.NOT_FOUND)
-                            .setErrorOccurred(true);
+                    throw new ResourceNotFoundException();
                 }
 
                 statement.close();
 
             } catch (SQLException e) {
                 logger.warning(SQL_EXECUTION_ERROR + e.getMessage());
-                response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
-                        .setErrorOccurred(true);
+
+                throw new OperationException(
+                        OperationException.ErrorCode.FAIL_TO_UPDATE
+                );
             }
         } else {
             logger.warning(DATABASE_CONNECTION_ERROR);
-            response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
-                    .setErrorOccurred(true);
+            throw new ServiceUnavailableException();
         }
 
         return response;
@@ -206,7 +211,11 @@ public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource a
      * @param type The type of the given ID
      * @return The session
      */
-    private SessionsModel getSession(int id, IdType type) {
+    private SessionsModel getSession(int id, IdType type) throws
+            ResourceNotFoundException,
+            ServiceUnavailableException,
+            OperationException {
+
         MySQLDatabase db = MySQLDatabase.getInstance();
         List<SessionModel> sessions = new ArrayList<>(1);
         SessionsModel response = new SessionsModel();
@@ -245,19 +254,19 @@ public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource a
 
                 //session does not exist
                 else {
-                    response.setHttpStatusCode(Response.Status.NOT_FOUND)
-                            .setErrorOccurred(true);
+                    throw new ResourceNotFoundException();
                 }
 
             } catch (SQLException e) {
                 logger.warning(SQL_EXECUTION_ERROR + e.getMessage());
-                response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
-                        .setErrorOccurred(true);
+
+                throw new OperationException(
+                        OperationException.ErrorCode.FAIL_TO_GET
+                );
             }
         } else {
             logger.warning(DATABASE_CONNECTION_ERROR);
-            response.setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
-                    .setErrorOccurred(true);
+            throw new ServiceUnavailableException();
         }
 
         return (SessionsModel) response.setObjects(sessions);
@@ -269,7 +278,11 @@ public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource a
      * @param id ID of the user who owns the session
      * @return The session of the user with the given ID
      */
-    public SessionsModel getSessionByUserId(int id) {
+    public SessionsModel getSessionByUserId(int id) throws
+            ServiceUnavailableException,
+            ResourceNotFoundException,
+            OperationException {
+
         return getSession(id, IdType.USER_ID);
     }
 
@@ -279,7 +292,11 @@ public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource a
      * @param id ID of the session to get
      * @return The session
      */
-    public SessionsModel getSessionById(int id) {
+    public SessionsModel getSessionById(int id) throws
+            ServiceUnavailableException,
+            ResourceNotFoundException,
+            OperationException {
+
         return getSession(id, IdType.SESSION_ID);
     }
 
@@ -291,10 +308,10 @@ public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource a
      * @return The closed session or an empty response if session does not exists or the authentication fails
      */
     public SessionsModel closeSession(int id, String authToken) throws
-            DataSourceUnavailableException,
-            DataSourceNotFoundException,
-            DataSourceDeletionException,
-            DataSourceAuthorizationException {
+            ServiceUnavailableException,
+            ResourceNotFoundException,
+            AuthorizationException,
+            OperationException {
 
         MySQLDatabase db = MySQLDatabase.getInstance();
         SessionsModel response = this.getSessionById(id);
@@ -308,20 +325,14 @@ public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource a
 
                     //update expiration flag on success
                     if (statement.executeUpdate() > 0) {
-                        SessionModel session = response.getObjects().get(0);
+                        SessionModel session = response.getObject(0);
                         session.setAuthToken(null);
                         session.setExpired(true);
                     }
 
                     //otherwise the authorization has failed
                     else {
-                        throw new DataSourceAuthorizationException();
-
-                        /* TODO
-                        response = (SessionsModel) new SessionsModel()
-                                .setHttpStatusCode(Response.Status.UNAUTHORIZED)
-                                .setErrorOccurred(true);
-                                */
+                        throw new AuthorizationException();
                     }
 
                     statement.close();
@@ -330,36 +341,21 @@ public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource a
                 //unknown SQL error
                 catch (SQLException e) {
                     logger.warning(SQL_EXECUTION_ERROR + e.getMessage());
-                    throw new DataSourceDeletionException();
 
-                    /* TODO
-                    response = (SessionsModel) new SessionsModel()
-                            .setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
-                            .setErrorOccurred(true);
-                            */
+                    throw new OperationException(
+                            OperationException.ErrorCode.FAIL_TO_DELETE
+                    );
                 }
 
             } else {
-                throw new DataSourceNotFoundException();
-
-                /* TODO use exception instead
-                response = (SessionsModel) new SessionsModel()
-                        .setHttpStatusCode(Response.Status.NOT_FOUND)
-                        .setErrorOccurred(true);
-                        */
+                throw new ResourceNotFoundException();
             }
         }
 
         //database server is unreachable
         else {
             logger.warning(DATABASE_CONNECTION_ERROR);
-            throw new DataSourceUnavailableException();
-
-            /* TODO use exception instead
-            response = (SessionsModel) new SessionsModel()
-                    .setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
-                    .setErrorOccurred(true);
-                    */
+            throw new ServiceUnavailableException();
         }
 
         return response;

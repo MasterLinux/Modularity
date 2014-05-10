@@ -5,6 +5,8 @@ import server.api.Api;
 import server.api.model.SessionsModel;
 import server.api.parameter.LoginBeanParam;
 import server.data.dao.SessionsDAO;
+import server.exception.*;
+import server.exception.ServiceUnavailableException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -29,17 +31,24 @@ public class Sessions extends BaseResource {
     public Response getSession(
             @BeanParam LoginBeanParam login
     ) {
-        SessionsModel sessions;
+        SessionsModel sessions = new SessionsModel();
+        Response.Status status = Response.Status.OK;
 
         if(login.isBadRequest()) {
-            sessions = new SessionsModel(Response.Status.BAD_REQUEST, true);
+            status = Response.Status.BAD_REQUEST;
         } else if (!login.isAuthorized()) {
-            sessions = new SessionsModel(Response.Status.UNAUTHORIZED, true);
+            status = Response.Status.UNAUTHORIZED;
         } else {
-            sessions = SessionsDAO.getInstance().getSessionByUserId(login.getUserId());
+            try {
+                sessions = SessionsDAO.getInstance().getSessionByUserId(login.getUserId());
+            } catch (ServiceUnavailableException | OperationException e) {
+                status = Response.Status.INTERNAL_SERVER_ERROR;
+            } catch (ResourceNotFoundException e) {
+                status = Response.Status.NOT_FOUND;
+            }
         }
 
-        return sessions.toResponse();
+        return sessions.toResponse(status);
     }
 
     /**
@@ -53,17 +62,24 @@ public class Sessions extends BaseResource {
     public Response createSession(
             @BeanParam LoginBeanParam login
     ) {
-        SessionsModel sessions;
+        SessionsModel sessions = new SessionsModel();
+        Response.Status status = Response.Status.CREATED;
 
         if(login.isBadRequest()) {
-            sessions = new SessionsModel(Response.Status.BAD_REQUEST, true);
+            status = Response.Status.BAD_REQUEST;
         } else if (!login.isAuthorized()) {
-            sessions = new SessionsModel(Response.Status.UNAUTHORIZED, true);
+            status = Response.Status.UNAUTHORIZED;
         } else {
-            sessions = SessionsDAO.getInstance().createSession(login.getUserId());
+            try {
+                sessions = SessionsDAO.getInstance().createSession(login.getUserId());
+            } catch (ServiceUnavailableException | OperationException e) {
+                status = Response.Status.INTERNAL_SERVER_ERROR;
+            } catch (ResourceNotFoundException e) {
+                status = Response.Status.NOT_FOUND;
+            }
         }
 
-        return sessions.toResponse();
+        return sessions.toResponse(status);
     }
 
     /**
@@ -80,15 +96,24 @@ public class Sessions extends BaseResource {
             @PathParam("id") @DefaultValue("-1") int sessionId,
             @HeaderParam(Api.HEADER_AUTH_TOKEN) String token
     ) {
-        SessionsModel sessions;
+        SessionsModel sessions = new SessionsModel();
+        Response.Status status = Response.Status.OK;
 
         //validate required parameter
         if (sessionId == -1 || TextUtils.isEmpty(token)) {
-            sessions = new SessionsModel(Response.Status.BAD_REQUEST, true);
+            status = Response.Status.BAD_REQUEST;
         } else {
-            sessions = SessionsDAO.getInstance().closeSession(sessionId, token);
+            try {
+                sessions = SessionsDAO.getInstance().closeSession(sessionId, token);
+            } catch (ServiceUnavailableException | OperationException e) {
+                status = Response.Status.INTERNAL_SERVER_ERROR;
+            } catch (ResourceNotFoundException e) {
+                status = Response.Status.NOT_FOUND;
+            } catch (AuthorizationException e) {
+                status = Response.Status.UNAUTHORIZED;
+            }
         }
 
-        return sessions.toResponse();
+        return sessions.toResponse(status);
     }
 }
