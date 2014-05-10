@@ -5,6 +5,6 @@ package server.exception;
  */
 public class AuthorizationException extends Throwable {
     public AuthorizationException() {
-        super("Authorization failed.");
+        super("Authorization has failed.");
     }
 }
