@@ -3,6 +3,10 @@ package server.data.dao;
 import server.data.MySQLDatabase;
 import server.api.model.SessionModel;
 import server.api.model.SessionsModel;
+import server.exception.DataSourceAuthorizationException;
+import server.exception.DataSourceDeletionException;
+import server.exception.DataSourceNotFoundException;
+import server.exception.DataSourceUnavailableException;
 
 import javax.ws.rs.core.Response;
 import java.sql.Date;
@@ -19,7 +23,7 @@ import java.util.logging.Logger;
  *
  * @author Christoph Grundmann
  */
-public class SessionsDAO extends BaseDAO {
+public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource as interface?
     private static final Logger logger = Logger.getLogger(SessionsDAO.class.getName());
     private static SessionsDAO instance;
 
@@ -286,7 +290,12 @@ public class SessionsDAO extends BaseDAO {
      * @param authToken The token to authenticate for this action
      * @return The closed session or an empty response if session does not exists or the authentication fails
      */
-    public SessionsModel closeSession(int id, String authToken) {
+    public SessionsModel closeSession(int id, String authToken) throws
+            DataSourceUnavailableException,
+            DataSourceNotFoundException,
+            DataSourceDeletionException,
+            DataSourceAuthorizationException {
+
         MySQLDatabase db = MySQLDatabase.getInstance();
         SessionsModel response = this.getSessionById(id);
 
@@ -306,9 +315,13 @@ public class SessionsDAO extends BaseDAO {
 
                     //otherwise the authorization has failed
                     else {
+                        throw new DataSourceAuthorizationException();
+
+                        /* TODO
                         response = (SessionsModel) new SessionsModel()
                                 .setHttpStatusCode(Response.Status.UNAUTHORIZED)
                                 .setErrorOccurred(true);
+                                */
                     }
 
                     statement.close();
@@ -317,24 +330,36 @@ public class SessionsDAO extends BaseDAO {
                 //unknown SQL error
                 catch (SQLException e) {
                     logger.warning(SQL_EXECUTION_ERROR + e.getMessage());
+                    throw new DataSourceDeletionException();
+
+                    /* TODO
                     response = (SessionsModel) new SessionsModel()
                             .setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
                             .setErrorOccurred(true);
+                            */
                 }
 
             } else {
+                throw new DataSourceNotFoundException();
+
+                /* TODO use exception instead
                 response = (SessionsModel) new SessionsModel()
                         .setHttpStatusCode(Response.Status.NOT_FOUND)
                         .setErrorOccurred(true);
+                        */
             }
         }
 
         //database server is unreachable
         else {
             logger.warning(DATABASE_CONNECTION_ERROR);
+            throw new DataSourceUnavailableException();
+
+            /* TODO use exception instead
             response = (SessionsModel) new SessionsModel()
                     .setHttpStatusCode(Response.Status.INTERNAL_SERVER_ERROR)
                     .setErrorOccurred(true);
+                    */
         }
 
         return response;

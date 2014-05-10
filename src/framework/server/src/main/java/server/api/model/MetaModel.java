@@ -12,7 +12,6 @@ public class MetaModel {
     private int totalCount;
     private String next;
     private String previous;
-    private Response.Status httpStatusCode;
     private boolean errorOccurred;
 
     public int getOffset() {
@@ -63,18 +62,17 @@ public class MetaModel {
         this.previous = previous;
     }
 
+    @Deprecated
     public void setHttpStatusCode(Response.Status httpStatusCode) {
-        this.httpStatusCode = httpStatusCode;
+
     }
 
-    public Response.Status getHttpStatusCode() {
-        return httpStatusCode;
-    }
-
+    @Deprecated
     public void setErrorOccurred(boolean errorOccurred) {
         this.errorOccurred = errorOccurred;
     }
 
+    @Deprecated
     public boolean isErrorOccurred() {
         return errorOccurred;
     }

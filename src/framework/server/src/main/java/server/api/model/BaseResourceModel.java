@@ -17,15 +17,6 @@ public class BaseResourceModel<T extends BaseObjectModel> {
     private List<T> objects = new ArrayList<>();
     private MetaModel meta = new MetaModel();
 
-    public BaseResourceModel(Response.Status status, boolean error) {
-        setHttpStatusCode(status);
-        setErrorOccurred(error);
-    }
-
-    public BaseResourceModel() {
-        this(Response.Status.OK, false);
-    }
-
     /**
      * Gets the meta data of the response
      * @return The meta data
@@ -47,9 +38,24 @@ public class BaseResourceModel<T extends BaseObjectModel> {
     /**
      * Gets the result set of the response
      * @return The result set
+     * @deprecated Use getObject instead
      */
+    @Deprecated
     public List<T> getObjects() {
         return objects;
+    }
+
+    /**
+     * Gets a specific object by its index
+     * @param index Index of the object to get
+     * @return The object or <code>null</code> if not exists
+     */
+    public T getObject(int index) {
+        if(objects != null && objects.size() > index) {
+            return objects.get(index);
+        }
+
+        return null;
     }
 
     /**
@@ -65,10 +71,11 @@ public class BaseResourceModel<T extends BaseObjectModel> {
     }
 
     /**
-     * Parses this resource to JSON
+     * Parses this response to JSON
+     * @param httpStatusCode HTTP status code of this response
      * @return The JSON representation of this resource
      */
-    public Response toResponse() {
+    public Response toResponse(Response.Status httpStatusCode) {
         Gson gson = new GsonBuilder()
                 .disableHtmlEscaping()
                 .serializeNulls()
@@ -77,9 +84,17 @@ public class BaseResourceModel<T extends BaseObjectModel> {
         String response = gson.toJson(this, getClass());
 
         return Response
-                .status(getMeta().getHttpStatusCode())
+                .status(httpStatusCode)
                 .entity(response)
                 .build();
+    }
+
+    /**
+     * Parses this resource to JSON
+     * @return The JSON representation of this resource
+     */
+    public Response toResponse() {
+        return toResponse(Response.Status.OK);
     }
 
     /**
@@ -90,20 +105,24 @@ public class BaseResourceModel<T extends BaseObjectModel> {
         return objects == null || objects.isEmpty();
     }
 
+    @Deprecated
     public BaseResourceModel<T> setHttpStatusCode(Response.Status httpStatusCode) {
         meta.setHttpStatusCode(httpStatusCode);
         return this;
     }
 
+    @Deprecated
     public Response.Status getHttpStatusCode() {
         return meta.getHttpStatusCode();
     }
 
+    @Deprecated
     public BaseResourceModel<T> setErrorOccurred(boolean errorOccurred) {
         meta.setErrorOccurred(errorOccurred);
         return this;
     }
 
+    @Deprecated
     public boolean isErrorOccurred() {
         return meta.isErrorOccurred();
     }
