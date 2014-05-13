@@ -22,19 +22,19 @@ public class SessionService extends SecureService {
 
     public Response getSession() {
         SessionsModel sessions = new SessionsModel();
-        javax.ws.rs.core.Response.Status status = javax.ws.rs.core.Response.Status.OK;
+        Response.Status status = Response.Status.OK;
 
         if(missingCredentials()) {
-            status = javax.ws.rs.core.Response.Status.BAD_REQUEST;
+            status = Response.Status.BAD_REQUEST;
         } else if (!isAuthorized()) {
-            status = javax.ws.rs.core.Response.Status.UNAUTHORIZED;
+            status = Response.Status.UNAUTHORIZED;
         } else {
             try {
                 sessions = SessionsDAO.getInstance().getSessionByUserId(getUserId());
             } catch (ServiceUnavailableException | OperationException e) {
-                status = javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+                status = Response.Status.INTERNAL_SERVER_ERROR;
             } catch (ResourceNotFoundException e) {
-                status = javax.ws.rs.core.Response.Status.NOT_FOUND;
+                status = Response.Status.NOT_FOUND;
             }
         }
 
