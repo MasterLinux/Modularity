@@ -13,8 +13,4 @@ public class Api {
 
     //default values
     public static final String DEFAULT_VALUE_UNSET_ID = "-1";
-
-    public static boolean isIdUnset(int id) {
-        return DEFAULT_VALUE_UNSET_ID.equals(String.valueOf(id));
-    }
 }

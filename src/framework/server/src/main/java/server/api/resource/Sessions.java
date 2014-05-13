@@ -1,12 +1,8 @@
 package server.api.resource;
 
-import org.apache.http.util.TextUtils;
 import server.api.Api;
-import server.api.model.SessionsModel;
 import server.api.parameter.LoginBeanParam;
-import server.data.dao.SessionsDAO;
-import server.exception.*;
-import server.exception.ServiceUnavailableException;
+import server.api.service.SessionService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -31,24 +27,7 @@ public class Sessions extends BaseResource {
     public Response getSession(
             @BeanParam LoginBeanParam login
     ) {
-        SessionsModel sessions = new SessionsModel();
-        Response.Status status = Response.Status.OK;
-
-        if(login.isBadRequest()) {
-            status = Response.Status.BAD_REQUEST;
-        } else if (!login.isAuthorized()) {
-            status = Response.Status.UNAUTHORIZED;
-        } else {
-            try {
-                sessions = SessionsDAO.getInstance().getSessionByUserId(login.getUserId());
-            } catch (ServiceUnavailableException | OperationException e) {
-                status = Response.Status.INTERNAL_SERVER_ERROR;
-            } catch (ResourceNotFoundException e) {
-                status = Response.Status.NOT_FOUND;
-            }
-        }
-
-        return sessions.toResponse(status);
+        return new SessionService(login.getUsername(), login.getPassword()).getSession();
     }
 
     /**
@@ -62,24 +41,7 @@ public class Sessions extends BaseResource {
     public Response createSession(
             @BeanParam LoginBeanParam login
     ) {
-        SessionsModel sessions = new SessionsModel();
-        Response.Status status = Response.Status.CREATED;
-
-        if(login.isBadRequest()) {
-            status = Response.Status.BAD_REQUEST;
-        } else if (!login.isAuthorized()) {
-            status = Response.Status.UNAUTHORIZED;
-        } else {
-            try {
-                sessions = SessionsDAO.getInstance().createSession(login.getUserId());
-            } catch (ServiceUnavailableException | OperationException e) {
-                status = Response.Status.INTERNAL_SERVER_ERROR;
-            } catch (ResourceNotFoundException e) {
-                status = Response.Status.NOT_FOUND;
-            }
-        }
-
-        return sessions.toResponse(status);
+        return new SessionService(login.getUsername(), login.getPassword()).createSession();
     }
 
     /**
@@ -96,24 +58,6 @@ public class Sessions extends BaseResource {
             @PathParam("id") @DefaultValue(Api.DEFAULT_VALUE_UNSET_ID) int sessionId,
             @HeaderParam(Api.HEADER_AUTH_TOKEN) String token
     ) {
-        SessionsModel sessions = new SessionsModel();
-        Response.Status status = Response.Status.OK;
-
-        //validate required parameter
-        if (Api.isIdUnset(sessionId) || TextUtils.isEmpty(token)) {
-            status = Response.Status.BAD_REQUEST;
-        } else {
-            try {
-                sessions = SessionsDAO.getInstance().closeSession(sessionId, token);
-            } catch (ServiceUnavailableException | OperationException e) {
-                status = Response.Status.INTERNAL_SERVER_ERROR;
-            } catch (ResourceNotFoundException e) {
-                status = Response.Status.NOT_FOUND;
-            } catch (AuthorizationException e) {
-                status = Response.Status.UNAUTHORIZED;
-            }
-        }
-
-        return sessions.toResponse(status);
+        return new SessionService(token).closeSession(sessionId);
     }
 }

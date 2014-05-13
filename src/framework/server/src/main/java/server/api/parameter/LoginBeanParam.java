@@ -1,13 +1,8 @@
 package server.api.parameter;
 
-import org.apache.http.util.TextUtils;
 import server.api.Api;
-import server.api.model.UserModel;
-import server.data.dao.UsersDAO;
-import server.security.Password;
 
 import javax.ws.rs.HeaderParam;
-import java.util.List;
 
 /**
  * Bean parameter used to check whether
@@ -17,11 +12,9 @@ import java.util.List;
  * @author Christoph Grundmann
  */
 public class LoginBeanParam {
-    private final Password password;
-    private final boolean isBadRequest;
-    private final int userId;
 
-    private static final int UNKNOWN_USER_ID = -1;
+    private final String username;
+    private final String password;
 
     /**
      * Initializes the login bean parameter
@@ -32,58 +25,16 @@ public class LoginBeanParam {
             @HeaderParam(Api.HEADER_USER_NAME) String username,
             @HeaderParam(Api.HEADER_USER_PASSWORD) String password
     ) {
-        if(TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-            this.isBadRequest = true;
-            this.password = null;
-            this.userId = UNKNOWN_USER_ID;
-        } else {
-            this.isBadRequest = false;
-            this.password = new Password(username, password, UserModel.class.toGenericString());
-            this.userId = getUserId(username);
-        }
+
+        this.username = username;
+        this.password = password;
     }
 
-    /**
-     * Gets the ID of a specific user by its username
-     * @param username The name of the user who`s ID is required
-     * @return The ID of the user or <code>-1</code> if user not exists
-     */
-    private int getUserId(String username) {
-        List<UserModel> users = UsersDAO.getInstance().getByUsername(username);
-
-        if(users.isEmpty()) {
-           return UNKNOWN_USER_ID;
-        }
-
-        return users.get(0).getId();
+    public String getUsername() {
+        return username;
     }
 
-    /**
-     * Checks whether the user is authorized to
-     * use this API.
-     *
-     * @return <code>true</code> if the user is authorized, <code>false</code> otherwise
-     */
-    public boolean isAuthorized() {
-        return !isBadRequest && userId != UNKNOWN_USER_ID &&
-                UsersDAO.getInstance().isAuthorized(userId, password);
-    }
-
-    /**
-     * Indicates whether all required
-     * request header are set
-     *
-     * @return <code>true</code> if a header is missing, <code>false</code> otherwise
-     */
-    public boolean isBadRequest() {
-        return isBadRequest;
-    }
-
-    /**
-     * Gets the user ID of the user
-     * @return The ID of the user
-     */
-    public int getUserId() {
-        return userId;
+    public String getPassword() {
+        return password;
     }
 }
