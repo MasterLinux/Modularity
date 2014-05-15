@@ -1,6 +1,5 @@
 package server.api.service;
 
-
 import server.api.model.SessionsModel;
 import server.data.dao.SessionsDAO;
 import server.exception.AuthorizationException;
