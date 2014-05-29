@@ -6,7 +6,7 @@ import server.api.model.UserModel;
 import server.api.parameter.MetaBeanParam;
 import server.api.parameter.SessionBeanParam;
 import server.data.dao.UsersDAO;
-import server.security.Password;
+import server.security.Token;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -107,15 +107,15 @@ public class Users extends BaseResource {
     ) {
         try {
             UserModel user = new Gson().fromJson(body, UserModel.class);
+            Token token = new Token.Builder(user.getUsername(), 3)
+                    .addPhrase(user.getPassword())
+                    .addPhrase(UserModel.class)
+                    .build();
 
             //try to add a new user
             if(!UsersDAO.getInstance().register(
                     user.getUsername(),
-                    new Password(
-                            user.getUsername(),
-                            user.getPassword(),
-                            UserModel.class.toGenericString()
-                    ),
+                    token,
                     user.getPrename(),
                     user.getSurname(),
                     user.getBirthdayDate(),

@@ -4,7 +4,7 @@ import org.apache.http.util.TextUtils;
 import server.Server;
 import server.api.model.UserModel;
 import server.data.MySQLDatabase;
-import server.security.Password;
+import server.security.Token;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -182,7 +182,7 @@ public class UsersDAO {
      *
      * @return <code>true</code> when the user is added successfully, <code>false</code> otherwise
      */
-    public boolean register(String username, Password password, String prename, String surname, Date birthday, String street, String houseNumber, String postalCode, String city, String country) {
+    public boolean register(String username, Token password, String prename, String surname, Date birthday, String street, String houseNumber, String postalCode, String city, String country) {
         MySQLDatabase db = MySQLDatabase.getInstance();
 
         if(db.isConnected()) {
@@ -191,7 +191,7 @@ public class UsersDAO {
 
                 //required fields
                 statement.setString(1, username);
-                statement.setBytes(2, password.getSecureToken());
+                statement.setBytes(2, password.getBytes());
 
                 //optional fields
                 setOptionalField(3, prename, statement);
@@ -242,7 +242,7 @@ public class UsersDAO {
      * @param password The password of the user to check for authorization
      * @return <code>true</code> if the user is authorized, <code>false</code> otherwise
      */
-    public boolean isAuthorized(int id, Password password) {
+    public boolean isAuthorized(int id, Token password) {
         MySQLDatabase db = MySQLDatabase.getInstance();
 
         if(db.isConnected()) {

@@ -4,7 +4,7 @@ import org.apache.http.util.TextUtils;
 import server.api.Api;
 import server.api.model.UserModel;
 import server.data.dao.UsersDAO;
-import server.security.Password;
+import server.security.Token;
 
 import java.util.List;
 
@@ -18,13 +18,16 @@ public abstract class SecureService {
     protected static final int UNKNOWN_USER_ID = -1;
     private final AuthorizationType authType;
     private int userId = UNKNOWN_USER_ID;
-    private Password password;
+    private Token password;
     private String authToken;
 
     public SecureService(String username, String password) {
         this.authType = AuthorizationType.CREDENTIALS;
         if(!TextUtils.isEmpty(username) && !TextUtils.isEmpty(password)) {
-            this.password = new Password(username, password, UserModel.class.toGenericString());
+            this.password = new Token.Builder(username, 3)
+                    .addPhrase(password)
+                    .addPhrase(UserModel.class)
+                    .build();
             this.userId = getUserId(username);
         }
     }

@@ -53,8 +53,6 @@ public class SessionService extends SecureService {
                 sessions = SessionsDAO.getInstance().createSession(getUserId());
             } catch (ServiceUnavailableException | OperationException e) {
                 status = Response.Status.INTERNAL_SERVER_ERROR;
-            } catch (ResourceNotFoundException e) {
-                status = Response.Status.NOT_FOUND;
             }
         }
 

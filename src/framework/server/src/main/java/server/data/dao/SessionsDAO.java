@@ -3,7 +3,11 @@ package server.data.dao;
 import server.api.model.SessionModel;
 import server.api.model.SessionsModel;
 import server.data.MySQLDatabase;
-import server.exception.*;
+import server.exception.AuthorizationException;
+import server.exception.OperationException;
+import server.exception.ResourceNotFoundException;
+import server.exception.ServiceUnavailableException;
+import server.security.Token;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -11,7 +15,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Logger;
 
 /**
@@ -87,22 +90,33 @@ public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource a
      */
     public SessionsModel createSession(int userId) throws
             ServiceUnavailableException,
-            ResourceNotFoundException,
             OperationException {
 
         MySQLDatabase db = MySQLDatabase.getInstance();
-        SessionsModel response = getSessionByUserId(userId);
+        SessionsModel response;
+
+        try {
+            response = getSessionByUserId(userId);
+        } catch(ResourceNotFoundException e) {
+            response = null;
+        }
 
         //check whether the response exists
-        boolean exists = !response.isEmpty();
+        boolean exists = response != null;
 
         //check whether the response is expired
-        boolean isExpired = !exists || response.getObjects().get(0).isExpired();
+        boolean isExpired = !exists || response.getObject(0).isExpired();
 
         if (db.isConnected()) {
             //refresh current response if exists
             if (exists && isExpired) {
-                response = refreshSession(userId);
+                try {
+                    response = refreshSession(userId);
+                } catch (ResourceNotFoundException e) {
+                    throw new OperationException(
+                            OperationException.ErrorCode.FAIL_TO_CREATE
+                    );
+                }
             }
 
             //otherwise create a new response
@@ -134,6 +148,10 @@ public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource a
                 } catch (SQLException e) {
                     logger.warning(SQL_EXECUTION_ERROR + e.getMessage());
 
+                    throw new OperationException(
+                            OperationException.ErrorCode.FAIL_TO_CREATE
+                    );
+                } catch (ResourceNotFoundException e) {
                     throw new OperationException(
                             OperationException.ErrorCode.FAIL_TO_CREATE
                     );
@@ -196,7 +214,9 @@ public class SessionsDAO extends BaseDAO { //TODO implements SessionDataSource a
     }
 
     private String buildAuthToken() {
-        return "auth_token_" + new Random().nextDouble(); //TODO implement
+        return new Token.Builder("auth_token", 1)
+                .addPhrase(getDate().getTime())
+                .build().toString();
     }
 
     private Date getDate() { //TODO move to util class

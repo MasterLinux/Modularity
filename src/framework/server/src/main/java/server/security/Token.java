@@ -8,6 +8,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Representation of a secure token
@@ -168,6 +169,17 @@ public class Token {
     }
 
     /**
+     * Returns <code>true</code> if the secure token is
+     * <i>equal</i> to this password.
+     *
+     * @param secureToken The secure token to check for equality
+     * @return <code>true</code> if both are equal, <code>false</code> otherwise
+     */
+    public boolean equals(byte[] secureToken) {
+        return Arrays.equals(secureToken, this.secureToken);
+    }
+
+    /**
      * Builds a token
      */
     public static class Builder {
@@ -220,6 +232,17 @@ public class Token {
          */
         public Builder addPhrase(long phrase) {
             phrases.add(ByteBuffer.allocate(Long.SIZE/Byte.SIZE).putLong(phrase).array());
+            return this;
+        }
+
+        /**
+         * Adds a new phrase for token generation
+         *
+         * @param phrase The phrase to add
+         * @return This builder
+         */
+        public Builder addPhrase(Class phrase) {
+            phrases.add(phrase.getName().getBytes());
             return this;
         }
 
