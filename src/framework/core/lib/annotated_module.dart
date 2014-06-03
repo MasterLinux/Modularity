@@ -1,5 +1,11 @@
 part of lib.core;
 
+/**
+ * Helper class to load and handle annotated
+ * modules. This class is used to load
+ * modules with the help of its library
+ * and class name.
+ */
 class AnnotatedModule {
   final Map<String, Object> config;
   final Fragment fragment;
@@ -11,11 +17,7 @@ class AnnotatedModule {
   ModuleContext _context;
 
   String _uniqueId;
-  String _author;
-  String _company;
-  String _eMail;
-  String _website;
-  String _version;
+  Module _meta;
 
   /**
    * Gets the unique ID of the module.
@@ -37,29 +39,12 @@ class AnnotatedModule {
   }
 
   /**
-   * Gets the company name of the author of the module.
+   * Gets the meta information
+   * of this module.
    */
-  String get company => _company;
-
-  /**
-   * Gets the e-mail address of the author of the module.
-   */
-  String get eMail => _eMail;
-
-  /**
-   * Gets the website of the author of the module.
-   */
-  String get website => _website; //TODO change return-type to url or uri?
-
-  /**
-   * Gets the version of the module.
-   */
-  String get version => _version;
-
-  /**
-   * Gets the name of the author of the module.
-   */
-  String get author => _author;
+  Module get meta {
+    return _meta;
+  }
 
   /**
    * Prefix used for the node ID
@@ -97,18 +82,6 @@ class AnnotatedModule {
     //TODO remove template from DOM
 
     onRemoved();
-  }
-
-  /**
-   * Sets each given [meta] information
-   * of this module.
-   */
-  void _setModuleInfo(Module meta) {
-      _version = meta.version;
-      _author = meta.author;
-      _eMail = meta.eMail;
-      _company = meta.company;
-      _website = meta.website;
   }
 
   /**
@@ -154,14 +127,14 @@ class AnnotatedModule {
             orElse: () => null
     );
 
-    if(libraryMirror != null
-    && (reflectedClass = libraryMirror.declarations[classSymbol]) != null) {
+    if(libraryMirror != null &&
+      (reflectedClass = libraryMirror.declarations[classSymbol]) != null) {
       return reflectedClass;
 
     } else if(libraryMirror != null && reflectedClass == null) {
-      //TODO throw missing class exception
+      throw new MissingModuleException(className);
     } else {
-      //TODO throw missing library exception
+      throw new MissingLibraryExeption(libraryName);
     }
   }
 
@@ -183,7 +156,7 @@ class AnnotatedModule {
 
     //get module information for registration
     if(annotation != null && name != null) {
-      _setModuleInfo(annotation.reflectee as Module);
+      _meta = annotation.reflectee as Module;
 
       //try to invoke onInit handler of module, if handler doesn't exists throw exception
       if(!_tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
@@ -298,7 +271,11 @@ class AnnotatedModule {
     );
   }
 
-
+  /**
+   * This event handler is invoked whenever the loading state is
+   * changed. For example if the module starts to load
+   * data or receives data.
+   */
   void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
     _invokeHandlerWhere(
       (meta) => meta.hasReflectee

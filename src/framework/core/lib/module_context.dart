@@ -1,12 +1,12 @@
 part of lib.core;
 
 class ModuleContext {
-  final AbstractModule _module;
+  final AbstractModule module;
 
   /**
    * Initializes the module context.
    */
-  ModuleContext(this._module);
+  ModuleContext(this.module);
 
   /**
    * Gets the parent page of the module which gives
@@ -14,47 +14,47 @@ class ModuleContext {
    * the title of the page or other information about
    * the page.
    */
-  Page get page =>  _module.fragment.page;
+  Page get page =>  module.fragment.page;
 
   /**
    * Gets the parent fragment of the module.
    */
-  Fragment get fragment => _module.fragment;
+  Fragment get fragment => module.fragment;
 
   /**
    * Gets the name of the module.
    */
-  String get name => _module.name;
+  String get name => module.name;
 
   /**
-   * Gets the library of the module.
+   * Gets the library name of the module.
    */
-  String get lib => _module.lib;
+  String get lib => module.lib;
 
   /**
-   * Gets the version of the module.
+   * Gets the version number of the module.
    */
-  String get version => _module.version;
+  String get version => module.meta.version;
 
   /**
    * Gets the name of the author of the module.
    */
-  String get author => _module.author;
+  String get author => module.meta.author;
 
   /**
    * Gets the company of the author of the module.
    */
-  String get company => _module.company;
+  String get company => module.meta.company;
 
   /**
    * Gets the website of the author of the module.
    */
-  String get website => _module.website;
+  String get website => module.meta.website;
 
   /**
    * Gets the e-mail address of the author of the module.
    */
-  String get eMail => _module.eMail;
+  String get eMail => module.meta.eMail;
 
   /**
    * Sends a message to other modules.
