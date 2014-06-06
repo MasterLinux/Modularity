@@ -6,7 +6,7 @@ part of lib.core.model;
 class ConfigApplicationsModel extends Model<ConfigApplicationModel> {}
 
 /**
- * Model which represents an appliaction
+ * Model which represents an application
  */
 class ConfigApplicationModel extends ObjectModel {
   String name;
