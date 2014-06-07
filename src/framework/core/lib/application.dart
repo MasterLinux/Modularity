@@ -3,9 +3,9 @@ part of lib.core;
 class Application {
   final ConfigApplicationModel config;
 
-  const int LOADING_PROGRESS_INITIAL = 0;
+  final int LOADING_PROGRESS_INITIAL = 0;
 
-  const int LOADING_PROGRESS_COMPLETED = 100;
+  final int LOADING_PROGRESS_COMPLETED = 100;
 
   /**
    * Initializes the application

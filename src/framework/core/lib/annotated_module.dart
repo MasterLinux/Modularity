@@ -110,40 +110,11 @@ class AnnotatedModule {
   }
 
   /**
-   * Gets the class mirror of the required module with the help of
-   * its [libraryName] and [className].
-   */
-  ClassMirror _getReflectedClass(String libraryName, String className) {
-    Symbol librarySymbol = new Symbol(libraryName); //TODO is the usage of const Symbol('') possible?
-    Symbol classSymbol = new Symbol(className); //TODO is the usage of const Symbol('') possible?
-    ClassMirror reflectedClass;
-
-    //get current mirror system
-    var mirrors = currentMirrorSystem();
-
-    //get required library mirror
-    var libraryMirror = mirrors.libraries.values.firstWhere(
-            (libraryMirror) => libraryMirror.qualifiedName == librarySymbol,
-            orElse: () => null
-    );
-
-    if(libraryMirror != null &&
-      (reflectedClass = libraryMirror.declarations[classSymbol]) != null) {
-      return reflectedClass;
-
-    } else if(libraryMirror != null && reflectedClass == null) {
-      throw new MissingModuleException(className);
-    } else {
-      throw new MissingLibraryExeption(libraryName);
-    }
-  }
-
-  /**
    * This init function is called once when the module
    * is initialized on app start.
    */
   void onInit(InitEventArgs args) {
-    _reflectedClass = _getReflectedClass(lib, name);
+    _reflectedClass = getClassMirror(lib, name);
 
     var metadata = _reflectedClass.metadata;
     var annotation = metadata.firstWhere(
