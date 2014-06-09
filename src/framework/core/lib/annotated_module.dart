@@ -114,7 +114,7 @@ class AnnotatedModule {
    * is initialized on app start.
    */
   void onInit(InitEventArgs args) {
-    _reflectedClass = getClassMirror(lib, name);
+    _reflectedClass = classUtil.getClassMirror(lib, name);
 
     var metadata = _reflectedClass.metadata;
     var annotation = metadata.firstWhere(
