@@ -1,6 +1,8 @@
 part of lib.core;
 
 class Application {
+  Completer _startCompleter = new Completer();
+
   final ConfigApplicationModel config;
 
   final int LOADING_PROGRESS_INITIAL = 0;
@@ -16,12 +18,9 @@ class Application {
    * Creates the application with the help
    * of the given config and starts it
    */
-  void start() {
-    _onLoadingProgressChange(LOADING_PROGRESS_INITIAL);
-
-    //TODO implement module loading
-
-    _onLoadingProgressChange(LOADING_PROGRESS_COMPLETED);
+  Future start() { //TODO return a feature to get informed on loading progress
+    //
+    return _startCompleter.future;
   }
 
   /**
@@ -36,6 +35,17 @@ class Application {
    * loading progress of the application changed
    */
   void _onLoadingProgressChange(int progress) {
+    switch(progress) {
+      case LOADING_PROGRESS_INITIAL:
+        break;
+
+      case LOADING_PROGRESS_COMPLETED:
+        _startCompleter.complete();
+        break;
+
+      default:
+        break;
+    }
     //TODO invoke loading indicator?
   }
 }
