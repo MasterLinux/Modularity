@@ -19,7 +19,11 @@ class Application {
    * of the given config and starts it
    */
   Future start() { //TODO return a feature to get informed on loading progress
-    //
+
+    new Future(() => _initialize())
+      .then(() => _startCompleter.complete())
+      .catchError((e) => _startCompleter.completeError(e));
+
     return _startCompleter.future;
   }
 
@@ -28,6 +32,10 @@ class Application {
    */
   void stop() {
     //TODO destroy application
+  }
+
+  void _initialize() {
+
   }
 
   /**
