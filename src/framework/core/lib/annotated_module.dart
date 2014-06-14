@@ -1,36 +1,88 @@
 part of lib.core;
 
-class AnnotatedModule extends AbstractModule {
+/**
+ * Helper class to load and handle annotated
+ * modules. This class is used to load
+ * modules with the help of its library
+ * and class name.
+ */
+class AnnotatedModule {
+  final Map<String, Object> config;
+  final Fragment fragment;
+  final String name;
+  final String lib;
+
   ClassMirror _reflectedClass;
   InstanceMirror _instance;
-  final String _name;
-  final String _lib;
-  String _author;
-  String _company;
-  String _eMail;
-  String _website;
-  String _version;
+  ModuleContext _context;
+
+  String _uniqueId;
+  Module _meta;
+
+  /**
+   * Gets the unique ID of the module.
+   * Each instance of a module has
+   * its own unique ID.
+   */
+  String get uniqueId {
+    return _uniqueId;
+  }
+
+  /**
+   * Gets the module context, used
+   * to get the current displayed
+   * page and to communicate with
+   * other modules.
+   */
+  ModuleContext get context {
+    return _context;
+  }
+
+  /**
+   * Gets the meta information
+   * of this module.
+   */
+  Module get meta {
+    return _meta;
+  }
+
+  /**
+   * Prefix used for the node ID
+   */
+  final String ID_PREFIX = "module";
 
   /**
    * Initializes the module with the help
    * of a class which uses the module annotations.
    */
-  AnnotatedModule(this._lib, this._name, Fragment fragment, Map<String, Object> config)
-    : super(fragment, config);
+  AnnotatedModule(this.lib, this.name, this.fragment, this.config) {
+    _uniqueId = new UniqueId(ID_PREFIX).build();
+    _context = new ModuleContext(this);
 
-  String get lib => _lib;
+    onInit(new InitEventArgs(this.config));
+  }
 
-  String get name => _name;
+  /**
+   * Adds the template of the module to DOM.
+   */
+  void add() {
+    onBeforeAdd();
 
-  String get company => _company;
+    //TODO add template to DOM
 
-  String get eMail => _eMail;
+    onAdded();
+  }
 
-  String get website => _website;
+  /**
+   * Removes the template of the module from DOM.
+   */
+  void remove() {
+    onBeforeRemove();
 
-  String get version => _version;
+    //TODO remove template from DOM
 
-  String get author => _author;
+    onRemoved();
+  }
 
   /**
    * Invokes all event handler which are passed the given [test].
@@ -58,45 +110,11 @@ class AnnotatedModule extends AbstractModule {
   }
 
   /**
-   * Gets the class mirror of the required module with the help of
-   * its [libraryName] and [className].
+   * This init function is called once when the module
+   * is initialized on app start.
    */
-  ClassMirror _getReflectedClass(String libraryName, String className) {
-    Symbol librarySymbol = new Symbol(libraryName); //TODO is the usage of const Symbol('') possible?
-    Symbol classSymbol = new Symbol(className); //TODO is the usage of const Symbol('') possible?
-    ClassMirror reflectedClass;
-
-    //get current mirror system
-    var mirrors = currentMirrorSystem();
-
-    //get required library mirror
-    var libraryMirror = mirrors.libraries.values.firstWhere(
-            (libraryMirror) => libraryMirror.qualifiedName == librarySymbol,
-            orElse: () => null
-    );
-
-    if(libraryMirror != null
-    && (reflectedClass = libraryMirror.declarations[classSymbol]) != null) {
-      return reflectedClass;
-
-    } else if(libraryMirror != null && reflectedClass == null) {
-      //TODO throw missing class exception
-    } else {
-      //TODO throw missing library exception
-    }
-  }
-
-  void _setModuleInfo(Module meta) {
-      _version = meta.version;
-      _author = meta.author;
-      _eMail = meta.eMail;
-      _company = meta.company;
-      _website = meta.website;
-  }
-
-  @override
   void onInit(InitEventArgs args) {
-    _reflectedClass = _getReflectedClass(lib, name);
+    _reflectedClass = classUtil.getClassMirror(lib, name);
 
     var metadata = _reflectedClass.metadata;
     var annotation = metadata.firstWhere(
@@ -109,7 +127,7 @@ class AnnotatedModule extends AbstractModule {
 
     //get module information for registration
     if(annotation != null && name != null) {
-      _setModuleInfo(annotation.reflectee as Module);
+      _meta = annotation.reflectee as Module;
 
       //try to invoke onInit handler of module, if handler doesn't exists throw exception
       if(!_tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
@@ -161,75 +179,57 @@ class AnnotatedModule extends AbstractModule {
     return initHandlerExists;
   }
 
-  @override
+  /**
+   * This event handler is invoked when the module will be created,
+   * but before the template of the module is added to the DOM.
+   */
   void onBeforeAdd() {
-    _invokeOnBeforeAddHandler(_reflectedClass, _instance);
-  }
-
-  /**
-   * Invokes all methods which are marked by the [@OnBeforeAdded] annotation.
-   */
-  void _invokeOnBeforeAddHandler(ClassMirror classMirror, InstanceMirror instanceMirror) {
     _invokeHandlerWhere(
-      (meta) => meta.hasReflectee && meta.reflectee is OnBeforeAddAnnotation,
-      classMirror, instanceMirror
+            (meta) => meta.hasReflectee && meta.reflectee is OnBeforeAddAnnotation,
+            _reflectedClass, _instance
     );
   }
 
-  @override
+  /**
+   * This event handler is invoked when the template
+   * of the module is completely added to DOM.
+   */
   void onAdded() {
-    _invokeOnAddedHandler(_reflectedClass, _instance);
-  }
-
-  /**
-   * Invokes all methods which are marked by the [@OnAdded] annotation.
-   */
-  void _invokeOnAddedHandler(ClassMirror classMirror, InstanceMirror instanceMirror) {
     _invokeHandlerWhere(
-        (meta) => meta.hasReflectee && meta.reflectee is OnAddedAnnotation,
-        classMirror, instanceMirror
+            (meta) => meta.hasReflectee && meta.reflectee is OnAddedAnnotation,
+            _reflectedClass, _instance
     );
   }
 
-  @override
+  /**
+   * This event handler is invoked when the module
+   * will be destroyed but before the template
+   * is removed from DOM.
+   */
   void onBeforeRemove() {
-    _invokeOnBeforeRemoveHandler(_reflectedClass, _instance);
-  }
-
-  /**
-   * Invokes all methods which are marked by the [@OnBeforeRemove] annotation.
-   */
-  void _invokeOnBeforeRemoveHandler(ClassMirror classMirror, InstanceMirror instanceMirror) {
     _invokeHandlerWhere(
-        (meta) => meta.hasReflectee && meta.reflectee is OnBeforeRemoveAnnotation,
-        classMirror, instanceMirror
+            (meta) => meta.hasReflectee && meta.reflectee is OnBeforeRemoveAnnotation,
+            _reflectedClass, _instance
     );
   }
 
-  @override
-  void onRemoved() {
-    _invokeOnRemovedHandler(_reflectedClass, _instance);
-  }
-
   /**
-   * Invokes all methods which are marked by the [@OnRemoved] annotation.
+   * This event handler is invoked when the template
+   * of the module is completely removed from DOM.
    */
-  void _invokeOnRemovedHandler(ClassMirror classMirror, InstanceMirror instanceMirror) {
+  void onRemoved() {
     _invokeHandlerWhere(
         (meta) => meta.hasReflectee && meta.reflectee is OnRemovedAnnotation,
-        classMirror, instanceMirror
+        _reflectedClass, _instance
     );
   }
 
-  @override
-  void onRequestCompleted(RequestCompletedEventArgs args) {
-    _invokeOnRequestCompletedHandler(_reflectedClass, _instance, args);
-  }
-
   /**
-   * Invokes all methods which are marked by the [@OnRequestCompleted] annotation.
+   * This event handler is invoked whenever a request
+   * is completed in case the request was successful but
+   * also when an error occurred.
    */
-  void _invokeOnRequestCompletedHandler(ClassMirror classMirror, InstanceMirror instanceMirror, RequestCompletedEventArgs args) {
+  void onRequestCompleted(RequestCompletedEventArgs args) {
     _invokeHandlerWhere(
             (meta) => meta.hasReflectee
               && meta.reflectee is OnRequestCompleted
@@ -238,21 +238,22 @@ class AnnotatedModule extends AbstractModule {
                   && meta.reflectee.isErrorHandler == args.isErrorOccurred)
                   || meta.reflectee.isDefault
               ),
-        classMirror, instanceMirror, args
+            _reflectedClass, _instance, args
     );
   }
 
-  @override
+  /**
+   * This event handler is invoked whenever the loading state is
+   * changed. For example if the module starts to load
+   * data or receives data.
+   */
   void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
-    _invokeOnLoadingStateChangedHandler(_reflectedClass, _instance, args);
-  }
-
-  void _invokeOnLoadingStateChangedHandler(ClassMirror classMirror, InstanceMirror instanceMirror, LoadingStateChangedEventArgs args) {
     _invokeHandlerWhere(
       (meta) => meta.hasReflectee
         && meta.reflectee is OnLoadingStateChanged
         && (meta.reflectee.isLoading == args.isLoading || meta.reflectee.isDefault),
-      classMirror, instanceMirror, args
+      _reflectedClass, _instance, args
     );
   }
+
 }

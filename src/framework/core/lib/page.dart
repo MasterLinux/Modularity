@@ -1,11 +1,14 @@
 part of lib.core;
 
+/**
+ *
+ */
 class Page {
   Map<String, dynamic> _navigationParameter;
-  final List<ConfigPageModel> pages;
+  final List<ConfigFragmentModel> fragments;
   final String title;
 
-  Page(this.title, this.pages);
+  Page(this.title, this.fragments);
 
   void navigate() {
 
@@ -33,10 +36,11 @@ class Page {
       return _navigationParameter[name];
     }
 
-
     //if the required parameter isn't available throw exception
     else {
       throw new MissingNavigationParameterException(name);
     }
   }
+
+  //TODO page injector required to inject specific page behaviour?
 }

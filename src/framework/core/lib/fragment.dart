@@ -1,7 +1,7 @@
 part of lib.core;
 
 class Fragment {
-  List<AbstractModule> _modules;
+  List<AnnotatedModule> _modules;
   String _title;
   String _id;
 
