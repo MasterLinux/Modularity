@@ -1,59 +1,67 @@
 part of lib.core;
 
+/**
+ * typedef to allow dependency injection
+ * for injecting a config loader into
+ * an application
+ */
+typedef ConfigLoader ConfigLoaderFactory();
+
 class Application {
-  Completer _startCompleter = new Completer();
-
-  final ConfigApplicationModel config;
-
-  final int LOADING_PROGRESS_INITIAL = 0;
-
-  final int LOADING_PROGRESS_COMPLETED = 100;
+  bool _isStarted = false;
+  bool _isLoaded = false;
+  List<Page> _pages;
 
   /**
-   * Initializes the application
+   * The config loader which is used
+   * to load the application with the
+   * help of a config
    */
-  Application(this.config);
+  final ConfigLoaderFactory configLoader;
 
   /**
-   * Creates the application with the help
-   * of the given config and starts it
+   * Flag which indicates whether the application
+   * runs in debug mode or not
    */
-  Future start() { //TODO return a feature to get informed on loading progress
+  final bool isInDebugMode;
 
-    new Future(() => _initialize())
-      .then(() => _startCompleter.complete())
-      .catchError((e) => _startCompleter.completeError(e));
+  /**
+   * Initializes the application with the help
+   * of a [configLoader]. If the debug mode is enabled
+   * by setting [isInDebugMode] to true the debug console
+   * will be visible
+   */
+  Application(this.configLoader, {this.isInDebugMode: false});
 
-    return _startCompleter.future;
+  /**
+   * Loads the config and starts the application
+   */
+  Future start() {
+    return null;
   }
 
   /**
    * Destructs and stops the application
    */
-  void stop() {
-    //TODO destroy application
-  }
-
-  void _initialize() {
-
+  Future stop() {
+    return null;
   }
 
   /**
-   * Event handler which is invoked whenever the
-   * loading progress of the application changed
+   * Flag which indicates whether the
+   * application is started or not
    */
-  void _onLoadingProgressChange(int progress) {
-    switch(progress) {
-      case LOADING_PROGRESS_INITIAL:
-        break;
+  bool get isStarted => _isStarted;
 
-      case LOADING_PROGRESS_COMPLETED:
-        _startCompleter.complete();
-        break;
+  /**
+   * Flag which indicates whether the
+   * application is successfully loaded or not
+   */
+  bool get isLoaded => _isLoaded;
 
-      default:
-        break;
-    }
-    //TODO invoke loading indicator?
-  }
+  /**
+   * Gets all pages if the config could
+   * be successfully loaded, otherwise it is null
+   */
+  void get pages => _pages;
 }
