@@ -36,27 +36,21 @@ class ApplicationTest {
       });
 
       test('test app should be initialized after started', () {
+        expect(appUnderTest.isStarted, isFalse);
 
         schedule(() {
           return appUnderTest.start().then((data) {
             expect(appUnderTest.pages, isNotNull);
             expect(appUnderTest.pages, hasLength(ConfigLoaderMock.PAGE_COUNT));
+            expect(appUnderTest.name, ConfigLoaderMock.APPLICATION_NAME);
+            expect(appUnderTest.author, ConfigLoaderMock.APPLICATION_AUTHOR);
+            expect(appUnderTest.language, ConfigLoaderMock.APPLICATION_LANGUAGE);
+            expect(appUnderTest.version, ConfigLoaderMock.APPLICATION_VERSION);
+            expect(appUnderTest.startUri, ConfigLoaderMock.APPLICATION_START_URI);
+            expect(appUnderTest.isStarted, isTrue);
           });
         });
 
-
-
-        //schedule();
-
-
-        //expect(future, completes);
-/*
-        //test application
-        expect(appUnderTest.pages, isNotNull);
-        expect(appUnderTest.pages, hasLength(PAGE_COUNT));
-
-        //TODO expectAsync?
-*/
       });
 
     });

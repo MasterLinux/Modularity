@@ -6,3 +6,4 @@ part 'missing_library_exception.dart';
 part 'missing_module_exception.dart';
 part 'missing_module_id_exception.dart';
 part 'missing_navigation_parameter_exception.dart';
+part 'missing_config_argument_exception.dart';

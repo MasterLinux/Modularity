@@ -9,7 +9,6 @@ typedef ConfigLoader ConfigLoaderFactory();
 
 class Application {
   bool _isStarted = false;
-  bool _isLoaded = false;
   List<Page> _pages;
   String _name;
   String _version;
@@ -55,9 +54,18 @@ class Application {
     }
 
     return configLoader.load().then((data) {
-      _pages = data.pages;
-      //print(data.name); //TODO implement
-      //_name = data.name;
+      if((_pages = data.pages) == null) {
+        throw new MissingConfigArgumentException("pages");
+      }
+
+      _name = data.name;
+      _author = data.author;
+      _language = data.language;
+      _startUri = data.startUri;
+      _version = data.version;
+      //TODO get tasks and resources
+
+      _isStarted = true;
     });
   }
 
@@ -73,12 +81,6 @@ class Application {
    * application is started or not
    */
   bool get isStarted => _isStarted;
-
-  /**
-   * Flag which indicates whether the
-   * application is successfully loaded or not
-   */
-  bool get isLoaded => _isLoaded;
 
   /**
    * Gets all pages if the config could
