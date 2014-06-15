@@ -1,9 +1,11 @@
-library lib.test;
+library modularity.tests;
 
-import 'package:unittest/vm_config.dart';
-import 'package:unittest/unittest.dart';
+//import 'package:unittest/vm_config.dart';
+//import 'package:unittest/unittest.dart';
+import 'package:scheduled_test/scheduled_test.dart';
 
 import '../lib/core.dart';
+import 'mock/mock.dart';
 
 part 'application_test.dart';
 
@@ -12,6 +14,6 @@ part 'application_test.dart';
  * library.
  */
 void main() {
-  ApplicationTest.run();
+  new ApplicationTest().run();
 }
 
