@@ -31,9 +31,9 @@ class Application {
 
   /**
    * Initializes the application. It is possible to inject a config
-   * loader by setting a [configLoaderFactory]. If the debug mode is enabled
-   * by setting [isInDebugMode] to true the debug console
-   * will be visible
+   * loader by setting a [configLoaderFactory] if not used the default
+   * config loader is used to initialize the app. Whenever [isInDebugMode]
+   * is set to true the debug console will be visible
    */
   Application({this.configLoaderFactory, this.isInDebugMode: false});
 
