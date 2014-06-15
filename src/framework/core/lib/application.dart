@@ -35,34 +35,53 @@ class Application {
    * config loader is used to initialize the app. Whenever [isInDebugMode]
    * is set to true the debug console will be visible
    */
+
   Application({this.configLoaderFactory, this.isInDebugMode: false});
 
   /**
-   * Loads the config and starts the application
+   * Gets the config loader to initialize the application
    */
-  Future start() {
+  ConfigLoader _getConfigLoader() {
     var configLoader;
 
     //try to get injected config loader
-    if(configLoaderFactory != null) {
+    if (configLoaderFactory != null) {
       configLoader = configLoaderFactory();
     }
 
     //otherwise get default config loader
     else {
-      configLoader = null; //TODO implement
+      configLoader = null;
+      //TODO implement
     }
 
-    return configLoader.load().then((data) {
+    return configLoader;
+  }
+
+  /**
+   * Loads the config and starts the application
+   */
+  Future start() {
+    return _getConfigLoader().load().then((data) {
+
+      //get required application data
       if((_pages = data.pages) == null) {
         throw new MissingConfigArgumentException("pages");
       }
 
-      _name = data.name;
-      _author = data.author;
-      _language = data.language;
-      _startUri = data.startUri;
+      if((_startUri = data.startUri) == null) {
+        throw new MissingConfigArgumentException(("startUri"));
+      }
+
+      if((_language = data.language) == null) {
+        throw new MissingConfigArgumentException(("language"));
+      }
+
+      //get optional application data
       _version = data.version;
+      _author = data.author;
+      _name = data.name;
+
       //TODO get tasks and resources
 
       _isStarted = true;

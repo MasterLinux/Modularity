@@ -1,7 +1,6 @@
 name: core
 dependencies:
   browser: any
-  connect: any
+  connect: "1.0.0-alpha.4"
 dev_dependencies:
-  unittest: any
   scheduled_test: any
