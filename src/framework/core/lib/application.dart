@@ -30,8 +30,8 @@ class Application {
   final bool isInDebugMode;
 
   /**
-   * Initializes the application with the help
-   * of a [configLoader]. If the debug mode is enabled
+   * Initializes the application. It is possible to inject a config
+   * loader by setting a [configLoaderFactory]. If the debug mode is enabled
    * by setting [isInDebugMode] to true the debug console
    * will be visible
    */
