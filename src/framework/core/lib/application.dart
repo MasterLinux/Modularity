@@ -47,13 +47,43 @@ class Application {
    * Loads the config and starts the application
    */
   Future start() {
-    return configLoaderFactory().load().then((data) {
+    return configLoaderFactory().load()
 
+    //get app data
+    .then((data) {
       //check whether the config could be loaded
       if((_appData = data) == null) {
         throw new ApplicationLoadingError();
       }
+      return data;
+    })
 
+    //load pages
+    .then((data) {
+      if(!_loadPages(data.pages)) {
+        throw new Error(); //TODO use custom error instead
+      }
+      return data;
+    })
+
+    //load tasks
+    .then((data) {
+      if(!_loadTasks(data.tasks)) {
+        throw new Error(); //TODO use custom error instead
+      }
+      return data;
+    })
+
+    //load resources
+    .then((data) {
+      if(!_loadResources(data.resources)) {
+        throw new Error(); //TODO use custom error instead
+      }
+      return data;
+    })
+
+    //finish loading
+    .whenComplete(() { //TODO check when _isStarted should be set to false
       _isStarted = true;
     });
   }
@@ -75,11 +105,19 @@ class Application {
    * Gets all pages if the config could
    * be successfully loaded, otherwise it is null
    */
-  void get pages => _appData.pages; //TODO info isn't public?
+  List<Page> get pages => _appData.pages;
 
-  //get tasks => _tasks;
+  /**
+   * Gets all background tasks if the config could
+   * be successfully loaded, otherwise it is null
+   */
+  List<Task> get tasks => _appData.tasks;
 
-  //get resources => _resources;
+  /**
+   * Gets all resources tasks if the config could
+   * be successfully loaded, otherwise it is null
+   */
+  List<Resource> get resources => _appData.resources;
 
   /**
    * Gets the name of the application
