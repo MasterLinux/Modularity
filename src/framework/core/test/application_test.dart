@@ -67,7 +67,7 @@ class ApplicationTest {
 
         schedule(() {
           return appUnderTest.start().catchError((error) {
-            expect(error, new isInstanceOf<ApplicationLoadingException>('isApplicationLoadingException'));
+            expect(error, new isInstanceOf<ApplicationLoadingException>('ApplicationLoadingException'));
           });
         });
       });

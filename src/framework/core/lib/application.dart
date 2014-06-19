@@ -19,7 +19,7 @@ ConfigLoader _defaultConfigLoader() => new RestApiConfigLoader();
 class Application {
   ApplicationData _appData = new ApplicationData();
   bool _isStarted = false;
-  List<Page> _pages;
+  List<Page> _pages; //TODO change type to HashMap<String, Page>, write tests first
 
   /**
    * The config loader which is used
@@ -40,7 +40,6 @@ class Application {
    * config loader is used to initialize the app. Whenever [isInDebugMode]
    * is set to true the debug console will be visible
    */
-
   Application({this.configLoaderFactory: _defaultConfigLoader, this.isInDebugMode: false});
 
   /**
@@ -60,8 +59,10 @@ class Application {
 
     //load pages
     .then((data) {
+      //TODO check whether startUri is not null
+
       if(!_loadPages(data.pages)) {
-        throw new ApplicationLoadingException(); //TODO allow custom message
+        throw new ApplicationLoadingException(); //TODO allow custom message -> no pages defined
       }
       return data;
     })
@@ -99,7 +100,7 @@ class Application {
   _loadPages(List<Page> pages) {
     bool isLoaded = false;
 
-    if(pages != null && pages.length > 0) {
+    if(startUri != null && pages != null && pages.length > 0) {
       //TODO implement
       isLoaded = true;
     }
@@ -131,13 +132,13 @@ class Application {
    * Gets all background tasks if no task is loaded
    * it returns an empty list
    */
-  List<Task> get tasks => _appData.tasks != null ? _appData.tasks : new List<Task>();
+  List<Task> get tasks => _appData.tasks != null ? _appData.tasks : new List<Task>(); //TODO use HashMap
 
   /**
    * Gets all resources tasks if no resource is loaded
    * it returns an empty list
    */
-  List<Resource> get resources => _appData.resources != null ? _appData.resources : new List<Resource>();
+  List<Resource> get resources => _appData.resources != null ? _appData.resources : new List<Resource>(); //TODO use HashMap
 
   /**
    * Gets the name of the application
