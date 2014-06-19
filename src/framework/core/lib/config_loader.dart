@@ -1,8 +1,12 @@
 part of lib.core;
 
-class ApplicationData { //TODO rename model
-  //List<Task> tasks;
-  //List<Resource> resources;
+/**
+ * Application data model which contains
+ * each information to initialize an app
+ */
+class ApplicationData {
+  List<Task> tasks;
+  List<Resource> resources;
   List<Page> pages;
   String name;
   String version;
@@ -11,6 +15,10 @@ class ApplicationData { //TODO rename model
   String author;
 }
 
+/**
+ * Interface which represents an
+ * application config loader
+ */
 abstract class ConfigLoader {
 
   /**

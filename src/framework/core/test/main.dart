@@ -1,7 +1,5 @@
 library modularity.tests;
 
-//import 'package:unittest/vm_config.dart';
-//import 'package:unittest/unittest.dart';
 import 'package:scheduled_test/scheduled_test.dart';
 
 import '../lib/core.dart';
@@ -15,5 +13,14 @@ part 'application_test.dart';
  */
 void main() {
   new ApplicationTest().run();
+}
+
+//TODO fix matcher
+/// A matcher for ApplicationLoadingExceptions.
+const Matcher isApplicationLoadingException = const _ApplicationLoadingException();
+
+class _ApplicationLoadingException extends TypeMatcher {
+  const _ApplicationLoadingException(): super("ApplicationLoadingException");
+  bool matches(item, Map matchState) => item is ApplicationLoadingException;
 }
 

@@ -11,13 +11,13 @@ typedef ConfigLoader ConfigLoaderFactory();
  * The default config loader used whenever
  * no custom loader is injected
  */
-ConfigLoaderFactory _defaultConfigLoader = () => new RestApiConfigLoader();
+ConfigLoader _defaultConfigLoader() => new RestApiConfigLoader();
 
 /**
  * Representation of an application
  */
 class Application {
-  ApplicationData _appData;
+  ApplicationData _appData = new ApplicationData();
   bool _isStarted = false;
   List<Page> _pages;
 
@@ -53,7 +53,7 @@ class Application {
     .then((data) {
       //check whether the config could be loaded
       if((_appData = data) == null) {
-        throw new ApplicationLoadingError();
+        throw new ApplicationLoadingException();
       }
       return data;
     })
@@ -61,7 +61,7 @@ class Application {
     //load pages
     .then((data) {
       if(!_loadPages(data.pages)) {
-        throw new Error(); //TODO use custom error instead
+        throw new ApplicationLoadingException(); //TODO allow custom message
       }
       return data;
     })
@@ -91,8 +91,20 @@ class Application {
     return null;
   }
 
+  /**
+   * Loads all pages and returns true
+   * if the given list is not null and not empty,
+   * false otherwise
+   */
   _loadPages(List<Page> pages) {
+    bool isLoaded = false;
 
+    if(pages != null && pages.length > 0) {
+      //TODO implement
+      isLoaded = true;
+    }
+
+    return isLoaded;
   }
 
   _loadTasks(List<Task> pages) {
@@ -113,19 +125,19 @@ class Application {
    * Gets all pages if no page is loaded
    * it returns an empty list
    */
-  List<Page> get pages => _appData.pages;
+  List<Page> get pages => _appData.pages != null ? _appData.pages : new List<Page>();
 
   /**
    * Gets all background tasks if no task is loaded
    * it returns an empty list
    */
-  List<Task> get tasks => _appData.tasks;
+  List<Task> get tasks => _appData.tasks != null ? _appData.tasks : new List<Task>();
 
   /**
    * Gets all resources tasks if no resource is loaded
    * it returns an empty list
    */
-  List<Resource> get resources => _appData.resources;
+  List<Resource> get resources => _appData.resources != null ? _appData.resources : new List<Resource>();
 
   /**
    * Gets the name of the application

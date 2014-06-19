@@ -1,6 +1,6 @@
 part of lib.core.exception;
 
-class MissingModuleException {
+class MissingModuleException implements Exception {
   final String moduleName;
 
   MissingModuleException(this.moduleName);

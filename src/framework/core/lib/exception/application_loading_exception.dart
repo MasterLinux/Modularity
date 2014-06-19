@@ -1,9 +1,9 @@
 part of lib.core.exception;
 
-class ApplicationLoadingError {
+class ApplicationLoadingException implements Exception {
   final String message = "The application could not be loaded.";
 
-  ApplicationLoadingError();
+  ApplicationLoadingException();
 
   String toString() {
     return message;
