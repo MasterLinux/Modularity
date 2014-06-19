@@ -7,14 +7,19 @@ part of lib.core;
  */
 typedef ConfigLoader ConfigLoaderFactory();
 
+/**
+ * The default config loader used whenever
+ * no custom loader is injected
+ */
+ConfigLoaderFactory _defaultConfigLoader = () => new RestApiConfigLoader();
+
+/**
+ * Representation of an application
+ */
 class Application {
+  ApplicationData _appData;
   bool _isStarted = false;
   List<Page> _pages;
-  String _name;
-  String _version;
-  String _language;
-  String _startUri;
-  String _author;
 
   /**
    * The config loader which is used
@@ -36,53 +41,18 @@ class Application {
    * is set to true the debug console will be visible
    */
 
-  Application({this.configLoaderFactory, this.isInDebugMode: false});
-
-  /**
-   * Gets the config loader to initialize the application
-   */
-  ConfigLoader _getConfigLoader() {
-    var configLoader;
-
-    //try to get injected config loader
-    if (configLoaderFactory != null) {
-      configLoader = configLoaderFactory();
-    }
-
-    //otherwise get default config loader
-    else {
-      configLoader = null;
-      //TODO implement
-    }
-
-    return configLoader;
-  }
+  Application({this.configLoaderFactory: _defaultConfigLoader, this.isInDebugMode: false});
 
   /**
    * Loads the config and starts the application
    */
   Future start() {
-    return _getConfigLoader().load().then((data) {
+    return configLoaderFactory().load().then((data) {
 
-      //get required application data
-      if((_pages = data.pages) == null) {
-        throw new MissingConfigArgumentException("pages");
+      //check whether the config could be loaded
+      if((_appData = data) == null) {
+        throw new ApplicationLoadingError();
       }
-
-      if((_startUri = data.startUri) == null) {
-        throw new MissingConfigArgumentException(("startUri"));
-      }
-
-      if((_language = data.language) == null) {
-        throw new MissingConfigArgumentException(("language"));
-      }
-
-      //get optional application data
-      _version = data.version;
-      _author = data.author;
-      _name = data.name;
-
-      //TODO get tasks and resources
 
       _isStarted = true;
     });
@@ -105,22 +75,34 @@ class Application {
    * Gets all pages if the config could
    * be successfully loaded, otherwise it is null
    */
-  void get pages => _pages;
-
-  /**
-   * Gets the name of the application
-   */
-  String get name => _name;
+  void get pages => _appData.pages; //TODO info isn't public?
 
   //get tasks => _tasks;
 
   //get resources => _resources;
 
-  get version => _version;
+  /**
+   * Gets the name of the application
+   */
+  String get name => _appData.name;
 
-  get language => _language;
+  /**
+   * Gets the current version number of the application
+   */
+  String get version => _appData.version;
 
-  get startUri => _startUri;
+  /**
+   * Gets the language code of the current displayed language
+   */
+  String get language => _appData.language;
 
-  get author => _author;
+  /**
+   * Gets the URI of the home page
+   */
+  String get startUri => _appData.startUri;
+
+  /**
+   * Gets the name of the author of the application
+   */
+  String get author => _appData.author;
 }

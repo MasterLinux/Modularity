@@ -1,5 +1,10 @@
 part of lib.core;
 
+/**
+ * The context of a module which contains all information
+ * about the module. Furthermore it is used to communicate
+ * with another modules.
+ */
 class ModuleContext {
   final AbstractModule module;
 
@@ -20,6 +25,11 @@ class ModuleContext {
    * Gets the parent fragment of the module.
    */
   Fragment get fragment => module.fragment;
+
+  /**
+   * Gets the whole application
+   */
+  Application get application => null; //TODO implement, or just return the meta information about the application?
 
   /**
    * Gets the name of the module.
@@ -76,5 +86,5 @@ class ModuleContext {
       .to(slot);
   }
 
-  //TODO add function for starting requests
+  //TODO add function for starting requests?
 }
