@@ -68,17 +68,13 @@ class Application {
 
     //load tasks
     .then((data) {
-      if(!_loadTasks(data.tasks)) {
-        throw new Error(); //TODO use custom error instead
-      }
+      _loadTasks(data.tasks);
       return data;
     })
 
     //load resources
     .then((data) {
-      if(!_loadResources(data.resources)) {
-        throw new Error(); //TODO use custom error instead
-      }
+      _loadResources(data.resources);
       return data;
     })
 
@@ -95,6 +91,18 @@ class Application {
     return null;
   }
 
+  _loadPages(List<Page> pages) {
+
+  }
+
+  _loadTasks(List<Task> pages) {
+
+  }
+
+  _loadResources(List<Resource> pages) {
+
+  }
+
   /**
    * Flag which indicates whether the
    * application is started or not
@@ -102,35 +110,38 @@ class Application {
   bool get isStarted => _isStarted;
 
   /**
-   * Gets all pages if the config could
-   * be successfully loaded, otherwise it is null
+   * Gets all pages if no page is loaded
+   * it returns an empty list
    */
   List<Page> get pages => _appData.pages;
 
   /**
-   * Gets all background tasks if the config could
-   * be successfully loaded, otherwise it is null
+   * Gets all background tasks if no task is loaded
+   * it returns an empty list
    */
   List<Task> get tasks => _appData.tasks;
 
   /**
-   * Gets all resources tasks if the config could
-   * be successfully loaded, otherwise it is null
+   * Gets all resources tasks if no resource is loaded
+   * it returns an empty list
    */
   List<Resource> get resources => _appData.resources;
 
   /**
    * Gets the name of the application
+   * or null if no application name is set
    */
   String get name => _appData.name;
 
   /**
    * Gets the current version number of the application
+   * or null if no version number is set
    */
   String get version => _appData.version;
 
   /**
    * Gets the language code of the current displayed language
+   * or null if no default language is set
    */
   String get language => _appData.language;
 
@@ -141,6 +152,7 @@ class Application {
 
   /**
    * Gets the name of the author of the application
+   * or null if no name is set
    */
   String get author => _appData.author;
 }
