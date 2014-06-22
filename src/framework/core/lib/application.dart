@@ -144,13 +144,13 @@ class Application {
    * Gets the name of the application
    * or null if no application name is set
    */
-  String get name => _appData.name;
+  String get name => _appData.name; //TODO move to meta obj?
 
   /**
    * Gets the current version number of the application
    * or null if no version number is set
    */
-  String get version => _appData.version;
+  String get version => _appData.version; //TODO move to meta obj?
 
   /**
    * Gets the language code of the current displayed language
@@ -167,5 +167,5 @@ class Application {
    * Gets the name of the author of the application
    * or null if no name is set
    */
-  String get author => _appData.author;
+  String get author => _appData.author; //TODO move to meta obj?
 }
