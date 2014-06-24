@@ -1,6 +1,6 @@
 part of lib.core.exception;
 
-class MissingLibraryException {
+class MissingLibraryException implements Exception {
   final String libraryName;
 
   MissingLibraryException(this.libraryName);

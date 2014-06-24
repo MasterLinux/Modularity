@@ -9,6 +9,15 @@
  *     @Module("1.3.37")
  *     class ExampleModule {
  *
+ *         @NavigationParameter -> TODO
+ *         NavigationParameter params;
+ *
+ *         @Inject("CustomModule") -> TODO
+ *         FrameworkModule customModule;
+ *
+ *         @Navigator -> TODO
+ *         Navigator navigator;
+ *
  *         @OnInit
  *         void initModule(ModuleContext context, InitEventArgs args) { ... }
  *

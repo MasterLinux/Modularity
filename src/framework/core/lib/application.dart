@@ -1,59 +1,171 @@
 part of lib.core;
 
+/**
+ * typedef to allow dependency injection
+ * for injecting a config loader into
+ * an application
+ */
+typedef ConfigLoader ConfigLoaderFactory();
+
+/**
+ * The default config loader used whenever
+ * no custom loader is injected
+ */
+ConfigLoader _defaultConfigLoader() => new RestApiConfigLoader();
+
+/**
+ * Representation of an application
+ */
 class Application {
-  Completer _startCompleter = new Completer();
-
-  final ConfigApplicationModel config;
-
-  final int LOADING_PROGRESS_INITIAL = 0;
-
-  final int LOADING_PROGRESS_COMPLETED = 100;
+  ApplicationData _appData = new ApplicationData();
+  bool _isStarted = false;
+  List<Page> _pages; //TODO change type to HashMap<String, Page>, write tests first
 
   /**
-   * Initializes the application
+   * The config loader which is used
+   * to load the application with the
+   * help of a config
    */
-  Application(this.config);
+  final ConfigLoaderFactory configLoaderFactory;
 
   /**
-   * Creates the application with the help
-   * of the given config and starts it
+   * Flag which indicates whether the application
+   * runs in debug mode or not
    */
-  Future start() { //TODO return a feature to get informed on loading progress
+  final bool isInDebugMode;
 
-    new Future(() => _initialize())
-      .then(() => _startCompleter.complete())
-      .catchError((e) => _startCompleter.completeError(e));
+  /**
+   * Initializes the application. It is possible to inject a config
+   * loader by setting a [configLoaderFactory] if not used the default
+   * config loader is used to initialize the app. Whenever [isInDebugMode]
+   * is set to true the debug console will be visible
+   */
+  Application({this.configLoaderFactory: _defaultConfigLoader, this.isInDebugMode: false});
 
-    return _startCompleter.future;
+  /**
+   * Loads the config and starts the application
+   */
+  Future start() {
+    return configLoaderFactory().load()
+
+    //get app data
+    .then((data) {
+      //check whether the config could be loaded
+      if((_appData = data) == null) {
+        throw new ApplicationLoadingException();
+      }
+      return data;
+    })
+
+    //load pages
+    .then((data) {
+      //TODO check whether startUri is not null
+
+      if(!_loadPages(data.pages)) {
+        throw new ApplicationLoadingException(); //TODO allow custom message -> no pages defined
+      }
+      return data;
+    })
+
+    //load tasks
+    .then((data) {
+      _loadTasks(data.tasks);
+      return data;
+    })
+
+    //load resources
+    .then((data) {
+      _loadResources(data.resources);
+      return data;
+    })
+
+    //finish loading
+    .whenComplete(() { //TODO check when _isStarted should be set to false
+      _isStarted = true;
+    });
   }
 
   /**
    * Destructs and stops the application
    */
-  void stop() {
-    //TODO destroy application
+  Future stop() {
+    return null;
   }
 
-  void _initialize() {
+  /**
+   * Loads all pages and returns true
+   * if the given list is not null and not empty,
+   * false otherwise
+   */
+  _loadPages(List<Page> pages) {
+    bool isLoaded = false;
+
+    if(startUri != null && pages != null && pages.length > 0) {
+      //TODO implement
+      isLoaded = true;
+    }
+
+    return isLoaded;
+  }
+
+  _loadTasks(List<Task> pages) {
+
+  }
+
+  _loadResources(List<Resource> pages) {
 
   }
 
   /**
-   * Event handler which is invoked whenever the
-   * loading progress of the application changed
+   * Flag which indicates whether the
+   * application is started or not
    */
-  void _onLoadingProgressChange(int progress) {
-    switch(progress) {
-      case LOADING_PROGRESS_INITIAL:
-        break;
+  bool get isStarted => _isStarted;
 
-      case LOADING_PROGRESS_COMPLETED:
-        _startCompleter.complete();
-        break;
+  /**
+   * Gets all pages if no page is loaded
+   * it returns an empty list
+   */
+  List<Page> get pages => _appData.pages != null ? _appData.pages : new List<Page>();
 
-      default:
-        break;
-    }
-    //TODO invoke loading indicator?
-  }
+  /**
+   * Gets all background tasks if no task is loaded
+   * it returns an empty list
+   */
+  List<Task> get tasks => _appData.tasks != null ? _appData.tasks : new List<Task>(); //TODO use HashMap
+
+  /**
+   * Gets all resources tasks if no resource is loaded
+   * it returns an empty list
+   */
+  List<Resource> get resources => _appData.resources != null ? _appData.resources : new List<Resource>(); //TODO use HashMap
+
+  /**
+   * Gets the name of the application
+   * or null if no application name is set
+   */
+  String get name => _appData.name; //TODO move to meta obj?
+
+  /**
+   * Gets the current version number of the application
+   * or null if no version number is set
+   */
+  String get version => _appData.version; //TODO move to meta obj?
+
+  /**
+   * Gets the language code of the current displayed language
+   * or null if no default language is set
+   */
+  String get language => _appData.language;
+
+  /**
+   * Gets the URI of the home page
+   */
+  String get startUri => _appData.startUri;
+
+  /**
+   * Gets the name of the author of the application
+   * or null if no name is set
+   */
+  String get author => _appData.author; //TODO move to meta obj?
 }
