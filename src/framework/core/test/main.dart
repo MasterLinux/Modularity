@@ -1,17 +1,26 @@
-library lib.test;
+library modularity.tests;
 
-import 'package:unittest/vm_config.dart';
-import 'package:unittest/unittest.dart';
-import '../lib/event/event.dart';
+import 'package:scheduled_test/scheduled_test.dart';
 
-part 'event/event_test.dart';
+import '../lib/core.dart';
+import 'mock/mock.dart';
+
+part 'application_test.dart';
 
 /**
  * Executes all tests of the
  * library.
  */
 void main() {
-  var eventTest = new EventTest();
-  eventTest.execute();
+  new ApplicationTest().run();
+}
+
+//TODO fix matcher
+/// A matcher for ApplicationLoadingExceptions.
+const Matcher isApplicationLoadingException = const _ApplicationLoadingException();
+
+class _ApplicationLoadingException extends TypeMatcher {
+  const _ApplicationLoadingException(): super("ApplicationLoadingException");
+  bool matches(item, Map matchState) => item is ApplicationLoadingException;
 }
 
