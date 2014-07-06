@@ -30,17 +30,13 @@ class Template {
   }
 }
 
-class ModularityValidator extends NodeValidator {
-
-  factory ModularityValidator({UriPolicy uriPolicy}) =>
-    new NodeValidator(uriPolicy: uriPolicy);
+class ModularityValidator implements NodeValidator {
 
   bool allowsAttribute(Element element, String attributeName, String value) {
-    return attributeName.startsWith('mod-');;
+    return attributeName.startsWith('mod-'); //TODO find nicely attribute name
   }
 
   bool allowsElement(Element element) {
     return true;
   }
-
 }
