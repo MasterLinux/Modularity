@@ -20,7 +20,7 @@ class ElementType {
         type = ElementType.DIV;
         break;
 
-      case "LABEL":
+      case "INPUT":
         type = ElementType.INPUT;
         break;
     }

@@ -1,8 +1,9 @@
 part of modularity.template;
 
-typedef OnValueChangedHandler(Property sender);
+typedef OnElementValueChangedHandler(Property sender);
 
 class Property<T> {
+  OnElementValueChangedHandler _elValueChangedHandler;
   Binding _binding;
   T _value;
 
@@ -32,7 +33,7 @@ class Property<T> {
   set value(T val) {
     if(val != _value) {
       _value = val;
-      _notifyPropertyChanged();
+      notifyPropertyChanged();
     }
   }
 
@@ -72,7 +73,11 @@ class Property<T> {
     }
   }
 
-  void _notifyPropertyChanged() {
+  /**
+   * Notifies the DOM element that the value
+   * is changed.
+   */
+  void notifyPropertyChanged() {
     if(_binding != null) {
       _binding.notifyPropertyChanged();
     } else {
@@ -80,8 +85,29 @@ class Property<T> {
     }
   }
 
-  Property<T> listen(OnValueChangedHandler handler) {
+  /**
+   * Sets the new [value] of the bound element
+   * and invokes the [OnElementValueChangedHandler]
+   * on change
+   */
+  void notifyElementChanged(T value) {
+    if(value != _value) {
+      _value = value;
 
+      if(_elValueChangedHandler) {
+        _elValueChangedHandler(this);
+      }
+    }
+  }
+
+  /**
+   * Registers an event [handler] which is invoked
+   * whenever the value of the DOM element is changed.
+   * This happens in case of a two-way binding for example when
+   * the user enters a new value into an input element.
+   */
+  Property<T> listen(OnElementValueChangedHandler handler) {
+    _elValueChangedHandler = handler;
     return this;
   }
 }

@@ -43,6 +43,9 @@ abstract class TwoWayBinding<TElement extends Element, TProperty> extends Bindin
   void notifyElementChanged();
 }
 
+/**
+ * One-way binding for divs
+ */
 class DivBinding<T> extends Binding<DivElement, T> {
   DivBinding(element, property) : super(element, property);
 
@@ -51,6 +54,9 @@ class DivBinding<T> extends Binding<DivElement, T> {
   }
 }
 
+/**
+ * Two-way binding for input fields
+ */
 class InputBinding<T> extends TwoWayBinding<InputElement, T> {
   StreamSubscription _subscription; //TODO add generic type
 
@@ -65,13 +71,12 @@ class InputBinding<T> extends TwoWayBinding<InputElement, T> {
   }
 
   void notifyElementChanged() {
-    property._value = element.value;
+    property.notifyElementChanged(element.value);
   }
 
   void onUnbind() {
     //remove event listener
     _subscription.cancel();
   }
-
 
 }
