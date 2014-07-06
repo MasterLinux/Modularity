@@ -14,7 +14,7 @@ class Property<T> {
    * with an initial [value]
    */
   Property.withValue(T value) {
-    this.value = value;
+    _value = value;
   }
 
   operator <<(T value) { //TODO which operator could be used?
@@ -27,7 +27,7 @@ class Property<T> {
    * property. Throws an [MissingBindingException]
    * if [element] is not set.
    */
-  set value(T val, bool notify) {
+  set value(T val) {
     if(val != _value) {
       _value = val;
       _notifyPropertyChanged();
@@ -55,7 +55,7 @@ class Property<T> {
       _binding = null;
     }
 
-    switch(element.tagName) {
+    switch(element.tagName.toLowerCase()) {
       case "div":
         _binding = new DivBinding(element, this);
         break;

@@ -33,7 +33,7 @@ abstract class Binding<TElement extends Element, TProperty> {
 
 abstract class TwoWayBinding<TElement extends Element, TProperty> extends Binding<TElement, TProperty> {
 
-  TwoWayBinding(element, property) : super(this.element, this.property);
+  TwoWayBinding(element, property) : super(element, property);
 
   /**
    * This function is invoked whenever the
@@ -44,7 +44,7 @@ abstract class TwoWayBinding<TElement extends Element, TProperty> extends Bindin
 }
 
 class DivBinding<T> extends Binding<DivElement, T> {
-  DivBinding(element, property) : super(this.element, this.property);
+  DivBinding(element, property) : super(element, property);
 
   void notifyPropertyChanged() {
     element.innerHtml = property.value;
@@ -54,7 +54,7 @@ class DivBinding<T> extends Binding<DivElement, T> {
 class InputBinding<T> extends TwoWayBinding<InputElement, T> {
   StreamSubscription _subscription; //TODO add generic type
 
-  InputBinding(element, property) : super(this.element, this.property) {
+  InputBinding(element, property) : super(element, property) {
     _subscription = element.onChange.listen((event) {
        notifyElementChanged();
     });
