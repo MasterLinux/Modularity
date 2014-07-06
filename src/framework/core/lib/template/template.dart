@@ -22,39 +22,25 @@ class Template {
         template,
         validator: new NodeValidatorBuilder()
           ..allowHtml5()
+          ..add(new ModularityValidator())
     );
 
 
     return node;
   }
 }
-   /*
+
 class ModularityValidator extends NodeValidator {
 
-  /*
   factory ModularityValidator({UriPolicy uriPolicy}) =>
-    new _Html5NodeValidator(uriPolicy: uriPolicy);
-    */
+    new NodeValidator(uriPolicy: uriPolicy);
+
   bool allowsAttribute(Element element, String attributeName, String value) {
     return attributeName.startsWith('mod-');;
   }
 
-
   bool allowsElement(Element element) {
-    return element.tagName.startsWith('MOD-');
+    return true;
   }
 
-
-/*
-  // Allow all elements which begin with ‘NG-’.
-  bool allowsElement(Element element) =>
-  element.tagName.startsWith('NG-');
-  // Allow all attributes beginning with ‘NG-’, regardless of element
-  // tag.
-  bool allowsAttribute(
-      Element element, String attributeName, String value) =>
-  attributeName.startsWith('ng-');
-  */
-
 }
-    */
