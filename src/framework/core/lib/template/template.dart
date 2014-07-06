@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'exception/exception.dart';
 
+part 'element_type.dart';
 part 'binding.dart';
 part 'property.dart';
 

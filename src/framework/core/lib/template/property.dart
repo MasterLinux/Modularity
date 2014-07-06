@@ -51,18 +51,23 @@ class Property<T> {
    * for the given [element]
    */
   set element(Element element) {
+    ElementType type = new ElementType(element.tagName);
+
     //destroy previous binding
     if(_binding != null) {
       _binding.unbind();
       _binding = null;
     }
 
-    switch(element.tagName.toLowerCase()) {
-      case "div":
+    switch(type) {
+      case ElementType.DIV:
         _binding = new DivBinding(element, this);
         break;
-      case "input":
+      case ElementType.INPUT:
         _binding = new InputBinding(element, this);
+        break;
+      default:
+        throw new NotSupportedElementException(element.tagName);
         break;
     }
   }
