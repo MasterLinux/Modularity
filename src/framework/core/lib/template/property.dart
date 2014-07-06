@@ -1,5 +1,7 @@
 part of modularity.template;
 
+typedef OnValueChangedHandler(Property sender);
+
 class Property<T> {
   Binding _binding;
   T _value;
@@ -71,5 +73,10 @@ class Property<T> {
     } else {
       throw new MissingBindingException();
     }
+  }
+
+  Property<T> listen(OnValueChangedHandler handler) {
+
+    return this;
   }
 }
