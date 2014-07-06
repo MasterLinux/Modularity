@@ -1,28 +1,37 @@
 part of modularity.template;
 
 class Property<T> {
-  Element _el;
+  Binding<T> _binding;
   T _value;
 
-  Property() {
+  /**
+   * Initializes the property
+   */
+  Property();
+
+  /**
+   * Initializes the property
+   * with an initial [value]
+   */
+  Property.withValue(T value) {
+    this.value = value;
   }
 
-  Property.withValue(T val) {
-    value = val;
-  }
-
-  operator <<(T val) { //TODO which operator could be used?
-    value = val;
+  operator <<(T value) { //TODO which operator could be used?
+    this.value = value;
   }
 
   /**
    * Sets the value and updates
    * the DOM element bind to this
-   * property
+   * property. Throws an [MissingBindingException]
+   * if [element] is not set.
    */
-  set value(T val) {
-    _value = val;
-    _notifyPropertyChanged();
+  set value(T val, bool notify) {
+    if(val != _value) {
+      _value = val;
+      _notifyPropertyChanged();
+    }
   }
 
   /**
@@ -33,15 +42,34 @@ class Property<T> {
   }
 
   /**
-   * Registers a DOM element
+   * Binds a DOM element to
+   * this property. It throws
+   * an [NotSupportedElementException]
+   * if there is no specific [Binding]
+   * for the given [element]
    */
-  set element(Element el) {
-    _el = el;
+  set element(Element element) {
+    //destroy previous binding
+    if(_binding != null) {
+      _binding.unbind();
+      _binding = null;
+    }
 
-    //TODO check whether a two way binding or a one way binding is required
+    switch(element.tagName) {
+      case "div":
+        _binding = new DivBinding(element, this);
+        break;
+      case "input":
+        _binding = new InputBinding(element, this);
+        break;
+    }
   }
 
   void _notifyPropertyChanged() {
-
+    if(_binding != null) {
+      _binding.notifyPropertyChanged();
+    } else {
+      throw new MissingBindingException();
+    }
   }
 }
