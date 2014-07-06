@@ -105,7 +105,7 @@ class Property<T> {
     if(value != _value) {
       _value = value;
 
-      if(_elValueChangedHandler) {
+      if(_elValueChangedHandler != null) {
         _elValueChangedHandler(this);
       }
     }
