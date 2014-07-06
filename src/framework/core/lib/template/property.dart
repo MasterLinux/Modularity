@@ -1,7 +1,7 @@
 part of modularity.template;
 
 class Property<T> {
-  Binding<T> _binding;
+  Binding _binding;
   T _value;
 
   /**
