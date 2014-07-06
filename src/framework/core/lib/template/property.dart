@@ -51,14 +51,9 @@ class Property<T> {
    * if there is no specific [Binding]
    * for the given [element]
    */
-  set element(Element element) {
+  Property<T> bind(Element element) {
     ElementType type = new ElementType(element.tagName);
-
-    //destroy previous binding
-    if(_binding != null) {
-      _binding.unbind();
-      _binding = null;
-    }
+    unbind();
 
     switch(type) {
       case ElementType.DIV:
@@ -71,6 +66,22 @@ class Property<T> {
         throw new NotSupportedElementException(element.tagName);
         break;
     }
+
+    return this;
+  }
+
+  /**
+   * Removes the binding. This function
+   * should be called before removing
+   * the bound DOM element from DOM.
+   */
+  Property<T> unbind() {
+    if(_binding != null) {
+      _binding.unbind();
+      _binding = null;
+    }
+
+    return this;
   }
 
   /**

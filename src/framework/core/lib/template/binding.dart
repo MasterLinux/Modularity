@@ -1,8 +1,8 @@
 part of modularity.template;
 
 abstract class Binding<TElement extends Element, TProperty> {
-  final Property<TProperty> property;
-  final TElement element;
+  Property<TProperty> property;
+  TElement element;
 
   Binding(this.element, this.property);
 
@@ -76,7 +76,10 @@ class InputBinding<T> extends TwoWayBinding<InputElement, T> {
 
   void onUnbind() {
     //remove event listener
-    _subscription.cancel();
+    if(_subscription != null) {
+      _subscription.cancel();
+      _subscription = null;
+    }
   }
 
 }
