@@ -1,32 +1,43 @@
 part of lib.core;
 
 /**
- * typedef to allow dependency injection
- * for injecting a config loader into
- * an application
+ * Application data model which contains
+ * each information to initialize an app
  */
-typedef ConfigLoader ConfigLoaderFactory();
+class ApplicationInfo {
 
-/**
- * The default config loader used whenever
- * no custom loader is injected
- */
-ConfigLoader _defaultConfigLoader() => new RestApiConfigLoader();
+  /**
+   * Gets or sets the name of the application
+   */
+  String name;
+
+  /**
+   * Gets or sets the current version number of the application
+   */
+  String version;
+
+  /**
+   * Gets or sets the language code of the current displayed language
+   */
+  String language;
+
+  /**
+   * Gets or sets the URI of the home page
+   */
+  String startUri;
+
+  /**
+   * Gets or sets the name of the author of the application
+   */
+  String author;
+}
 
 /**
  * Representation of an application
  */
 class Application {
-  ApplicationData _appData = new ApplicationData();
   bool _isStarted = false;
-  List<Page> _pages; //TODO change type to HashMap<String, Page>, write tests first
-
-  /**
-   * The config loader which is used
-   * to load the application with the
-   * help of a config
-   */
-  final ConfigLoaderFactory configLoaderFactory;
+  Future _mainTask;
 
   /**
    * Flag which indicates whether the application
@@ -35,86 +46,28 @@ class Application {
   final bool isInDebugMode;
 
   /**
-   * Initializes the application. It is possible to inject a config
-   * loader by setting a [configLoaderFactory] if not used the default
-   * config loader is used to initialize the app. Whenever [isInDebugMode]
-   * is set to true the debug console will be visible
+   * Contains all information
+   * about the application
    */
-  Application({this.configLoaderFactory: _defaultConfigLoader, this.isInDebugMode: false});
+  final ApplicationInfo info;
 
   /**
-   * Loads the config and starts the application
+   * Gets all resources tasks if no resource is loaded
+   * it returns an empty list
    */
-  Future start() {
-    return configLoaderFactory().load()
-
-    //get app data
-    .then((data) {
-      //check whether the config could be loaded
-      if((_appData = data) == null) {
-        throw new ApplicationLoadingException();
-      }
-      return data;
-    })
-
-    //load pages
-    .then((data) {
-      //TODO check whether startUri is not null
-
-      if(!_loadPages(data.pages)) {
-        throw new ApplicationLoadingException(); //TODO allow custom message -> no pages defined
-      }
-      return data;
-    })
-
-    //load tasks
-    .then((data) {
-      _loadTasks(data.tasks);
-      return data;
-    })
-
-    //load resources
-    .then((data) {
-      _loadResources(data.resources);
-      return data;
-    })
-
-    //finish loading
-    .whenComplete(() { //TODO check when _isStarted should be set to false
-      _isStarted = true;
-    });
-  }
+  final HashMap<String, Resource> resources;
 
   /**
-   * Destructs and stops the application
+   * Gets all pages if no page is loaded
+   * it returns an empty list
    */
-  Future stop() {
-    return null;
-  }
+  final HashMap<String, Page> pages;
 
   /**
-   * Loads all pages and returns true
-   * if the given list is not null and not empty,
-   * false otherwise
+   * Gets all background tasks if no task is loaded
+   * it returns an empty list
    */
-  _loadPages(List<Page> pages) {
-    bool isLoaded = false;
-
-    if(startUri != null && pages != null && pages.length > 0) {
-      //TODO implement
-      isLoaded = true;
-    }
-
-    return isLoaded;
-  }
-
-  _loadTasks(List<Task> pages) {
-
-  }
-
-  _loadResources(List<Resource> pages) {
-
-  }
+  final HashMap<String, Task> tasks;
 
   /**
    * Flag which indicates whether the
@@ -123,49 +76,37 @@ class Application {
   bool get isStarted => _isStarted;
 
   /**
-   * Gets all pages if no page is loaded
-   * it returns an empty list
+   * Initializes the application. Whenever [isInDebugMode]
+   * is set to true the debug console will be visible
    */
-  List<Page> get pages => _appData.pages != null ? _appData.pages : new List<Page>();
+  Application({this.info, this.pages, this.tasks, this.resources, this.isInDebugMode: false});
 
   /**
-   * Gets all background tasks if no task is loaded
-   * it returns an empty list
+   * Loads the config and starts the application
    */
-  List<Task> get tasks => _appData.tasks != null ? _appData.tasks : new List<Task>(); //TODO use HashMap
+  Future start() {
+    if(!_isStarted) {
+      _isStarted = true;
+
+      //start new main task
+      _mainTask = new Future.microtask(() {
+        //TODO initialize app
+      }).whenComplete(() {
+        _isStarted = true;
+      });
+    }
+
+    return _mainTask;
+  }
 
   /**
-   * Gets all resources tasks if no resource is loaded
-   * it returns an empty list
+   * Destructs and stops the application
    */
-  List<Resource> get resources => _appData.resources != null ? _appData.resources : new List<Resource>(); //TODO use HashMap
-
-  /**
-   * Gets the name of the application
-   * or null if no application name is set
-   */
-  String get name => _appData.name; //TODO move to meta obj?
-
-  /**
-   * Gets the current version number of the application
-   * or null if no version number is set
-   */
-  String get version => _appData.version; //TODO move to meta obj?
-
-  /**
-   * Gets the language code of the current displayed language
-   * or null if no default language is set
-   */
-  String get language => _appData.language;
-
-  /**
-   * Gets the URI of the home page
-   */
-  String get startUri => _appData.startUri;
-
-  /**
-   * Gets the name of the author of the application
-   * or null if no name is set
-   */
-  String get author => _appData.author; //TODO move to meta obj?
+  Future stop() {
+    if(_isStarted) {
+      _isStarted = false;
+      //TODO stop application
+    }
+    return null;
+  }
 }

@@ -1,21 +1,6 @@
 part of lib.core;
 
 /**
- * Application data model which contains
- * each information to initialize an app
- */
-class ApplicationData {
-  List<Task> tasks;
-  List<Resource> resources;
-  List<Page> pages;
-  String name;
-  String version;
-  String language;
-  String startUri;
-  String author;
-}
-
-/**
  * Interface which represents an
  * application config loader
  */
@@ -30,5 +15,5 @@ abstract class ConfigLoader {
   /**
    * Loads the config asynchronously
    */
-  Future<ApplicationData> load();
+  Future<ApplicationInfo> load();
 }
