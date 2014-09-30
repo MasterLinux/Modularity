@@ -3,10 +3,12 @@ part of modularity.tests;
 class ApplicationBuilderTest {
   final String APP_NAME = "test_App_name";
   final String APP_VERSION = "1.0.0";
-  final String PAGE_URI = "test_uri";
-  final String START_PAGE_URI = "test_start_uri";
   final String APP_AUTHOR = "test_author";
+  final String START_PAGE_URI = "test_start_uri";
+  final String PAGE_URI = "test_uri";
+  final String RESOURCE_NAME = "test_res_name";
   final String LANGUAGE = "test_language";
+  final String TASK_ID = "test_task_id";
 
   void run() {
     test('builder should create an app with defaults', () {
@@ -41,9 +43,9 @@ class ApplicationBuilderTest {
 
     test('builder should add a page, task and resource', () {
       var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION)
-                                        .addPage(new Page(null, null, null))
-                                        .addTask(new BackgroundTask())
-                                        .addResource(new Resource())
+                                        .addPage(new Page(null, PAGE_URI, null))
+                                        .addTask(new BackgroundTask()..id = TASK_ID)
+                                        .addResource(new Resource()..name = RESOURCE_NAME)
                                         .build();
 
       expect(appUnderTest, isNotNull);
@@ -53,13 +55,16 @@ class ApplicationBuilderTest {
       expect(appUnderTest.resources.isNotEmpty, isTrue);
       expect(appUnderTest.pages.isNotEmpty, isTrue);
       expect(appUnderTest.tasks.isNotEmpty, isTrue);
+      expect(appUnderTest.resources[RESOURCE_NAME], isNotNull);
+      expect(appUnderTest.pages[PAGE_URI], isNotNull);
+      expect(appUnderTest.tasks[TASK_ID], isNotNull);
     });
 
     test('builder should add a pages, tasks and resources', () {
       var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION)
-                                        .addPages(new List<Page>()..add(new Page(null, null, null)))
-                                        .addTasks(new List<BackgroundTask>()..add(new BackgroundTask()))
-                                        .addResources(new List<Resource>()..add(new Resource()))
+                                        .addPages(new List<Page>()..add(new Page(null, PAGE_URI, null)))
+                                        .addTasks(new List<BackgroundTask>()..add(new BackgroundTask()..id = TASK_ID))
+                                        .addResources(new List<Resource>()..add(new Resource()..name = RESOURCE_NAME))
                                         .build();
 
       expect(appUnderTest, isNotNull);
@@ -69,6 +74,9 @@ class ApplicationBuilderTest {
       expect(appUnderTest.resources.isNotEmpty, isTrue);
       expect(appUnderTest.pages.isNotEmpty, isTrue);
       expect(appUnderTest.tasks.isNotEmpty, isTrue);
+      expect(appUnderTest.resources[RESOURCE_NAME], isNotNull);
+      expect(appUnderTest.pages[PAGE_URI], isNotNull);
+      expect(appUnderTest.tasks[TASK_ID], isNotNull);
     });
 
     test('builder should use URI of the first page as start URI using addPages(List)', () {
