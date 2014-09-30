@@ -1,10 +1,14 @@
 library modularity.tests;
 
 import 'package:scheduled_test/scheduled_test.dart';
+import 'package:unittest/html_config.dart';
 
 import '../lib/core.dart';
 import 'mock/mock.dart';
 
+import 'dart:html';
+
+part 'application_builder_test.dart';
 part 'application_test.dart';
 
 /**
@@ -12,7 +16,10 @@ part 'application_test.dart';
  * library.
  */
 void main() {
-  new ApplicationTest().run();
+  useHtmlConfiguration();
+
+  //new ApplicationTest().run();
+  new ApplicationBuilderTest().run();
 }
 
 //TODO fix matcher

@@ -1,0 +1,94 @@
+part of modularity.tests;
+
+class ApplicationBuilderTest {
+  final String APP_NAME = "test_App_name";
+  final String APP_VERSION = "1.0.0";
+  final String PAGE_URI = "test_uri";
+  final String START_PAGE_URI = "test_start_uri";
+  final String APP_AUTHOR = "test_author";
+  final String LANGUAGE = "test_language";
+
+  void run() {
+    test('builder should create an app with defaults', () {
+      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION).build();
+
+      expect(appUnderTest, isNotNull);
+      expect(appUnderTest.info.name, APP_NAME);
+      expect(appUnderTest.info.author, isNull);
+      expect(appUnderTest.info.startUri, isNull);
+      expect(appUnderTest.info.language, Application.DEFAULT_LANGUAGE);
+      expect(appUnderTest.info.version, APP_VERSION);
+      expect(appUnderTest.resources, isEmpty);
+      expect(appUnderTest.pages, isEmpty);
+      expect(appUnderTest.tasks, isEmpty);
+    });
+
+    test('builder should create an app with all info', () {
+      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION)
+                                        .setAuthor(APP_AUTHOR)
+                                        .setLanguage(LANGUAGE)
+                                        .setStartUri(START_PAGE_URI)
+                                        .build();
+
+      expect(appUnderTest, isNotNull);
+      expect(appUnderTest.info, isNotNull);
+      expect(appUnderTest.info.name, APP_NAME);
+      expect(appUnderTest.info.author, APP_AUTHOR);
+      expect(appUnderTest.info.startUri, START_PAGE_URI);
+      expect(appUnderTest.info.language, LANGUAGE);
+      expect(appUnderTest.info.version, APP_VERSION);
+    });
+
+    test('builder should add a page, task and resource', () {
+      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION)
+                                        .addPage(new Page(null, null, null))
+                                        .addTask(new BackgroundTask())
+                                        .addResource(new Resource())
+                                        .build();
+
+      expect(appUnderTest, isNotNull);
+      expect(appUnderTest.resources, isNotNull);
+      expect(appUnderTest.pages, isNotNull);
+      expect(appUnderTest.tasks, isNotNull);
+      expect(appUnderTest.resources.isNotEmpty, isTrue);
+      expect(appUnderTest.pages.isNotEmpty, isTrue);
+      expect(appUnderTest.tasks.isNotEmpty, isTrue);
+    });
+
+    test('builder should add a pages, tasks and resources', () {
+      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION)
+                                        .addPages(new List<Page>()..add(new Page(null, null, null)))
+                                        .addTasks(new List<BackgroundTask>()..add(new BackgroundTask()))
+                                        .addResources(new List<Resource>()..add(new Resource()))
+                                        .build();
+
+      expect(appUnderTest, isNotNull);
+      expect(appUnderTest.resources, isNotNull);
+      expect(appUnderTest.pages, isNotNull);
+      expect(appUnderTest.tasks, isNotNull);
+      expect(appUnderTest.resources.isNotEmpty, isTrue);
+      expect(appUnderTest.pages.isNotEmpty, isTrue);
+      expect(appUnderTest.tasks.isNotEmpty, isTrue);
+    });
+
+    test('builder should use URI of the first page as start URI using addPages(List)', () {
+      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION)
+                                        .addPages(new List<Page>()..add(new Page(null, PAGE_URI, null)))
+                                        .build();
+
+      expect(appUnderTest, isNotNull);
+      expect(appUnderTest.info, isNotNull);
+      expect(appUnderTest.info.startUri, PAGE_URI);
+    });
+
+    test('builder should use URI of the first page as start URI using addPage(Page)', () {
+      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION)
+                                          .addPage(new Page(null, PAGE_URI, null))
+                                          .build();
+
+      expect(appUnderTest, isNotNull);
+      expect(appUnderTest.info, isNotNull);
+      expect(appUnderTest.info.startUri, PAGE_URI);
+    });
+  }
+}

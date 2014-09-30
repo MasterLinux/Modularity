@@ -36,8 +36,9 @@ class ApplicationInfo {
  * Representation of an application
  */
 class Application {
-  bool _isStarted = false;
-  Future _mainTask;
+  static final String DEFAULT_LANGUAGE = "en_EN";
+  Future<Application> _mainTask;
+  bool _isBusy = false;
 
   /**
    * Flag which indicates whether the application
@@ -67,13 +68,13 @@ class Application {
    * Gets all background tasks if no task is loaded
    * it returns an empty list
    */
-  final HashMap<String, Task> tasks;
+  final HashMap<String, BackgroundTask> tasks;
 
   /**
    * Flag which indicates whether the
    * application is started or not
    */
-  bool get isStarted => _isStarted;
+  bool get isStarted => _isBusy;
 
   /**
    * Initializes the application. Whenever [isInDebugMode]
@@ -85,14 +86,15 @@ class Application {
    * Loads the config and starts the application
    */
   Future start() {
-    if(!_isStarted) {
-      _isStarted = true;
+    if(!_isBusy) {
+      _isBusy = true;
+      _mainTask = _buildTask();
 
       //start new main task
-      _mainTask = new Future.microtask(() {
+      _mainTask.then((instance) {
         //TODO initialize app
       }).whenComplete(() {
-        _isStarted = true;
+        _isBusy = false;
       });
     }
 
@@ -103,10 +105,20 @@ class Application {
    * Destructs and stops the application
    */
   Future stop() {
-    if(_isStarted) {
-      _isStarted = false;
+    if(_isBusy) {
+      _isBusy = false;
       //TODO stop application
     }
     return null;
+  }
+
+  /**
+   * Gets the main task
+   */
+  Future<Application> _buildTask() {
+    Completer completer;
+    completer.complete(this);
+
+    return completer.future;
   }
 }
