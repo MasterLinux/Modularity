@@ -2,5 +2,6 @@ name: core
 dependencies:
   browser: any
   connect: "1.0.0-alpha.4"
+
 dev_dependencies:
   scheduled_test: any
