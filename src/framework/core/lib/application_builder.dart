@@ -4,10 +4,11 @@ part of lib.core;
  * Builder class used to create and setup an application
  */
 class ApplicationBuilder {
+  static final String NAMESPACE = "lib.core.ApplicationBuilder";
   HashMap<String, BackgroundTask> _tasks;
   HashMap<String, Resource> _resources;
   HashMap<String, Page> _pages;
-  bool _isInDebugMode;
+  Logger logger;
   String _author;
   String _name;
   String _version;
@@ -17,23 +18,17 @@ class ApplicationBuilder {
 
   /**
    * Initializes the builder. The [name] and the
-   * [version] is required to build an application
+   * [version] is required to build an application.
+   * The [logger] is used to used to log warnings, errors, etc.
+   * and is used as default [logger] in the [Application]. If the
+   * [logger] isn't set the debug mode is disabled.
    */
-  ApplicationBuilder(String name, String version) {
+  ApplicationBuilder(String name, String version, {this.logger}) {
     _tasks = new HashMap<String, BackgroundTask>();
     _resources = new HashMap<String, Resource>();
     _pages = new HashMap<String, Page>();
-    _isInDebugMode = false;
     _version = version;
     _name = name;
-  }
-
-  /**
-   * Enables or disables the debug mode
-   */
-  ApplicationBuilder setDebugModeEnabled(bool debugModeEnabled) {
-    _isInDebugMode = debugModeEnabled;
-    return this;
   }
 
   /**
@@ -65,8 +60,8 @@ class ApplicationBuilder {
    */
   ApplicationBuilder addPages(List<Page> pages) {
     _pages.addAll(new HashMap.fromIterable(pages, key: (page) {
-      if(_pages.containsKey(page.uri)) {
-        //TODO log warning
+      if(logger != null && _pages.containsKey(page.uri)) {
+        logger.warning(new PageExistsWarning(NAMESPACE, page.uri));
       } else if(_firstPageUri == null) {
         _firstPageUri = page.uri;
       }
@@ -80,8 +75,8 @@ class ApplicationBuilder {
    * Adds a single [page] to the application
    */
   ApplicationBuilder addPage(Page page) {
-    if(_pages.containsKey(page.uri)) {
-      //TODO log warning
+    if(logger != null && _pages.containsKey(page.uri)) {
+      logger.warning(new PageExistsWarning(NAMESPACE, page.uri));
     } else if(_firstPageUri == null) {
       _firstPageUri = page.uri;
     }
@@ -95,8 +90,8 @@ class ApplicationBuilder {
    */
   ApplicationBuilder addTasks(List<BackgroundTask> tasks) {
     _tasks.addAll(new HashMap.fromIterable(tasks, key: (task) {
-      if(_tasks.containsKey(task.id)) {
-        //TODO log warning
+      if(logger != null && _tasks.containsKey(task.id)) {
+        logger.warning(new BackgroundTaskExistsWarning(NAMESPACE, task.id));
       }
 
       return task.id;
@@ -108,8 +103,8 @@ class ApplicationBuilder {
    * Adds a single background [task] to the application
    */
   ApplicationBuilder addTask(BackgroundTask task) {
-    if(_tasks.containsKey(task.id)) {
-      //TODO log warning
+    if(logger != null && _tasks.containsKey(task.id)) {
+      logger.warning(new BackgroundTaskExistsWarning(NAMESPACE, task.id));
     }
 
     _tasks[task.id] = task;
@@ -121,8 +116,8 @@ class ApplicationBuilder {
    */
   ApplicationBuilder addResources(List<Resource> resources) {
     _resources.addAll(new HashMap.fromIterable(resources, key: (resource) {
-      if(_resources.containsKey(resource.name)) {
-        //TODO log warning
+      if(logger != null && _resources.containsKey(resource.name)) {
+        logger.warning(new ResourceExistsWarning(NAMESPACE, resource.name));
       }
 
       return resource.name;
@@ -134,8 +129,8 @@ class ApplicationBuilder {
    * Adds a single [resource] to the application
    */
   ApplicationBuilder addResource(Resource resource) {
-    if(_resources.containsKey(resource.name)) {
-      //TODO log warning
+    if(logger != null && _resources.containsKey(resource.name)) {
+      logger.warning(new ResourceExistsWarning(NAMESPACE, resource.name));
     }
 
     _resources[resource.name] = resource;
@@ -161,7 +156,7 @@ class ApplicationBuilder {
     info.name = _name;
 
     return new Application(
-      isInDebugMode: _isInDebugMode,
+      logger: logger,
       resources: _resources,
       pages: _pages,
       tasks: _tasks,

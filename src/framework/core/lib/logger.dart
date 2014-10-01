@@ -3,6 +3,14 @@ part of lib.core;
 class Logger {
   final List<MessageObserver> _observer = new List<MessageObserver>();
   final List<LoggingMessage> _messages = new List<LoggingMessage>();
+  final String applicationVersion;
+  final String applicationName;
+
+  /**
+   * Initializes the logger for a specific application
+   * with its [applicationName] and [applicationVersion]
+   */
+  Logger(this.applicationName, this.applicationVersion);
 
   /**
    * Registers a new [observer] which will be notified

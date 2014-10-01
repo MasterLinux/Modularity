@@ -23,6 +23,7 @@ class ApplicationBuilderTest {
       expect(appUnderTest.resources, isEmpty);
       expect(appUnderTest.pages, isEmpty);
       expect(appUnderTest.tasks, isEmpty);
+      expect(appUnderTest.logger, isNull);
     });
 
     test('builder should create an app with all info', () {
@@ -39,6 +40,15 @@ class ApplicationBuilderTest {
       expect(appUnderTest.info.startUri, START_PAGE_URI);
       expect(appUnderTest.info.language, LANGUAGE);
       expect(appUnderTest.info.version, APP_VERSION);
+    });
+
+    test('builder should add logger', () {
+      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION, logger: new Logger(APP_NAME, APP_VERSION)).build();
+
+      expect(appUnderTest, isNotNull);
+      expect(appUnderTest.logger, isNotNull);
+      expect(appUnderTest.logger.applicationName, APP_NAME);
+      expect(appUnderTest.logger.applicationVersion, APP_VERSION);
     });
 
     test('builder should add a page, task and resource', () {
