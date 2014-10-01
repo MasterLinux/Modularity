@@ -43,8 +43,8 @@ class ConfigLoaderMock extends ConfigLoader {
     return true;
   }
 
-  Future<ApplicationData> load() {
-    var model = new ApplicationData();
+  Future<ApplicationInfo> load() {
+    var model = new ApplicationInfo();
 
     if(!_excludeVersion) model.version = APPLICATION_VERSION;
     if(!_excludeAuthor) model.author = APPLICATION_AUTHOR;
