@@ -2,7 +2,7 @@ part of lib.core;
 
 class Logger {
   final List<MessageObserver> _observer = new List<MessageObserver>();
-  final List<LoggingMessage> _messages = new List<LoggingMessage>();
+  final List<LoggingMessage> messages = new List<LoggingMessage>();
   final String applicationVersion;
   final String applicationName;
 
@@ -28,12 +28,22 @@ class Logger {
   }
 
   /**
-   * Notifies each observer if a
+   * Notifies each observer that a
    * [message] is received
    */
-  void _notify(LoggingMessage message) {
+  void _notifyMessageReceived(LoggingMessage message) {
     for(var observer in _observer) {
-      observer(this, message);
+      observer.onMessageReceived(this, message);
+    }
+  }
+
+  /**
+   * Notifies each observer that all
+   * messages are removed
+   */
+  void _notifyMessagesCleared(LoggingMessage message) {
+    for(var observer in _observer) {
+      observer.onMessagesCleared(this);
     }
   }
 
@@ -42,22 +52,85 @@ class Logger {
    * messages from stack
    */
   void clear() {
-    _messages.clear();
+    messages.clear();
   }
 
   /**
    * Gets all received warnings
    */
-  void get warnings {
-    return _messages.where((message) => message.level == Warning.LEVEL);
+  void get warningMessages {
+    return messages.where((message) => message.level == WarningMessage.LEVEL);
+  }
+
+  /**
+   * Gets all received errors
+   */
+  void get errorMessages {
+    return messages.where((message) => message.level == ErrorMessage.LEVEL);
+  }
+
+  /**
+   * Gets all received info messages
+   */
+  void get infoMessages {
+    return messages.where((message) => message.level == InfoMessage.LEVEL);
+  }
+
+  /**
+   * Gets all received lifecycle messages
+   */
+  void get lifecycleMessages {
+    return messages.where((message) => message.level == LifecycleMessage.LEVEL);
+  }
+
+  /**
+   * Gets all received network messages
+   */
+  void get networkMessages {
+    return messages.where((message) => message.level == NetworkMessage.LEVEL);
+  }
+
+  /**
+   * Logs a [message]
+   */
+  void log(LoggingMessage message) {
+    messages.add(message);
+    _notifyMessageReceived(message);
   }
 
   /**
    * Logs a warning [message]
    */
-  void warning(Warning message) {
-    _messages.add(message);
-    _notify(message);
+  void logWarning(WarningMessage message) {
+    log(message);
+  }
+
+  /**
+   * Logs an error [message]
+   */
+  void logError(ErrorMessage message) {
+    log(message);
+  }
+
+  /**
+   * Logs an info [message]
+   */
+  void logInfo(InfoMessage message) {
+    log(message);
+  }
+
+  /**
+   * Logs a lifecycle [message]
+   */
+  void logLifecycle(LifecycleMessage message) {
+    log(message);
+  }
+
+  /**
+   * Logs a network [message]
+   */
+  void logNetwork(NetworkMessage message) {
+    log(message);
   }
 }
 
@@ -106,10 +179,62 @@ abstract class LoggingMessage {
 /**
  * Representation of a warning
  */
-abstract class Warning extends LoggingMessage {
+abstract class WarningMessage extends LoggingMessage {
   static final String LEVEL = "warning";
 
-  Warning(String namespace) : super(namespace);
+  WarningMessage(String namespace) : super(namespace);
+
+  String get level {
+    return LEVEL;
+  }
+}
+
+/**
+ * Representation of an error
+ */
+abstract class ErrorMessage extends LoggingMessage {
+  static final String LEVEL = "error";
+
+  ErrorMessage(String namespace) : super(namespace);
+
+  String get level {
+    return LEVEL;
+  }
+}
+
+/**
+ * Representation of an info message
+ */
+abstract class InfoMessage extends LoggingMessage {
+  static final String LEVEL = "info";
+
+  InfoMessage(String namespace) : super(namespace);
+
+  String get level {
+    return LEVEL;
+  }
+}
+
+/**
+ * Representation of a lifecycle message
+ */
+abstract class LifecycleMessage extends LoggingMessage {
+  static final String LEVEL = "lifecycle";
+
+  LifecycleMessage(String namespace) : super(namespace);
+
+  String get level {
+    return LEVEL;
+  }
+}
+
+/**
+ * Representation of a network message
+ */
+abstract class NetworkMessage extends LoggingMessage {
+  static final String LEVEL = "network";
+
+  NetworkMessage(String namespace) : super(namespace);
 
   String get level {
     return LEVEL;
@@ -119,7 +244,7 @@ abstract class Warning extends LoggingMessage {
 /**
  * Warning which is used whenever a page already exists
  */
-class PageExistsWarning extends Warning {
+class PageExistsWarning extends WarningMessage {
   final String uri;
 
   PageExistsWarning(String namespace, this.uri) : super(namespace);
@@ -132,7 +257,7 @@ class PageExistsWarning extends Warning {
 /**
  * Warning which is used whenever a background task already exists
  */
-class BackgroundTaskExistsWarning extends Warning {
+class BackgroundTaskExistsWarning extends WarningMessage {
   final String id;
 
   BackgroundTaskExistsWarning(String namespace, this.id) : super(namespace);
@@ -145,7 +270,7 @@ class BackgroundTaskExistsWarning extends Warning {
 /**
  * Warning which is used whenever a resource already exists
  */
-class ResourceExistsWarning extends Warning {
+class ResourceExistsWarning extends WarningMessage {
   final String name;
 
   ResourceExistsWarning(String namespace, this.name) : super(namespace);

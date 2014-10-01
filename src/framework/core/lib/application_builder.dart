@@ -61,7 +61,7 @@ class ApplicationBuilder {
   ApplicationBuilder addPages(List<Page> pages) {
     _pages.addAll(new HashMap.fromIterable(pages, key: (page) {
       if(logger != null && _pages.containsKey(page.uri)) {
-        logger.warning(new PageExistsWarning(NAMESPACE, page.uri));
+        logger.logWarning(new PageExistsWarning(NAMESPACE, page.uri));
       } else if(_firstPageUri == null) {
         _firstPageUri = page.uri;
       }
@@ -76,7 +76,7 @@ class ApplicationBuilder {
    */
   ApplicationBuilder addPage(Page page) {
     if(logger != null && _pages.containsKey(page.uri)) {
-      logger.warning(new PageExistsWarning(NAMESPACE, page.uri));
+      logger.logWarning(new PageExistsWarning(NAMESPACE, page.uri));
     } else if(_firstPageUri == null) {
       _firstPageUri = page.uri;
     }
@@ -91,7 +91,7 @@ class ApplicationBuilder {
   ApplicationBuilder addTasks(List<BackgroundTask> tasks) {
     _tasks.addAll(new HashMap.fromIterable(tasks, key: (task) {
       if(logger != null && _tasks.containsKey(task.id)) {
-        logger.warning(new BackgroundTaskExistsWarning(NAMESPACE, task.id));
+        logger.logWarning(new BackgroundTaskExistsWarning(NAMESPACE, task.id));
       }
 
       return task.id;
@@ -104,7 +104,7 @@ class ApplicationBuilder {
    */
   ApplicationBuilder addTask(BackgroundTask task) {
     if(logger != null && _tasks.containsKey(task.id)) {
-      logger.warning(new BackgroundTaskExistsWarning(NAMESPACE, task.id));
+      logger.logWarning(new BackgroundTaskExistsWarning(NAMESPACE, task.id));
     }
 
     _tasks[task.id] = task;
@@ -117,7 +117,7 @@ class ApplicationBuilder {
   ApplicationBuilder addResources(List<Resource> resources) {
     _resources.addAll(new HashMap.fromIterable(resources, key: (resource) {
       if(logger != null && _resources.containsKey(resource.name)) {
-        logger.warning(new ResourceExistsWarning(NAMESPACE, resource.name));
+        logger.logWarning(new ResourceExistsWarning(NAMESPACE, resource.name));
       }
 
       return resource.name;
@@ -130,7 +130,7 @@ class ApplicationBuilder {
    */
   ApplicationBuilder addResource(Resource resource) {
     if(logger != null && _resources.containsKey(resource.name)) {
-      logger.warning(new ResourceExistsWarning(NAMESPACE, resource.name));
+      logger.logWarning(new ResourceExistsWarning(NAMESPACE, resource.name));
     }
 
     _resources[resource.name] = resource;
