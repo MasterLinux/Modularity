@@ -1,16 +1,35 @@
 part of lib.core;
 
 class Logger {
+  static const String NAMESPACE = "modularity.core.Logger";
+  static const String DEFAULT_APPLICATION_VERSION = "0.0.0";
+  static const String DEFAULT_APPLICATION_NAME = "undefined";
   final List<MessageObserver> _observer = new List<MessageObserver>();
   final List<LoggingMessage> messages = new List<LoggingMessage>();
   final String applicationVersion;
   final String applicationName;
+  final bool isSynchronouslyModeEnabled;
 
   /**
    * Initializes the logger for a specific application
    * with its [applicationName] and [applicationVersion]
    */
-  Logger(this.applicationName, this.applicationVersion);
+  Logger({this.applicationName: DEFAULT_APPLICATION_NAME,
+         this.applicationVersion: DEFAULT_APPLICATION_VERSION,
+         this.isSynchronouslyModeEnabled: false
+         }) {
+    if(applicationName == DEFAULT_APPLICATION_NAME ||
+                          applicationName == null ||
+                          applicationName.isEmpty) {
+      log(new MissingApplicationNameError(NAMESPACE));
+    }
+
+    if(applicationVersion == DEFAULT_APPLICATION_VERSION ||
+                             applicationVersion == null ||
+                             applicationVersion.isEmpty) {
+      log(new MissingApplicationVersionError(NAMESPACE));
+    }
+  }
 
   /**
    * Registers a new [observer] which will be notified
@@ -91,46 +110,61 @@ class Logger {
   }
 
   /**
-   * Logs a [message]
+   * Logs synchronously
    */
-  void log(LoggingMessage message) {
+  void _logSync(LoggingMessage message) {
     messages.add(message);
     _notifyMessageReceived(message);
   }
 
   /**
+   * Logs a [message]
+   */
+  Future log(LoggingMessage message) {
+    if(isSynchronouslyModeEnabled) {
+      return new Future.sync(() => _logSync(message));
+    } else {
+      Completer completer = new Completer();
+      completer.complete();
+      return completer.future.then((instance) {
+        _logSync(message);
+      });
+    }
+  }
+
+  /**
    * Logs a warning [message]
    */
-  void logWarning(WarningMessage message) {
-    log(message);
+  Future logWarning(WarningMessage message) {
+    return log(message);
   }
 
   /**
    * Logs an error [message]
    */
-  void logError(ErrorMessage message) {
-    log(message);
+  Future logError(ErrorMessage message) {
+    return log(message);
   }
 
   /**
    * Logs an info [message]
    */
-  void logInfo(InfoMessage message) {
-    log(message);
+  Future logInfo(InfoMessage message) {
+    return log(message);
   }
 
   /**
    * Logs a lifecycle [message]
    */
-  void logLifecycle(LifecycleMessage message) {
-    log(message);
+  Future logLifecycle(LifecycleMessage message) {
+    return log(message);
   }
 
   /**
    * Logs a network [message]
    */
-  void logNetwork(NetworkMessage message) {
-    log(message);
+  Future logNetwork(NetworkMessage message) {
+    return log(message);
   }
 }
 
@@ -138,8 +172,8 @@ class Logger {
  * Interface for declaring classes as message observer
  */
 class MessageObserver {
-  onMessageReceived(Logger sender, LoggingMessage message);
-  onMessagesCleared(Logger sender);
+  void onMessageReceived(Logger sender, LoggingMessage message);
+  void onMessagesCleared(Logger sender);
 }
 
 /**
@@ -263,7 +297,7 @@ class BackgroundTaskExistsWarning extends WarningMessage {
   BackgroundTaskExistsWarning(String namespace, this.id) : super(namespace);
 
   String get message {
-    return "Task with ID => \"${id}\" already exists. The new one overrides the previous added task.";
+    return "Task with ID => \"$id\" already exists. The new one overrides the previous added task.";
   }
 }
 
@@ -276,6 +310,22 @@ class ResourceExistsWarning extends WarningMessage {
   ResourceExistsWarning(String namespace, this.name) : super(namespace);
 
   String get message {
-    return "Resource with name => \"${name}\" already exists. The new one overrides the previous added resource.";
+    return "Resource with name => \"$name\" already exists. The new one overrides the previous added resource.";
+  }
+}
+
+class MissingApplicationNameError extends ErrorMessage {
+  MissingApplicationNameError(String namespace) : super(namespace);
+
+  String get message {
+    return "Application name is missing. You have to set a name to ensure that your application runs correctly.";
+  }
+}
+
+class MissingApplicationVersionError extends ErrorMessage {
+  MissingApplicationVersionError(String namespace) : super(namespace);
+
+  String get message {
+    return "Application version is missing. You have to set a version number to ensure that your application runs correctly.";
   }
 }

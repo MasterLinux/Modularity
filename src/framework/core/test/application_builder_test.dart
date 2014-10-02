@@ -43,7 +43,7 @@ class ApplicationBuilderTest {
     });
 
     test('builder should add logger', () {
-      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION, logger: new Logger(APP_NAME, APP_VERSION)).build();
+      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION, logger: new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION)).build();
 
       expect(appUnderTest, isNotNull);
       expect(appUnderTest.logger, isNotNull);
@@ -60,7 +60,7 @@ class ApplicationBuilderTest {
           expectedResourceWarningCount = 2,
           expectedPageWarningCount = 2;
 
-      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION, logger: new Logger(APP_NAME, APP_VERSION))
+      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION, logger: new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION, isSynchronouslyModeEnabled: true))
                                         .addPage(new Page(null, PAGE_URI, null))
                                         .addTask(new BackgroundTask()..id = TASK_ID)
                                         .addResource(new Resource()..name = RESOURCE_NAME)

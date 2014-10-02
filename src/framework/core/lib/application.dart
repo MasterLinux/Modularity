@@ -36,7 +36,7 @@ class ApplicationInfo {
  * Representation of an application
  */
 class Application {
-  static final String DEFAULT_LANGUAGE = "en_EN";
+  static const String DEFAULT_LANGUAGE = "en_EN";
   Future<Application> _mainTask;
   bool _isBusy = false;
 

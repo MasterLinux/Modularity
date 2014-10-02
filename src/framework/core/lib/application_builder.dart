@@ -4,7 +4,7 @@ part of lib.core;
  * Builder class used to create and setup an application
  */
 class ApplicationBuilder {
-  static final String NAMESPACE = "lib.core.ApplicationBuilder";
+  static const String NAMESPACE = "modularity.core.ApplicationBuilder";
   HashMap<String, BackgroundTask> _tasks;
   HashMap<String, Resource> _resources;
   HashMap<String, Page> _pages;
