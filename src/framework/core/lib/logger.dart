@@ -58,35 +58,35 @@ class Logger {
   /**
    * Gets all received warnings
    */
-  void get warningMessages {
+  List<WarningMessage> get warningMessages {
     return messages.where((message) => message.level == WarningMessage.LEVEL);
   }
 
   /**
    * Gets all received errors
    */
-  void get errorMessages {
+  List<ErrorMessage> get errorMessages {
     return messages.where((message) => message.level == ErrorMessage.LEVEL);
   }
 
   /**
    * Gets all received info messages
    */
-  void get infoMessages {
+  List<InfoMessage> get infoMessages {
     return messages.where((message) => message.level == InfoMessage.LEVEL);
   }
 
   /**
    * Gets all received lifecycle messages
    */
-  void get lifecycleMessages {
+  List<LifecycleMessage> get lifecycleMessages {
     return messages.where((message) => message.level == LifecycleMessage.LEVEL);
   }
 
   /**
    * Gets all received network messages
    */
-  void get networkMessages {
+  List<NetworkMessage> get networkMessages {
     return messages.where((message) => message.level == NetworkMessage.LEVEL);
   }
 

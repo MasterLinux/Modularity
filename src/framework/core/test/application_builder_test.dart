@@ -51,6 +51,39 @@ class ApplicationBuilderTest {
       expect(appUnderTest.logger.applicationVersion, APP_VERSION);
     });
 
+    test('builder should log warning on duplicate', () {
+      var expectedPageCount = 1,
+          expectedResourceCount = 1,
+          expectedTaskCount = 1,
+          expectedWarningCount = 6,
+          expectedTaskWarningCount = 2,
+          expectedResourceWarningCount = 2,
+          expectedPageWarningCount = 2;
+
+      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION, logger: new Logger(APP_NAME, APP_VERSION))
+                                        .addPage(new Page(null, PAGE_URI, null))
+                                        .addTask(new BackgroundTask()..id = TASK_ID)
+                                        .addResource(new Resource()..name = RESOURCE_NAME)
+                                        .addPage(new Page(null, PAGE_URI, null))
+                                        .addTask(new BackgroundTask()..id = TASK_ID)
+                                        .addResource(new Resource()..name = RESOURCE_NAME)
+                                        .addPage(new Page(null, PAGE_URI, null))
+                                        .addTask(new BackgroundTask()..id = TASK_ID)
+                                        .addResource(new Resource()..name = RESOURCE_NAME)
+                                        .build();
+
+      expect(appUnderTest, isNotNull);
+      expect(appUnderTest.pages.length, expectedPageCount);
+      expect(appUnderTest.tasks.length, expectedTaskCount);
+      expect(appUnderTest.resources.length, expectedResourceCount);
+      expect(appUnderTest.logger, isNotNull);
+      expect(appUnderTest.logger.warningMessages, isNotNull);
+      expect(appUnderTest.logger.warningMessages.length, expectedWarningCount);
+      expect(appUnderTest.logger.warningMessages.where((message) => message is BackgroundTaskExistsWarning).length, expectedTaskWarningCount);
+      expect(appUnderTest.logger.warningMessages.where((message) => message is ResourceExistsWarning).length, expectedResourceWarningCount);
+      expect(appUnderTest.logger.warningMessages.where((message) => message is PageExistsWarning).length, expectedPageWarningCount);
+    });
+
     test('builder should add a page, task and resource', () {
       var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION)
                                         .addPage(new Page(null, PAGE_URI, null))
