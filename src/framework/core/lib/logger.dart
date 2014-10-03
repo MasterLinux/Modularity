@@ -1,14 +1,23 @@
 part of modularity.core;
 
 class Logger {
-  static const String NAMESPACE = "modularity.core.Logger";
-  static const String DEFAULT_APPLICATION_VERSION = "0.0.0";
-  static const String DEFAULT_APPLICATION_NAME = "undefined";
   final List<MessageObserver> _observer = new List<MessageObserver>();
   final List<LoggingMessage> messages = new List<LoggingMessage>();
   final String applicationVersion;
   final String applicationName;
   final bool isSynchronouslyModeEnabled;
+
+  static const String namespace = "modularity.core.Logger";
+  static const String defaultApplicationVersion = "0.0.0";
+  static const String defaultApplicationName = "undefined";
+
+  //all available level
+  static const String customLevel = "custom";
+  static const String errorLevel = "error";
+  static const String warningLevel = "warning";
+  static const String lifecycleLevel = "lifecycle";
+  static const String infoLevel = "info";
+  static const String networkLevel = "network";
 
   /**
    * Initializes the logger for a specific application
@@ -16,20 +25,20 @@ class Logger {
    * It is possible to enable synchronously mode so a [Logger.log] or
    * the call of [Logger.clear] is executed synchronously
    */
-  Logger({this.applicationName: DEFAULT_APPLICATION_NAME,
-         this.applicationVersion: DEFAULT_APPLICATION_VERSION,
+  Logger({this.applicationName: defaultApplicationName,
+         this.applicationVersion: defaultApplicationVersion,
          this.isSynchronouslyModeEnabled: false
-         }) {
-    if(applicationName == DEFAULT_APPLICATION_NAME ||
-                          applicationName == null ||
-                          applicationName.isEmpty) {
-      log(new MissingApplicationNameError(NAMESPACE));
+  }) {
+    if(applicationName == defaultApplicationName ||
+       applicationName == null ||
+       applicationName.isEmpty) {
+      log(new MissingApplicationNameError(namespace));
     }
 
-    if(applicationVersion == DEFAULT_APPLICATION_VERSION ||
-                             applicationVersion == null ||
-                             applicationVersion.isEmpty) {
-      log(new MissingApplicationVersionError(NAMESPACE));
+    if(applicationVersion == defaultApplicationVersion ||
+       applicationVersion == null ||
+       applicationVersion.isEmpty) {
+      log(new MissingApplicationVersionError(namespace));
     }
   }
 
@@ -37,16 +46,12 @@ class Logger {
    * Registers a new [observer] which will be notified
    * if a new message is received
    */
-  void register(MessageObserver observer) {
-    _observer.add(observer);
-  }
+  void register(MessageObserver observer) => _observer.add(observer);
 
   /**
    * Unregisters a specific [observer]
    */
-  void unregister(MessageObserver observer) {
-    _observer.remove(observer);
-  }
+  void unregister(MessageObserver observer) => _observer.remove(observer);
 
   /**
    * Notifies each observer that a
@@ -90,50 +95,40 @@ class Logger {
   /**
    * Gets all received warnings
    */
-  List<WarningMessage> get warningMessages {
-    return messages.where((message) => message.level == WarningMessage.LEVEL);
-  }
+  List<WarningMessage> get warningMessages => messages.where((message) => message.level == warningLevel);
 
   /**
    * Gets all received errors
    */
-  List<ErrorMessage> get errorMessages {
-    return messages.where((message) => message.level == ErrorMessage.LEVEL);
-  }
+  List<ErrorMessage> get errorMessages => messages.where((message) => message.level == errorLevel);
 
   /**
    * Gets all received info messages
    */
-  List<InfoMessage> get infoMessages {
-    return messages.where((message) => message.level == InfoMessage.LEVEL);
-  }
+  List<InfoMessage> get infoMessages => messages.where((message) => message.level == infoLevel);
 
   /**
    * Gets all received lifecycle messages
    */
-  List<LifecycleMessage> get lifecycleMessages {
-    return messages.where((message) => message.level == LifecycleMessage.LEVEL);
-  }
+  List<LifecycleMessage> get lifecycleMessages => messages.where((message) => message.level == lifecycleLevel);
 
   /**
    * Gets all received network messages
    */
-  List<NetworkMessage> get networkMessages {
-    return messages.where((message) => message.level == NetworkMessage.LEVEL);
-  }
+  List<NetworkMessage> get networkMessages => messages.where((message) => message.level == networkLevel);
 
   /**
    * Gets all received custom messages
    */
-  List<NetworkMessage> get customMessages {
-    return messages.where((message) => message.level == CustomMessage.LEVEL);
-  }
+  List<NetworkMessage> get customMessages => messages.where((message) => message.level == customLevel);
 
   /**
    * Gets all received custom messages of a specific category
    */
   List<NetworkMessage> getCustomMessagesOfCategory(String category) {
-    return messages.where((message) => message.level == CustomMessage.LEVEL && (message as CustomMessage).category == category);
+    return messages.where(
+      (message) => message.level == customLevel && (message as CustomMessage).category == category
+    );
   }
 
   void _logSync(LoggingMessage message) {
@@ -157,37 +152,27 @@ class Logger {
   /**
    * Logs a warning [message]
    */
-  Future logWarning(WarningMessage message) {
-    return log(message);
-  }
+  Future logWarning(WarningMessage message) => log(message);
 
   /**
    * Logs an error [message]
    */
-  Future logError(ErrorMessage message) {
-    return log(message);
-  }
+  Future logError(ErrorMessage message) => log(message);
 
   /**
    * Logs an info [message]
    */
-  Future logInfo(InfoMessage message) {
-    return log(message);
-  }
+  Future logInfo(InfoMessage message) => log(message);
 
   /**
    * Logs a lifecycle [message]
    */
-  Future logLifecycle(LifecycleMessage message) {
-    return log(message);
-  }
+  Future logLifecycle(LifecycleMessage message) => log(message);
 
   /**
    * Logs a network [message]
    */
-  Future logNetwork(NetworkMessage message) {
-    return log(message);
-  }
+  Future logNetwork(NetworkMessage message) => log(message);
 }
 
 /**
@@ -240,132 +225,109 @@ abstract class LoggingMessage {
  * Representation of a custom message
  */
 class CustomMessage extends LoggingMessage {
-  static final String LEVEL = "custom";
   final String category;
 
   CustomMessage(String namespace, this.category, [String message]) : super(namespace, message);
 
-  String get level {
-    return LEVEL;
-  }
+  String get level => Logger.customLevel;
 }
 
 /**
  * Representation of a warning
  */
 class WarningMessage extends LoggingMessage {
-  static final String LEVEL = "warning";
-
   WarningMessage(String namespace, [String message]) : super(namespace, message);
 
-  String get level {
-    return LEVEL;
-  }
+  String get level => Logger.warningLevel;
 }
 
 /**
  * Representation of an error
  */
 class ErrorMessage extends LoggingMessage {
-  static final String LEVEL = "error";
-
   ErrorMessage(String namespace, [String message]) : super(namespace, message);
 
-  String get level {
-    return LEVEL;
-  }
+  String get level => Logger.errorLevel;
 }
 
 /**
  * Representation of an info message
  */
 class InfoMessage extends LoggingMessage {
-  static final String LEVEL = "info";
-
   InfoMessage(String namespace, [String message]) : super(namespace, message);
 
-  String get level {
-    return LEVEL;
-  }
+  String get level => Logger.infoLevel;
 }
 
 /**
  * Representation of a lifecycle message
  */
 class LifecycleMessage extends LoggingMessage {
-  static final String LEVEL = "lifecycle";
-
   LifecycleMessage(String namespace, [String message]) : super(namespace, message);
 
-  String get level {
-    return LEVEL;
-  }
+  String get level => Logger.lifecycleLevel;
 }
 
 /**
  * Representation of a network message
  */
 class NetworkMessage extends LoggingMessage {
-  static final String LEVEL = "network";
-
   NetworkMessage(String namespace, [String message]) : super(namespace, message);
 
-  String get level {
-    return LEVEL;
-  }
+  String get level => Logger.networkLevel;
 }
 
 /**
  * Warning which is used whenever a page already exists
  */
 class PageExistsWarning extends WarningMessage {
-  final String uri;
+  final String _uri;
 
-  PageExistsWarning(String namespace, this.uri) : super(namespace);
+  PageExistsWarning(String namespace, String uri) : _uri = uri, super(namespace);
 
-  String get message {
-    return "Page with URI => \"$uri\" already exists. The new one overrides the previous added page.";
-  }
+  @override
+  String get message =>
+      "Page with URI => \"$_uri\" already exists. The new one overrides the previous added page.";
 }
 
 /**
  * Warning which is used whenever a background task already exists
  */
 class BackgroundTaskExistsWarning extends WarningMessage {
-  final String id;
+  final String _id;
 
-  BackgroundTaskExistsWarning(String namespace, this.id) : super(namespace);
+  BackgroundTaskExistsWarning(String namespace, String id) : _id = id, super(namespace);
 
-  String get message {
-    return "Task with ID => \"$id\" already exists. The new one overrides the previous added task.";
-  }
+  @override
+  String get message =>
+      "Task with ID => \"$_id\" already exists. The new one overrides the previous added task.";
 }
 
 /**
  * Warning which is used whenever a resource already exists
  */
 class ResourceExistsWarning extends WarningMessage {
-  final String name;
+  final String _name;
 
-  ResourceExistsWarning(String namespace, this.name) : super(namespace);
+  ResourceExistsWarning(String namespace, String name) : _name = name, super(namespace);
 
-  String get message {
-    return "Resource with name => \"$name\" already exists. The new one overrides the previous added resource.";
-  }
+  @override
+  String get message =>
+      "Resource with name => \"$_name\" already exists. The new one overrides the previous added resource.";
 }
 
 class MissingApplicationNameError extends ErrorMessage {
   MissingApplicationNameError(String namespace) : super(namespace);
 
-  String get message {
-    return "Application name is missing. You have to set a name to ensure that your application runs correctly.";
-  }
+  @override
+  String get message =>
+      "Application name is missing. You have to set a name to ensure that your application runs correctly.";
 }
 
 class MissingApplicationVersionError extends ErrorMessage {
   MissingApplicationVersionError(String namespace) : super(namespace);
 
-  String get message {
-    return "Application version is missing. You have to set a version number to ensure that your application runs correctly.";
-  }
+  @override
+  String get message =>
+      "Application version is missing. You have to set a version number to ensure that your application runs correctly.";
 }

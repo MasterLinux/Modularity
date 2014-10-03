@@ -52,6 +52,12 @@ class ApplicationBuilderTest {
     });
 
     test('builder should log warning on duplicate', () {
+      var loggerUnderTest = new Logger(
+          applicationName: APP_NAME,
+          applicationVersion: APP_VERSION,
+          isSynchronouslyModeEnabled: true
+      );
+
       var expectedPageCount = 1,
           expectedResourceCount = 1,
           expectedTaskCount = 1,
@@ -60,7 +66,7 @@ class ApplicationBuilderTest {
           expectedResourceWarningCount = 2,
           expectedPageWarningCount = 2;
 
-      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION, logger: new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION, isSynchronouslyModeEnabled: true))
+      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION, logger: loggerUnderTest)
                                         .addPage(new Page(null, PAGE_URI, null))
                                         .addTask(new BackgroundTask()..id = TASK_ID)
                                         .addResource(new Resource()..name = RESOURCE_NAME)
