@@ -12,7 +12,9 @@ class Logger {
 
   /**
    * Initializes the logger for a specific application
-   * with its [applicationName] and [applicationVersion]
+   * with its [applicationName] and [applicationVersion].
+   * It is possible to enable synchronously mode so a [Logger.log] or
+   * the call of [Logger.clear] is executed synchronously
    */
   Logger({this.applicationName: DEFAULT_APPLICATION_NAME,
          this.applicationVersion: DEFAULT_APPLICATION_VERSION,
