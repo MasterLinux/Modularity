@@ -1,4 +1,4 @@
-part of lib.core.exception;
+part of modularity.core.exception;
 
 class MissingInitMethodException implements Exception {
   final String moduleName;

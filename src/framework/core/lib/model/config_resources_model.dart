@@ -1,4 +1,4 @@
-part of lib.core.model;
+part of modularity.core.model;
 
 class ConfigResourcesModel extends Model<ConfigResourceModel> {}
 

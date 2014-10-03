@@ -1,4 +1,4 @@
-part of lib.core;
+part of modularity.core;
 
 class Logger {
   static const String NAMESPACE = "modularity.core.Logger";
@@ -209,7 +209,7 @@ abstract class LoggingMessage {
   /**
    * Initializes the message with a [namespace] which
    * is usually the namespace and the name of the class,
-   * like "lib.core.Logger" and a [message].
+   * like "modularity.core.Logger" and a [message].
    */
   LoggingMessage(this.namespace, [String message]) {
     _time = new DateTime.now();

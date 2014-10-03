@@ -1,4 +1,4 @@
-part of lib.core.exception;
+part of modularity.core.exception;
 
 class MissingLibraryException implements Exception {
   final String libraryName;

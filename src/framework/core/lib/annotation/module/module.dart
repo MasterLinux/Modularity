@@ -52,7 +52,7 @@
  *         );
  *
  */
-library lib.core.annotation.module;
+library modularity.core.annotation.module;
 
 part 'on_added.dart';
 part 'on_before_add.dart';

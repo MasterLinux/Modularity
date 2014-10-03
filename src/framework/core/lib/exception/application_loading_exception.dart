@@ -1,4 +1,4 @@
-part of lib.core.exception;
+part of modularity.core.exception;
 
 class ApplicationLoadingException implements Exception {
   final String message = "The application could not be loaded.";

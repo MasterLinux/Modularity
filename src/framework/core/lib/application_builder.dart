@@ -1,4 +1,4 @@
-part of lib.core;
+part of modularity.core;
 
 /**
  * Builder class used to create and setup an application
