@@ -60,18 +60,29 @@ class Logger {
    * Notifies each observer that all
    * messages are removed
    */
-  void _notifyMessagesCleared(LoggingMessage message) {
+  void _notifyMessagesCleared() {
     for(var observer in _observer) {
       observer.onMessagesCleared(this);
     }
+  }
+
+  void _clearSync() {
+    messages.clear();
+    _notifyMessagesCleared();
   }
 
   /**
    * Removes all logging
    * messages from stack
    */
-  void clear() {
-    messages.clear();
+  Future clear() {
+    if(isSynchronouslyModeEnabled) {
+        return new Future.sync(() => _clearSync());
+    } else {
+        Completer completer = new Completer();
+        completer.complete();
+        return completer.future.then((_) => _clearSync());
+    }
   }
 
   /**
@@ -109,9 +120,6 @@ class Logger {
     return messages.where((message) => message.level == NetworkMessage.LEVEL);
   }
 
-  /**
-   * Logs synchronously
-   */
   void _logSync(LoggingMessage message) {
     messages.add(message);
     _notifyMessageReceived(message);
@@ -126,9 +134,7 @@ class Logger {
     } else {
       Completer completer = new Completer();
       completer.complete();
-      return completer.future.then((instance) {
-        _logSync(message);
-      });
+      return completer.future.then((_) => _logSync(message));
     }
   }
 
@@ -182,14 +188,16 @@ class MessageObserver {
 abstract class LoggingMessage {
   final String namespace;
   DateTime _time;
+  String _message;
 
   /**
    * Initializes the message with a [namespace] which
    * is usually the namespace and the name of the class,
-   * like "lib.core.Logger".
+   * like "lib.core.Logger" and a [message].
    */
-  LoggingMessage(this.namespace) {
+  LoggingMessage(this.namespace, [String message]) {
     _time = new DateTime.now();
+    _message = message;
   }
 
   /**
@@ -202,7 +210,9 @@ abstract class LoggingMessage {
   /**
    * Gets the logging message
    */
-  String get message;
+  String get message {
+    return _message;
+  }
 
   /**
    * Gets the message level
@@ -213,10 +223,10 @@ abstract class LoggingMessage {
 /**
  * Representation of a warning
  */
-abstract class WarningMessage extends LoggingMessage {
+class WarningMessage extends LoggingMessage {
   static final String LEVEL = "warning";
 
-  WarningMessage(String namespace) : super(namespace);
+  WarningMessage(String namespace, [String message]) : super(namespace, message);
 
   String get level {
     return LEVEL;
@@ -226,10 +236,10 @@ abstract class WarningMessage extends LoggingMessage {
 /**
  * Representation of an error
  */
-abstract class ErrorMessage extends LoggingMessage {
+class ErrorMessage extends LoggingMessage {
   static final String LEVEL = "error";
 
-  ErrorMessage(String namespace) : super(namespace);
+  ErrorMessage(String namespace, [String message]) : super(namespace, message);
 
   String get level {
     return LEVEL;
@@ -239,10 +249,10 @@ abstract class ErrorMessage extends LoggingMessage {
 /**
  * Representation of an info message
  */
-abstract class InfoMessage extends LoggingMessage {
+class InfoMessage extends LoggingMessage {
   static final String LEVEL = "info";
 
-  InfoMessage(String namespace) : super(namespace);
+  InfoMessage(String namespace, [String message]) : super(namespace, message);
 
   String get level {
     return LEVEL;
@@ -252,10 +262,10 @@ abstract class InfoMessage extends LoggingMessage {
 /**
  * Representation of a lifecycle message
  */
-abstract class LifecycleMessage extends LoggingMessage {
+class LifecycleMessage extends LoggingMessage {
   static final String LEVEL = "lifecycle";
 
-  LifecycleMessage(String namespace) : super(namespace);
+  LifecycleMessage(String namespace, [String message]) : super(namespace, message);
 
   String get level {
     return LEVEL;
@@ -265,10 +275,10 @@ abstract class LifecycleMessage extends LoggingMessage {
 /**
  * Representation of a network message
  */
-abstract class NetworkMessage extends LoggingMessage {
+class NetworkMessage extends LoggingMessage {
   static final String LEVEL = "network";
 
-  NetworkMessage(String namespace) : super(namespace);
+  NetworkMessage(String namespace, [String message]) : super(namespace, message);
 
   String get level {
     return LEVEL;

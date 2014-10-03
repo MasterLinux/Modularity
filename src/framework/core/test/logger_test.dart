@@ -7,7 +7,7 @@ class LoggerTest {
   final String PAGE_URI = "test_page";
 
   void run() {
-    test('logger should be initialized without app name and version', () {
+    test('logger should be initialized with defaults', () {
       var expectedLoggingMessageCount = 0;
       var expectedErrorCount = 2;
       var expectedAppNameErrorCount = 1;
@@ -47,7 +47,7 @@ class LoggerTest {
       expect(loggerUnderTest.errorMessages.where((message) => message is MissingApplicationVersionError).length, expectedAppVersionErrorCount);
     });
 
-    test('logger should be correctly initialized', () {
+    test('logger should be initialized with app name and version', () {
       var expectedLoggingMessageCount = 0;
       var loggerUnderTest = new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION);
 
@@ -80,10 +80,13 @@ class LoggerTest {
           expect(loggerUnderTest.messages, isNotNull);
           expect(loggerUnderTest.messages.length, expectedLoggingMessageCountBeforeClear);
 
-          loggerUnderTest.clear();
+          return schedule(() {
+            return loggerUnderTest.clear().then((_) {
+              expect(loggerUnderTest.messages, isNotNull);
+              expect(loggerUnderTest.messages.length, expectedLoggingMessageCountAfterClear);
 
-          expect(loggerUnderTest.messages, isNotNull);
-          expect(loggerUnderTest.messages.length, expectedLoggingMessageCountAfterClear);
+            });
+          });
         });
       });
     });
@@ -91,15 +94,24 @@ class LoggerTest {
     test('logger should notify observer on logging message received', () {
       var loggerUnderTest = new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION);
       var observerUnderTest = new ObserverMock();
-      var expectedMessageCount = 1;
+      var expectedMessageCount = 6;
+      var expectedErrorMessageCount = 2;
+      var expectedNetworkMessageCount = 1;
       loggerUnderTest.register(observerUnderTest);
 
       schedule(() {
-        return loggerUnderTest.logError(new MissingApplicationVersionError(LOGGER_NAMESPACE)).then((_) {
-          var actualMessages = observerUnderTest.messages.where((msg) => msg is MissingApplicationVersionError);
-          expect(actualMessages, isNotNull);
-          expect(actualMessages.length, expectedMessageCount);
-          expect(actualMessages.first is MissingApplicationVersionError, isTrue);
+        return Future.wait([
+            loggerUnderTest.log(new ErrorMessage(LOGGER_NAMESPACE)),
+            loggerUnderTest.logError(new ErrorMessage(LOGGER_NAMESPACE)),
+            loggerUnderTest.logWarning(new WarningMessage(LOGGER_NAMESPACE)),
+            loggerUnderTest.logInfo(new InfoMessage(LOGGER_NAMESPACE)),
+            loggerUnderTest.logLifecycle(new LifecycleMessage(LOGGER_NAMESPACE)),
+            loggerUnderTest.logNetwork(new NetworkMessage(LOGGER_NAMESPACE)),
+        ]).then((_) {
+          expect(observerUnderTest.messages, isNotNull);
+          expect(observerUnderTest.messages.length, expectedMessageCount);
+          expect(observerUnderTest.messages.where((message) => message is ErrorMessage).length, expectedErrorMessageCount);
+          expect(observerUnderTest.messages.where((message) => message is NetworkMessage).length, expectedNetworkMessageCount);
         });
       });
     });
@@ -107,18 +119,55 @@ class LoggerTest {
     test('logger should notify observer on messages cleared', () {
       var loggerUnderTest = new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION);
       var observerUnderTest = new ObserverMock();
-      var expectedMessageCount = 1;
+      var expectedMessageCountBeforeClear = 1;
+      var expectedMessageCountAfterClear = 0;
       loggerUnderTest.register(observerUnderTest);
 
       schedule(() {
         return loggerUnderTest.logError(new MissingApplicationVersionError(LOGGER_NAMESPACE)).then((_) {
           var actualMessages = observerUnderTest.messages.where((msg) => msg is MissingApplicationVersionError);
+          expect(observerUnderTest.messages.length, expectedMessageCountBeforeClear);
+
+          return schedule(() {
+            return loggerUnderTest.clear().then((_) {
+              expect(observerUnderTest.messages.length, expectedMessageCountAfterClear);
+
+            });
+          });
+        });
+      });
+    });
+
+    test('logger should unregister observer', () {
+      var loggerUnderTest = new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION);
+      var observerUnderTest = new ObserverMock();
+      loggerUnderTest.register(observerUnderTest);
+      var expectedMessageCount = 1;
+
+      //first message should be received
+      schedule(() {
+        return loggerUnderTest.log(new ErrorMessage(LOGGER_NAMESPACE)).then((_) {
+          expect(observerUnderTest.messages, isNotNull);
           expect(observerUnderTest.messages.length, expectedMessageCount);
 
-          loggerUnderTest.clear();    //TODO make asnyc?
+          loggerUnderTest.unregister(observerUnderTest);
 
-          expect(observerUnderTest.messages.length, 0);
+          //the second message shouldn't appear
+          return schedule(() {
+            return loggerUnderTest.log(new ErrorMessage(LOGGER_NAMESPACE)).then((_) {
+              expect(observerUnderTest.messages, isNotNull);
+              expect(observerUnderTest.messages.length, expectedMessageCount);
 
+              //and clear shouldn't affect, too
+              return schedule(() {
+                return loggerUnderTest.clear().then((_) {
+                  expect(observerUnderTest.messages, isNotNull);
+                  expect(observerUnderTest.messages.length, expectedMessageCount);
+
+                });
+              });
+            });
+          });
         });
       });
     });
