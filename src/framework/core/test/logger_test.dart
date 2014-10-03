@@ -97,7 +97,7 @@ class LoggerTest {
       var loggerUnderTest = new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION);
       var observerUnderTest = new ObserverMock();
       var expectedMessageCount = 8;
-      var expectedErrorMessageCount = 2;
+      var expectedWarningMessageCount = 2;
       var expectedCustomMessageCount = 2;
       var expectedSpecificCustomMessageCount = 1;
       var expectedSpecificMessageCount = 1;
@@ -106,7 +106,7 @@ class LoggerTest {
 
       schedule(() {
         return Future.wait([
-            loggerUnderTest.log(new ErrorMessage(NAMESPACE)),
+            loggerUnderTest.log(new PageExistsWarning(NAMESPACE, PAGE_URI)),
             loggerUnderTest.logError(new ErrorMessage(NAMESPACE)),
             loggerUnderTest.logWarning(new WarningMessage(NAMESPACE)),
             loggerUnderTest.logInfo(new InfoMessage(NAMESPACE)),
@@ -118,14 +118,14 @@ class LoggerTest {
           //test observer
           expect(observerUnderTest.messages, isNotNull);
           expect(observerUnderTest.messages.length, expectedMessageCount);
-          expect(observerUnderTest.messages.where((message) => message is ErrorMessage).length, expectedErrorMessageCount);
+          expect(observerUnderTest.messages.where((message) => message is WarningMessage).length, expectedWarningMessageCount);
           expect(observerUnderTest.messages.where((message) => message is NetworkMessage).length, expectedNetworkMessageCount);
           expect(observerUnderTest.messages.where((message) => message is CustomMessage).length, expectedCustomMessageCount);
 
           //test logger
           expect(loggerUnderTest.messages.length, expectedMessageCount);
-          expect(loggerUnderTest.errorMessages.length, expectedErrorMessageCount);
-          expect(loggerUnderTest.warningMessages.length, expectedSpecificMessageCount);
+          expect(loggerUnderTest.errorMessages.length, expectedSpecificMessageCount);
+          expect(loggerUnderTest.warningMessages.length, expectedWarningMessageCount);
           expect(loggerUnderTest.infoMessages.length, expectedSpecificMessageCount);
           expect(loggerUnderTest.lifecycleMessages.length, expectedSpecificMessageCount);
           expect(loggerUnderTest.networkMessages.length, expectedSpecificMessageCount);
