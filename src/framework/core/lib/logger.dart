@@ -122,6 +122,20 @@ class Logger {
     return messages.where((message) => message.level == NetworkMessage.LEVEL);
   }
 
+  /**
+   * Gets all received custom messages
+   */
+  List<NetworkMessage> get customMessages {
+    return messages.where((message) => message.level == CustomMessage.LEVEL);
+  }
+
+  /**
+   * Gets all received custom messages of a specific category
+   */
+  List<NetworkMessage> getCustomMessagesOfCategory(String category) {
+    return messages.where((message) => message.level == CustomMessage.LEVEL && (message as CustomMessage).category == category);
+  }
+
   void _logSync(LoggingMessage message) {
     messages.add(message);
     _notifyMessageReceived(message);
@@ -220,6 +234,20 @@ abstract class LoggingMessage {
    * Gets the message level
    */
   String get level;
+}
+
+/**
+ * Representation of a custom message
+ */
+class CustomMessage extends LoggingMessage {
+  static final String LEVEL = "custom";
+  final String category;
+
+  CustomMessage(String namespace, this.category, [String message]) : super(namespace, message);
+
+  String get level {
+    return LEVEL;
+  }
 }
 
 /**
