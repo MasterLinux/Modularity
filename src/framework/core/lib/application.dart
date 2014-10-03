@@ -36,15 +36,16 @@ class ApplicationInfo {
  * Representation of an application
  */
 class Application {
-  static final String DEFAULT_LANGUAGE = "en_EN";
+  static const String DEFAULT_LANGUAGE = "en_EN";
   Future<Application> _mainTask;
   bool _isBusy = false;
 
   /**
-   * Flag which indicates whether the application
-   * runs in debug mode or not
+   * Logger used in this application.
+   * If logger is [null] the debug mode
+   * is disabled
    */
-  final bool isInDebugMode;
+  final Logger logger;
 
   /**
    * Contains all information
@@ -77,10 +78,10 @@ class Application {
   bool get isStarted => _isBusy;
 
   /**
-   * Initializes the application. Whenever [isInDebugMode]
-   * is set to true the debug console will be visible
+   * Initializes the application. If [logger]
+   * is set the debug mode is enabled
    */
-  Application({this.info, this.pages, this.tasks, this.resources, this.isInDebugMode: false});
+  Application({this.info, this.pages, this.tasks, this.resources, this.logger});
 
   /**
    * Loads the config and starts the application
