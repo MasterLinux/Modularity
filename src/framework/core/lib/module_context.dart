@@ -1,4 +1,4 @@
-part of lib.core;
+part of modularity.core;
 
 /**
  * The context of a module which contains all information

@@ -1,4 +1,4 @@
-library lib.core.exception;
+library modularity.core.exception;
 
 part 'invalid_module_exception.dart';
 part 'missing_init_method_exception.dart';

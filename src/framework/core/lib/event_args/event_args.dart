@@ -1,4 +1,4 @@
-library lib.core.eventArgs;
+library modularity.core.eventArgs;
 
 part 'init_event_args.dart';
 part 'loading_state_changed_event_args.dart';

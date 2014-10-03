@@ -1,4 +1,4 @@
-part of lib.core.exception;
+part of modularity.core.exception;
 
 class MissingModuleIdException implements Exception {
 

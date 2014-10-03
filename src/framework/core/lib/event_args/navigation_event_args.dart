@@ -1,4 +1,4 @@
-part of lib.core.eventArgs;
+part of modularity.core.eventArgs;
 
 class NavigationEventArgs implements EventArgs {
   final Map<String, dynamic> parameter;

@@ -1,4 +1,4 @@
-library lib.utility.classutility;
+library modularity.utility.classutility;
 
 import '../exception/exception.dart';
 import 'dart:mirrors';

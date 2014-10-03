@@ -1,4 +1,4 @@
-library lib.core.model;
+library modularity.core.model;
 
 import 'dart:collection';
 

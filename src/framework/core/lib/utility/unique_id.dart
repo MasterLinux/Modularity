@@ -1,4 +1,4 @@
-part of lib.core.utility;
+part of modularity.core.utility;
 
 class UniqueId {
   static Map<String, UniqueId> _cache;

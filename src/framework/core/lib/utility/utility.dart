@@ -1,4 +1,4 @@
-library lib.core.utility;
+library modularity.core.utility;
 
 part 'unique_id.dart';
 

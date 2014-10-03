@@ -1,4 +1,4 @@
-part of lib.core.annotation.module;
+part of modularity.core.annotation.module;
 
 /**
  * Annotation which marks a function

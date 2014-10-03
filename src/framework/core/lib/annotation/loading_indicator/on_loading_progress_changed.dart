@@ -1,4 +1,4 @@
-part of lib.annotation.loadingindicator;
+part of modularity.core.annotation.loadingindicator;
 
 const Object OnLoadingProgressChanged = const OnLoadingProgressChangedAnnotation();
 

@@ -1,4 +1,4 @@
-part of lib.core.eventArgs;
+part of modularity.core.eventArgs;
 
 class RequestCompletedEventArgs<T> implements EventArgs {
   final String requestId;
