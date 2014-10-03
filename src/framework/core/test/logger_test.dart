@@ -17,8 +17,8 @@ class LoggerTest {
       var loggerUnderTest = new Logger(isSynchronouslyModeEnabled: true);
 
       expect(loggerUnderTest, isNotNull);
-      expect(loggerUnderTest.applicationName, Logger.DEFAULT_APPLICATION_NAME);
-      expect(loggerUnderTest.applicationVersion, Logger.DEFAULT_APPLICATION_VERSION);
+      expect(loggerUnderTest.applicationName, Logger.defaultApplicationName);
+      expect(loggerUnderTest.applicationVersion, Logger.defaultApplicationVersion);
       expect(loggerUnderTest.errorMessages, isNotNull);
       expect(loggerUnderTest.errorMessages.length, expectedErrorCount);
       expect(loggerUnderTest.errorMessages.where((message) => message is MissingApplicationNameError).length, expectedAppNameErrorCount);

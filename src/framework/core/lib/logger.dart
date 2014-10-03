@@ -7,9 +7,9 @@ class Logger {
   final String applicationName;
   final bool isSynchronouslyModeEnabled;
 
-  static const String NAMESPACE = "modularity.core.Logger";
-  static const String DEFAULT_APPLICATION_VERSION = "0.0.0";
-  static const String DEFAULT_APPLICATION_NAME = "undefined";
+  static const String namespace = "modularity.core.Logger";
+  static const String defaultApplicationVersion = "0.0.0";
+  static const String defaultApplicationName = "undefined";
 
   //all available level
   static const String customLevel = "custom";
@@ -25,20 +25,20 @@ class Logger {
    * It is possible to enable synchronously mode so a [Logger.log] or
    * the call of [Logger.clear] is executed synchronously
    */
-  Logger({this.applicationName: DEFAULT_APPLICATION_NAME,
-         this.applicationVersion: DEFAULT_APPLICATION_VERSION,
+  Logger({this.applicationName: defaultApplicationName,
+         this.applicationVersion: defaultApplicationVersion,
          this.isSynchronouslyModeEnabled: false
   }) {
-    if(applicationName == DEFAULT_APPLICATION_NAME ||
+    if(applicationName == defaultApplicationName ||
        applicationName == null ||
        applicationName.isEmpty) {
-      log(new MissingApplicationNameError(NAMESPACE));
+      log(new MissingApplicationNameError(namespace));
     }
 
-    if(applicationVersion == DEFAULT_APPLICATION_VERSION ||
+    if(applicationVersion == defaultApplicationVersion ||
        applicationVersion == null ||
        applicationVersion.isEmpty) {
-      log(new MissingApplicationVersionError(NAMESPACE));
+      log(new MissingApplicationVersionError(namespace));
     }
   }
 
