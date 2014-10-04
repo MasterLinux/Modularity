@@ -60,7 +60,7 @@ class ApplicationBuilder {
     if(_pages.where((p) => p.uri == page.uri).isEmpty) {
       _pages.add(new Page(page.uri, page.title));
     } else if(logger != null) {
-      logger.logWarning(new PageExistsWarning(namespace, page.uri));
+      logger.log(new PageExistsWarning(namespace, page.uri));
     }
   }
 
@@ -80,7 +80,7 @@ class ApplicationBuilder {
     if(_tasks.where((t) => t.name == task.name).isEmpty) {
       _tasks.add(new BackgroundTask(task.name));
     } else if(logger != null) {
-      logger.logWarning(new BackgroundTaskExistsWarning(namespace, task.name));
+      logger.log(new BackgroundTaskExistsWarning(namespace, task.name));
     }
   }
 
@@ -103,7 +103,7 @@ class ApplicationBuilder {
       _resources.add(new Resource(resource.languageCode, resource.languageName));
       //TODO find solution to add text resources
     } else if(logger != null) {
-      logger.logWarning(new ResourceExistsWarning(namespace, name));
+      logger.log(new ResourceExistsWarning(namespace, name));
     }
   }
 

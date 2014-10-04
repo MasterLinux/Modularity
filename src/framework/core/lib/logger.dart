@@ -80,7 +80,7 @@ class Logger {
 
   /**
    * Removes all logging
-   * messages from stack
+   * messages from logger
    */
   Future clear() {
     if(isSynchronouslyModeEnabled) {
@@ -137,7 +137,8 @@ class Logger {
   }
 
   /**
-   * Logs a [message]
+   * Add a [message] to the logger to track
+   * a specific action, event, etc.
    */
   Future log(LoggingMessage message) {
     if(isSynchronouslyModeEnabled) {
@@ -148,31 +149,6 @@ class Logger {
       return completer.future.then((_) => _logSync(message));
     }
   }
-
-  /**
-   * Logs a warning [message]
-   */
-  Future logWarning(WarningMessage message) => log(message);
-
-  /**
-   * Logs an error [message]
-   */
-  Future logError(ErrorMessage message) => log(message);
-
-  /**
-   * Logs an info [message]
-   */
-  Future logInfo(InfoMessage message) => log(message);
-
-  /**
-   * Logs a lifecycle [message]
-   */
-  Future logLifecycle(LifecycleMessage message) => log(message);
-
-  /**
-   * Logs a network [message]
-   */
-  Future logNetwork(NetworkMessage message) => log(message);
 }
 
 /**

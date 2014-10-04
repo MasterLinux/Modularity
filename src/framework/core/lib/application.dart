@@ -135,7 +135,7 @@ class Application {
   void addPages(List<Page> pagesCollection) {
     pages.addAll(new HashMap.fromIterable(pagesCollection, key: (page) {
       if(logger != null && pages.containsKey(page.uri)) {
-        logger.logWarning(new PageExistsWarning(namespace, page.uri));
+        logger.log(new PageExistsWarning(namespace, page.uri));
       }
 
       return page.uri;
@@ -147,7 +147,7 @@ class Application {
    */
   void addPage(Page page) {
     if(logger != null && pages.containsKey(page.uri)) {
-      logger.logWarning(new PageExistsWarning(namespace, page.uri));
+      logger.log(new PageExistsWarning(namespace, page.uri));
     }
 
     pages[page.uri] = page;
@@ -159,7 +159,7 @@ class Application {
   void addTasks(List<BackgroundTask> taskCollection) {
     tasks.addAll(new HashMap.fromIterable(taskCollection, key: (task) {
       if(logger != null && tasks.containsKey(task.name)) {
-        logger.logWarning(new BackgroundTaskExistsWarning(namespace, task.name));
+        logger.log(new BackgroundTaskExistsWarning(namespace, task.name));
       }
 
       return task.name;
@@ -171,7 +171,7 @@ class Application {
    */
   void addTask(BackgroundTask task) {
     if(logger != null && tasks.containsKey(task.name)) {
-      logger.logWarning(new BackgroundTaskExistsWarning(namespace, task.name));
+      logger.log(new BackgroundTaskExistsWarning(namespace, task.name));
     }
 
     tasks[task.name] = task;
@@ -183,7 +183,7 @@ class Application {
   void addResources(List<Resource> resourceCollection) {
     resources.addAll(new HashMap.fromIterable(resourceCollection, key: (resource) {
       if(logger != null && resources.containsKey(resource.name)) {
-        logger.logWarning(new ResourceExistsWarning(namespace, resource.name));
+        logger.log(new ResourceExistsWarning(namespace, resource.name));
       }
 
       return resource.name;
@@ -195,7 +195,7 @@ class Application {
    */
   void addResource(Resource resource) {
     if(logger != null && resources.containsKey(resource.name)) {
-      logger.logWarning(new ResourceExistsWarning(namespace, resource.name));
+      logger.log(new ResourceExistsWarning(namespace, resource.name));
     }
 
     resources[resource.name] = resource;

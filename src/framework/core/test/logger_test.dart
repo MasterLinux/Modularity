@@ -75,8 +75,8 @@ class LoggerTest {
 
       schedule(() {
         return Future.wait([
-          loggerUnderTest.logError(new MissingApplicationVersionError(NAMESPACE)),
-          loggerUnderTest.logWarning(new PageExistsWarning(NAMESPACE, PAGE_URI))
+          loggerUnderTest.log(new MissingApplicationVersionError(NAMESPACE)),
+          loggerUnderTest.log(new PageExistsWarning(NAMESPACE, PAGE_URI))
         ]).then((_) {
           expect(loggerUnderTest, isNotNull);
           expect(loggerUnderTest.messages, isNotNull);
@@ -107,11 +107,11 @@ class LoggerTest {
       schedule(() {
         return Future.wait([
             loggerUnderTest.log(new PageExistsWarning(NAMESPACE, PAGE_URI)),
-            loggerUnderTest.logError(new ErrorMessage(NAMESPACE)),
-            loggerUnderTest.logWarning(new WarningMessage(NAMESPACE)),
-            loggerUnderTest.logInfo(new InfoMessage(NAMESPACE)),
-            loggerUnderTest.logLifecycle(new LifecycleMessage(NAMESPACE)),
-            loggerUnderTest.logNetwork(new NetworkMessage(NAMESPACE)),
+            loggerUnderTest.log(new ErrorMessage(NAMESPACE)),
+            loggerUnderTest.log(new WarningMessage(NAMESPACE)),
+            loggerUnderTest.log(new InfoMessage(NAMESPACE)),
+            loggerUnderTest.log(new LifecycleMessage(NAMESPACE)),
+            loggerUnderTest.log(new NetworkMessage(NAMESPACE)),
             loggerUnderTest.log(new CustomMessage(NAMESPACE, MESSAGE_CATEGORY)),
             loggerUnderTest.log(new CustomMessage(NAMESPACE, ANOTHER_MESSAGE_CATEGORY))
         ]).then((_) {
@@ -144,7 +144,7 @@ class LoggerTest {
       loggerUnderTest.register(observerUnderTest);
 
       schedule(() {
-        return loggerUnderTest.logError(new MissingApplicationVersionError(NAMESPACE)).then((_) {
+        return loggerUnderTest.log(new MissingApplicationVersionError(NAMESPACE)).then((_) {
           var actualMessages = observerUnderTest.messages.where((msg) => msg is MissingApplicationVersionError);
           expect(observerUnderTest.messages.length, expectedMessageCountBeforeClear);
 
