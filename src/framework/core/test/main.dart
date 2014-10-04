@@ -3,6 +3,7 @@ library modularity.tests;
 import 'package:scheduled_test/scheduled_test.dart';
 import 'package:unittest/html_config.dart';
 
+import '../lib/model/model.dart';
 import '../lib/core.dart';
 import 'mock/mock.dart';
 

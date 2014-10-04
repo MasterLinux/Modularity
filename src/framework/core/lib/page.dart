@@ -5,11 +5,11 @@ part of modularity.core;
  */
 class Page {
   Map<String, dynamic> _navigationParameter;
-  final List<ConfigFragmentModel> fragments;
+  final List<ConfigFragmentModel> fragments; //TODO find solution for adding fragments
   final String title;
   final String uri;
 
-  Page(this.title, this.uri, this.fragments);
+  Page(this.uri, this.title);
 
   void navigate() {
 

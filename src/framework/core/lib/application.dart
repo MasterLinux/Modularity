@@ -36,8 +36,9 @@ class ApplicationInfo {
  * Representation of an application
  */
 class Application {
-  static const String DEFAULT_LANGUAGE = "en_EN";
-  Future<Application> _mainTask;
+  static const String namespace = "modularity.core.Application";
+  static const String DEFAULT_LANGUAGE = "en_EN";    //TODO move const to the language manager class
+  bool _isStarted = false;
   bool _isBusy = false;
 
   /**
@@ -75,51 +76,128 @@ class Application {
    * Flag which indicates whether the
    * application is started or not
    */
-  bool get isStarted => _isBusy;
+  bool get isStarted => _isStarted;
 
   /**
    * Initializes the application. If [logger]
    * is set the debug mode is enabled
    */
-  Application({this.info, this.pages, this.tasks, this.resources, this.logger});
+  Application(this.info, {this.logger}) :
+    resources = new HashMap<String, Resource>(),
+    tasks = new HashMap<String, BackgroundTask>(),
+    pages = new HashMap<String, Page>();
 
   /**
    * Loads the config and starts the application
    */
-  Future start() {
-    if(!_isBusy) {
+  Future<Application> start() {
+    if(!_isBusy && !_isStarted) {
       _isBusy = true;
-      _mainTask = _buildTask();
+      Completer completer = new Completer();
+      completer.complete(this);
 
-      //start new main task
-      _mainTask.then((instance) {
-        //TODO initialize app
-      }).whenComplete(() {
+      return completer.future.then((instance) {
+
+
+        _isStarted = true;
         _isBusy = false;
+        return instance;
       });
+    } else {
+      //throw new ExecutionException();
     }
-
-    return _mainTask;
   }
 
   /**
    * Destructs and stops the application
    */
-  Future stop() {
-    if(_isBusy) {
-      _isBusy = false;
-      //TODO stop application
+  Future<Application> stop() {
+    if(!_isBusy && _isStarted) {
+      _isBusy = true;
+      Completer completer = new Completer();
+      completer.complete(this);
+
+      return completer.future.then((instance) {
+
+
+        _isStarted = false;
+        _isBusy = false;
+        return instance;
+      });
+    } else {
+      //throw new ExecutionException();
     }
-    return null;
   }
 
   /**
-   * Gets the main task
+   * Adds all [pages] in list to the application
    */
-  Future<Application> _buildTask() {
-    Completer completer;
-    completer.complete(this);
+  void addPages(List<Page> pagesCollection) {
+    pages.addAll(new HashMap.fromIterable(pagesCollection, key: (page) {
+      if(logger != null && pages.containsKey(page.uri)) {
+        logger.logWarning(new PageExistsWarning(namespace, page.uri));
+      }
 
-    return completer.future;
+      return page.uri;
+    }));
+  }
+
+  /**
+   * Adds a single [page] to the application
+   */
+  void addPage(Page page) {
+    if(logger != null && pages.containsKey(page.uri)) {
+      logger.logWarning(new PageExistsWarning(namespace, page.uri));
+    }
+
+    pages[page.uri] = page;
+  }
+
+  /**
+   * Adds all background [tasks] to the application
+   */
+  void addTasks(List<BackgroundTask> taskCollection) {
+    tasks.addAll(new HashMap.fromIterable(taskCollection, key: (task) {
+      if(logger != null && tasks.containsKey(task.name)) {
+        logger.logWarning(new BackgroundTaskExistsWarning(namespace, task.name));
+      }
+
+      return task.name;
+    }));
+  }
+
+  /**
+   * Adds a single background [task] to the application
+   */
+  void addTask(BackgroundTask task) {
+    if(logger != null && tasks.containsKey(task.name)) {
+      logger.logWarning(new BackgroundTaskExistsWarning(namespace, task.name));
+    }
+
+    tasks[task.name] = task;
+  }
+
+  /**
+   * Adds all [resources] to the application
+   */
+  void addResources(List<Resource> resourceCollection) {
+    resources.addAll(new HashMap.fromIterable(resourceCollection, key: (resource) {
+      if(logger != null && resources.containsKey(resource.name)) {
+        logger.logWarning(new ResourceExistsWarning(namespace, resource.name));
+      }
+
+      return resource.name;
+    }));
+  }
+
+  /**
+   * Adds a single [resource] to the application
+   */
+  void addResource(Resource resource) {
+    if(logger != null && resources.containsKey(resource.name)) {
+      logger.logWarning(new ResourceExistsWarning(namespace, resource.name));
+    }
+
+    resources[resource.name] = resource;
   }
 }

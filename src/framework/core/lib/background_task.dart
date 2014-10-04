@@ -1,8 +1,7 @@
 part of modularity.core;
 
 class BackgroundTask {
-  String id;
+  final String name;
 
-  BackgroundTask() {
-  }
+  BackgroundTask(this.name);
 }

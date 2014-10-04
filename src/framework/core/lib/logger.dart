@@ -287,7 +287,7 @@ class PageExistsWarning extends WarningMessage {
 
   @override
   String get message =>
-      "Page with URI => \"$_uri\" already exists. The new one overrides the previous added page.";
+      "Page with URI => \"$_uri\" already exists. You have to fix the name duplicate to ensure that the application works as expected.";
 }
 
 /**
@@ -300,7 +300,7 @@ class BackgroundTaskExistsWarning extends WarningMessage {
 
   @override
   String get message =>
-      "Task with ID => \"$_id\" already exists. The new one overrides the previous added task.";
+      "Task with ID => \"$_id\" already exists. You have to fix the name duplicate to ensure that the application works as expected.";
 }
 
 /**
@@ -313,7 +313,7 @@ class ResourceExistsWarning extends WarningMessage {
 
   @override
   String get message =>
-      "Resource with name => \"$_name\" already exists. The new one overrides the previous added resource.";
+      "Resource with name => \"$_name\" already exists. You have to fix the name duplicate to ensure that the application works as expected.";
 }
 
 class MissingApplicationNameError extends ErrorMessage {

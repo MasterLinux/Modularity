@@ -6,7 +6,8 @@ class ApplicationBuilderTest {
   final String APP_AUTHOR = "test_author";
   final String START_PAGE_URI = "test_start_uri";
   final String PAGE_URI = "test_uri";
-  final String RESOURCE_NAME = "test_res_name";
+  final String LANGUAGE_NAME = "test_lang_name";
+  final String LANGUAGE_CODE = "test_lang_code";
   final String LANGUAGE = "test_language";
   final String TASK_ID = "test_task_id";
 
@@ -27,10 +28,10 @@ class ApplicationBuilderTest {
     });
 
     test('builder should create an app with all info', () {
-      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION)
-                                        .setAuthor(APP_AUTHOR)
-                                        .setLanguage(LANGUAGE)
-                                        .setStartUri(START_PAGE_URI)
+      var appUnderTest = (new ApplicationBuilder(APP_NAME, APP_VERSION)
+                                        ..author = APP_AUTHOR
+                                        ..language = LANGUAGE
+                                        ..startUri = START_PAGE_URI)
                                         .build();
 
       expect(appUnderTest, isNotNull);
@@ -66,16 +67,40 @@ class ApplicationBuilderTest {
           expectedResourceWarningCount = 2,
           expectedPageWarningCount = 2;
 
-      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION, logger: loggerUnderTest)
-                                        .addPage(new Page(null, PAGE_URI, null))
-                                        .addTask(new BackgroundTask()..id = TASK_ID)
-                                        .addResource(new Resource()..name = RESOURCE_NAME)
-                                        .addPage(new Page(null, PAGE_URI, null))
-                                        .addTask(new BackgroundTask()..id = TASK_ID)
-                                        .addResource(new Resource()..name = RESOURCE_NAME)
-                                        .addPage(new Page(null, PAGE_URI, null))
-                                        .addTask(new BackgroundTask()..id = TASK_ID)
-                                        .addResource(new Resource()..name = RESOURCE_NAME)
+      var page1 = new ConfigPageModel()
+        ..uri = PAGE_URI;
+      var page2 = new ConfigPageModel()
+        ..uri = PAGE_URI;
+      var page3 = new ConfigPageModel()
+        ..uri = PAGE_URI;
+
+      var task1 = new ConfigTaskModel()
+        ..name = TASK_ID;
+      var task2 = new ConfigTaskModel()
+        ..name = TASK_ID;
+      var task3 = new ConfigTaskModel()
+        ..name = TASK_ID;
+
+      var res1 = new ConfigResourceModel()
+        ..languageName = LANGUAGE_NAME
+        ..languageCode = LANGUAGE_CODE;
+      var res2 = new ConfigResourceModel()
+        ..languageName = LANGUAGE_NAME
+        ..languageCode = LANGUAGE_CODE;
+      var res3 = new ConfigResourceModel()
+        ..languageName = LANGUAGE_NAME
+        ..languageCode = LANGUAGE_CODE;
+
+      var appUnderTest = (new ApplicationBuilder(APP_NAME, APP_VERSION, logger: loggerUnderTest)
+                                        ..addPage(page1)
+                                        ..addTask(task1)
+                                        ..addResource(res1)
+                                        ..addPage(page2)
+                                        ..addTask(task2)
+                                        ..addResource(res2)
+                                        ..addPage(page3)
+                                        ..addTask(task3)
+                                        ..addResource(res3))
                                         .build();
 
       expect(appUnderTest, isNotNull);
@@ -91,10 +116,18 @@ class ApplicationBuilderTest {
     });
 
     test('builder should add a page, task and resource', () {
-      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION)
-                                        .addPage(new Page(null, PAGE_URI, null))
-                                        .addTask(new BackgroundTask()..id = TASK_ID)
-                                        .addResource(new Resource()..name = RESOURCE_NAME)
+      var page = new ConfigPageModel()
+        ..uri = PAGE_URI;
+      var task = new ConfigTaskModel()
+        ..name = TASK_ID;
+      var res = new ConfigResourceModel()
+        ..languageName = LANGUAGE_NAME
+        ..languageCode = LANGUAGE_CODE;
+
+      var appUnderTest = (new ApplicationBuilder(APP_NAME, APP_VERSION)
+                                        ..addPage(page)
+                                        ..addTask(task)
+                                        ..addResource(res))
                                         .build();
 
       expect(appUnderTest, isNotNull);
@@ -104,16 +137,24 @@ class ApplicationBuilderTest {
       expect(appUnderTest.resources.isNotEmpty, isTrue);
       expect(appUnderTest.pages.isNotEmpty, isTrue);
       expect(appUnderTest.tasks.isNotEmpty, isTrue);
-      expect(appUnderTest.resources[RESOURCE_NAME], isNotNull);
+      expect(appUnderTest.resources[Resource.buildName(LANGUAGE_CODE, LANGUAGE_NAME)], isNotNull);
       expect(appUnderTest.pages[PAGE_URI], isNotNull);
       expect(appUnderTest.tasks[TASK_ID], isNotNull);
     });
 
     test('builder should add a pages, tasks and resources', () {
-      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION)
-                                        .addPages(new List<Page>()..add(new Page(null, PAGE_URI, null)))
-                                        .addTasks(new List<BackgroundTask>()..add(new BackgroundTask()..id = TASK_ID))
-                                        .addResources(new List<Resource>()..add(new Resource()..name = RESOURCE_NAME))
+      var page = new ConfigPageModel()
+        ..uri = PAGE_URI;
+      var task = new ConfigTaskModel()
+        ..name = TASK_ID;
+      var res = new ConfigResourceModel()
+        ..languageName = LANGUAGE_NAME
+        ..languageCode = LANGUAGE_CODE;
+
+      var appUnderTest = (new ApplicationBuilder(APP_NAME, APP_VERSION)
+                                        ..addPages(new List<Page>()..add(page))
+                                        ..addTasks(new List<BackgroundTask>()..add(task))
+                                        ..addResources(new List<Resource>()..add(res)))
                                         .build();
 
       expect(appUnderTest, isNotNull);
@@ -123,14 +164,17 @@ class ApplicationBuilderTest {
       expect(appUnderTest.resources.isNotEmpty, isTrue);
       expect(appUnderTest.pages.isNotEmpty, isTrue);
       expect(appUnderTest.tasks.isNotEmpty, isTrue);
-      expect(appUnderTest.resources[RESOURCE_NAME], isNotNull);
+      expect(appUnderTest.resources[Resource.buildName(LANGUAGE_CODE, LANGUAGE_NAME)], isNotNull);
       expect(appUnderTest.pages[PAGE_URI], isNotNull);
       expect(appUnderTest.tasks[TASK_ID], isNotNull);
     });
 
     test('builder should use URI of the first page as start URI using addPages(List)', () {
-      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION)
-                                        .addPages(new List<Page>()..add(new Page(null, PAGE_URI, null)))
+      var page = new ConfigPageModel()
+        ..uri = PAGE_URI;
+
+      var appUnderTest = (new ApplicationBuilder(APP_NAME, APP_VERSION)
+                                        ..addPages(new List<Page>()..add(page)))
                                         .build();
 
       expect(appUnderTest, isNotNull);
@@ -139,8 +183,11 @@ class ApplicationBuilderTest {
     });
 
     test('builder should use URI of the first page as start URI using addPage(Page)', () {
-      var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION)
-                                          .addPage(new Page(null, PAGE_URI, null))
+      var page = new ConfigPageModel()
+        ..uri = PAGE_URI;
+
+      var appUnderTest = (new ApplicationBuilder(APP_NAME, APP_VERSION)
+                                          ..addPage(page))
                                           .build();
 
       expect(appUnderTest, isNotNull);
