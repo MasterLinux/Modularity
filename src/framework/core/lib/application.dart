@@ -35,7 +35,7 @@ class ApplicationInfo {
 /**
  * Representation of an application
  */
-class Application {
+class Application implements NavigationListener {
   static const String namespace = "modularity.core.Application";
   static const String DEFAULT_LANGUAGE = "en_EN";    //TODO move const to the language manager class
   bool _isStarted = false;
@@ -86,7 +86,8 @@ class Application {
   Application(this.info, {this.logger}) :
     resources = new HashMap<String, Resource>(),
     tasks = new HashMap<String, Task>(),
-    pages = new HashMap<String, Page>();
+    pages = new HashMap<String, Page>(),
+    _navigator = new Navigator();
 
   /**
    * Loads the config and starts the application
@@ -98,7 +99,10 @@ class Application {
       completer.complete(this);
 
       return completer.future.then((instance) {
-
+        _navigator
+            ..logger = logger
+            ..addListener(instance)
+            ..navigateTo(info.startUri);
 
         _isStarted = true;
         _isBusy = false;
@@ -119,7 +123,7 @@ class Application {
       completer.complete(this);
 
       return completer.future.then((instance) {
-
+        _navigator.cleanUp();
 
         _isStarted = false;
         _isBusy = false;
