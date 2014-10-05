@@ -2,6 +2,7 @@ part of modularity.core;
 
 class Navigator {
   final List<NavigationListener> _listener;
+  List<HistoryItem> _history;
   Logger logger;
 
   Navigator() :
@@ -11,19 +12,25 @@ class Navigator {
     //TODO implement navigation
 
     for(var listener in _listener) {
-      var args = new NavigationEventArgs();
-
+      var args = new NavigationEventArgs(uri);
       listener.onNavigatedTo(this, args);
     }
+
+    _history.add(uri);
   }
 
   void navigateBack() {
-    //TODO implement back navigation
+    //remove current page from history
+    _history.removeLast();
 
-    for(var listener in _listener) {
-      var args = new NavigationEventArgs(isNavigatedBack: true);
+    if(_history.isNotEmpty) {
+      var uri = _history.last;
+      //TODO implement back navigation
 
-      listener.onNavigatedBack(this, args);
+      for(var listener in _listener) {
+        var args = new NavigationEventArgs(uri, isNavigatedBack: true);
+        listener.onNavigatedTo(this, args);
+      }
     }
   }
 
@@ -31,13 +38,23 @@ class Navigator {
 
   void removeListener(NavigationListener listener) => _listener.remove(listener);
 
-  void cleanUp() {
+  /**
+   * Removes all listener and
+   * history entries
+   */
+  void clear() {
     _listener.clear();
+    _history.clear();
     logger = null;
   }
 }
 
 class NavigationListener {
-  void onNavigatedBack(Navigator sender, NavigationEventArgs args);
   void onNavigatedTo(Navigator sender, NavigationEventArgs args);
 }
+
+class HistoryItem {
+  String previousPageUri;
+  String pageUri;
+}
+

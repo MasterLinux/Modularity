@@ -266,6 +266,16 @@ class PageExistsWarning extends WarningMessage {
       "Page with URI => \"$_uri\" already exists. You have to fix the name duplicate to ensure that the application works as expected.";
 }
 
+class MissingPageWarning extends WarningMessage {
+  final String _uri;
+
+  MissingPageWarning(String namespace, String uri) : _uri = uri, super(namespace);
+
+  @override
+  String get message =>
+  "Page with URI => \"$_uri\" does not exists. Please check whether a page with this URI is registered.";
+}
+
 /**
  * Warning which is used whenever a background task already exists
  */

@@ -41,6 +41,7 @@ class Application implements NavigationListener {
   bool _isStarted = false;
   bool _isBusy = false;
   Navigator _navigator;
+  Page _currentPage;
 
   /**
    * Logger used in this application.
@@ -78,6 +79,11 @@ class Application implements NavigationListener {
    * application is started or not
    */
   bool get isStarted => _isStarted;
+
+  /**
+   * Gets the current displayed page
+   */
+  Page get currentPage => _currentPage;
 
   /**
    * Initializes the application. If [logger]
@@ -123,7 +129,7 @@ class Application implements NavigationListener {
       completer.complete(this);
 
       return completer.future.then((instance) {
-        _navigator.cleanUp();
+        _navigator.clear();
 
         _isStarted = false;
         _isBusy = false;
@@ -131,6 +137,34 @@ class Application implements NavigationListener {
       });
     } else {
       //throw new ExecutionException();
+    }
+  }
+
+  void onNavigatedTo(Navigator sender, NavigationEventArgs args) {
+    _closeCurrentPage();
+    _openPage(args);
+  }
+
+  /**
+   * Closes the current displayed page
+   */
+  void _closeCurrentPage() {
+    if(_currentPage != null) {
+      _currentPage.close();
+      _currentPage = null;
+    }
+  }
+
+  /**
+   * Opens a specific page
+   */
+  void _openPage(NavigationEventArgs args) {
+    if(pages.containsKey(args.uri)) {
+      _currentPage = pages[args.uri];
+      _currentPage.open(args);
+
+    } else if(logger != null) {
+      logger.log(new MissingPageWarning(namespace, args.uri));
     }
   }
 
