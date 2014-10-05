@@ -5,7 +5,7 @@ part of modularity.core;
  */
 class ApplicationBuilder {
   static const String namespace = "modularity.core.ApplicationBuilder";
-  final List<BackgroundTask> _tasks;
+  final List<Task> _tasks;
   final List<Resource> _resources;
   final List<Page> _pages;
   final Logger logger;
@@ -23,7 +23,7 @@ class ApplicationBuilder {
    * [logger] isn't set the debug mode is disabled.
    */
   ApplicationBuilder(String name, String version, {this.logger}) :
-    _tasks = new List<BackgroundTask>(),
+    _tasks = new List<Task>(),
     _resources = new List<Resource>(),
     _pages = new List<Page>(),
     _version = version,
@@ -78,9 +78,9 @@ class ApplicationBuilder {
    */
   void addTask(ConfigTaskModel task) {
     if(_tasks.where((t) => t.name == task.name).isEmpty) {
-      _tasks.add(new BackgroundTask(task.name));
+      _tasks.add(new Task(task.name));
     } else if(logger != null) {
-      logger.log(new BackgroundTaskExistsWarning(namespace, task.name));
+      logger.log(new TaskExistsWarning(namespace, task.name));
     }
   }
 

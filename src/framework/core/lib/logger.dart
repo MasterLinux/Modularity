@@ -269,10 +269,10 @@ class PageExistsWarning extends WarningMessage {
 /**
  * Warning which is used whenever a background task already exists
  */
-class BackgroundTaskExistsWarning extends WarningMessage {
+class TaskExistsWarning extends WarningMessage {
   final String _id;
 
-  BackgroundTaskExistsWarning(String namespace, String id) : _id = id, super(namespace);
+  TaskExistsWarning(String namespace, String id) : _id = id, super(namespace);
 
   @override
   String get message =>

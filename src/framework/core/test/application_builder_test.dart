@@ -12,47 +12,47 @@ class ApplicationBuilderTest {
   final String TASK_ID = "test_task_id";
 
   void run() {
-    test('builder should create an app with defaults', () {
+    test.test('builder should create an app with defaults', () {
       var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION).build();
 
-      expect(appUnderTest, isNotNull);
-      expect(appUnderTest.info.name, APP_NAME);
-      expect(appUnderTest.info.author, isNull);
-      expect(appUnderTest.info.startUri, isNull);
-      expect(appUnderTest.info.language, Application.DEFAULT_LANGUAGE);
-      expect(appUnderTest.info.version, APP_VERSION);
-      expect(appUnderTest.resources, isEmpty);
-      expect(appUnderTest.pages, isEmpty);
-      expect(appUnderTest.tasks, isEmpty);
-      expect(appUnderTest.logger, isNull);
+      test.expect(appUnderTest, test.isNotNull);
+      test.expect(appUnderTest.info.name, APP_NAME);
+      test.expect(appUnderTest.info.author, test.isNull);
+      test.expect(appUnderTest.info.startUri, test.isNull);
+      test.expect(appUnderTest.info.language, Application.DEFAULT_LANGUAGE);
+      test.expect(appUnderTest.info.version, APP_VERSION);
+      test.expect(appUnderTest.resources, test.isEmpty);
+      test.expect(appUnderTest.pages, test.isEmpty);
+      test.expect(appUnderTest.tasks, test.isEmpty);
+      test.expect(appUnderTest.logger, test.isNull);
     });
 
-    test('builder should create an app with all info', () {
+    test.test('builder should create an app with all info', () {
       var appUnderTest = (new ApplicationBuilder(APP_NAME, APP_VERSION)
                                         ..author = APP_AUTHOR
                                         ..language = LANGUAGE
                                         ..startUri = START_PAGE_URI)
                                         .build();
 
-      expect(appUnderTest, isNotNull);
-      expect(appUnderTest.info, isNotNull);
-      expect(appUnderTest.info.name, APP_NAME);
-      expect(appUnderTest.info.author, APP_AUTHOR);
-      expect(appUnderTest.info.startUri, START_PAGE_URI);
-      expect(appUnderTest.info.language, LANGUAGE);
-      expect(appUnderTest.info.version, APP_VERSION);
+      test.expect(appUnderTest, test.isNotNull);
+      test.expect(appUnderTest.info, test.isNotNull);
+      test.expect(appUnderTest.info.name, APP_NAME);
+      test.expect(appUnderTest.info.author, APP_AUTHOR);
+      test.expect(appUnderTest.info.startUri, START_PAGE_URI);
+      test.expect(appUnderTest.info.language, LANGUAGE);
+      test.expect(appUnderTest.info.version, APP_VERSION);
     });
 
-    test('builder should add logger', () {
+    test.test('builder should add logger', () {
       var appUnderTest = new ApplicationBuilder(APP_NAME, APP_VERSION, logger: new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION)).build();
 
-      expect(appUnderTest, isNotNull);
-      expect(appUnderTest.logger, isNotNull);
-      expect(appUnderTest.logger.applicationName, APP_NAME);
-      expect(appUnderTest.logger.applicationVersion, APP_VERSION);
+      test.expect(appUnderTest, test.isNotNull);
+      test.expect(appUnderTest.logger, test.isNotNull);
+      test.expect(appUnderTest.logger.applicationName, APP_NAME);
+      test.expect(appUnderTest.logger.applicationVersion, APP_VERSION);
     });
 
-    test('builder should log warning on duplicate', () {
+    test.test('builder should log warning on duplicate', () {
       var loggerUnderTest = new Logger(
           applicationName: APP_NAME,
           applicationVersion: APP_VERSION,
@@ -103,19 +103,19 @@ class ApplicationBuilderTest {
                                         ..addResource(res3))
                                         .build();
 
-      expect(appUnderTest, isNotNull);
-      expect(appUnderTest.pages.length, expectedPageCount);
-      expect(appUnderTest.tasks.length, expectedTaskCount);
-      expect(appUnderTest.resources.length, expectedResourceCount);
-      expect(appUnderTest.logger, isNotNull);
-      expect(appUnderTest.logger.warningMessages, isNotNull);
-      expect(appUnderTest.logger.warningMessages.length, expectedWarningCount);
-      expect(appUnderTest.logger.warningMessages.where((message) => message is BackgroundTaskExistsWarning).length, expectedTaskWarningCount);
-      expect(appUnderTest.logger.warningMessages.where((message) => message is ResourceExistsWarning).length, expectedResourceWarningCount);
-      expect(appUnderTest.logger.warningMessages.where((message) => message is PageExistsWarning).length, expectedPageWarningCount);
+      test.expect(appUnderTest, test.isNotNull);
+      test.expect(appUnderTest.pages.length, expectedPageCount);
+      test.expect(appUnderTest.tasks.length, expectedTaskCount);
+      test.expect(appUnderTest.resources.length, expectedResourceCount);
+      test.expect(appUnderTest.logger, test.isNotNull);
+      test.expect(appUnderTest.logger.warningMessages, test.isNotNull);
+      test.expect(appUnderTest.logger.warningMessages.length, expectedWarningCount);
+      test.expect(appUnderTest.logger.warningMessages.where((message) => message is TaskExistsWarning).length, expectedTaskWarningCount);
+      test.expect(appUnderTest.logger.warningMessages.where((message) => message is ResourceExistsWarning).length, expectedResourceWarningCount);
+      test.expect(appUnderTest.logger.warningMessages.where((message) => message is PageExistsWarning).length, expectedPageWarningCount);
     });
 
-    test('builder should add a page, task and resource', () {
+    test.test('builder should add a page, task and resource', () {
       var page = new ConfigPageModel()
         ..uri = PAGE_URI;
       var task = new ConfigTaskModel()
@@ -130,19 +130,19 @@ class ApplicationBuilderTest {
                                         ..addResource(res))
                                         .build();
 
-      expect(appUnderTest, isNotNull);
-      expect(appUnderTest.resources, isNotNull);
-      expect(appUnderTest.pages, isNotNull);
-      expect(appUnderTest.tasks, isNotNull);
-      expect(appUnderTest.resources.isNotEmpty, isTrue);
-      expect(appUnderTest.pages.isNotEmpty, isTrue);
-      expect(appUnderTest.tasks.isNotEmpty, isTrue);
-      expect(appUnderTest.resources[Resource.buildName(LANGUAGE_CODE, LANGUAGE_NAME)], isNotNull);
-      expect(appUnderTest.pages[PAGE_URI], isNotNull);
-      expect(appUnderTest.tasks[TASK_ID], isNotNull);
+      test.expect(appUnderTest, test.isNotNull);
+      test.expect(appUnderTest.resources, test.isNotNull);
+      test.expect(appUnderTest.pages, test.isNotNull);
+      test.expect(appUnderTest.tasks, test.isNotNull);
+      test.expect(appUnderTest.resources.isNotEmpty, test.isTrue);
+      test.expect(appUnderTest.pages.isNotEmpty, test.isTrue);
+      test.expect(appUnderTest.tasks.isNotEmpty, test.isTrue);
+      test.expect(appUnderTest.resources[Resource.buildName(LANGUAGE_CODE, LANGUAGE_NAME)], test.isNotNull);
+      test.expect(appUnderTest.pages[PAGE_URI], test.isNotNull);
+      test.expect(appUnderTest.tasks[TASK_ID], test.isNotNull);
     });
 
-    test('builder should add a pages, tasks and resources', () {
+    test.test('builder should add a pages, tasks and resources', () {
       var page = new ConfigPageModel()
         ..uri = PAGE_URI;
       var task = new ConfigTaskModel()
@@ -153,23 +153,23 @@ class ApplicationBuilderTest {
 
       var appUnderTest = (new ApplicationBuilder(APP_NAME, APP_VERSION)
                                         ..addPages(new List<Page>()..add(page))
-                                        ..addTasks(new List<BackgroundTask>()..add(task))
+                                        ..addTasks(new List<Task>()..add(task))
                                         ..addResources(new List<Resource>()..add(res)))
                                         .build();
 
-      expect(appUnderTest, isNotNull);
-      expect(appUnderTest.resources, isNotNull);
-      expect(appUnderTest.pages, isNotNull);
-      expect(appUnderTest.tasks, isNotNull);
-      expect(appUnderTest.resources.isNotEmpty, isTrue);
-      expect(appUnderTest.pages.isNotEmpty, isTrue);
-      expect(appUnderTest.tasks.isNotEmpty, isTrue);
-      expect(appUnderTest.resources[Resource.buildName(LANGUAGE_CODE, LANGUAGE_NAME)], isNotNull);
-      expect(appUnderTest.pages[PAGE_URI], isNotNull);
-      expect(appUnderTest.tasks[TASK_ID], isNotNull);
+      test.expect(appUnderTest, test.isNotNull);
+      test.expect(appUnderTest.resources, test.isNotNull);
+      test.expect(appUnderTest.pages, test.isNotNull);
+      test.expect(appUnderTest.tasks, test.isNotNull);
+      test.expect(appUnderTest.resources.isNotEmpty, test.isTrue);
+      test.expect(appUnderTest.pages.isNotEmpty, test.isTrue);
+      test.expect(appUnderTest.tasks.isNotEmpty, test.isTrue);
+      test.expect(appUnderTest.resources[Resource.buildName(LANGUAGE_CODE, LANGUAGE_NAME)], test.isNotNull);
+      test.expect(appUnderTest.pages[PAGE_URI], test.isNotNull);
+      test.expect(appUnderTest.tasks[TASK_ID], test.isNotNull);
     });
 
-    test('builder should use URI of the first page as start URI using addPages(List)', () {
+    test.test('builder should use URI of the first page as start URI using addPages(List)', () {
       var page = new ConfigPageModel()
         ..uri = PAGE_URI;
 
@@ -177,12 +177,12 @@ class ApplicationBuilderTest {
                                         ..addPages(new List<Page>()..add(page)))
                                         .build();
 
-      expect(appUnderTest, isNotNull);
-      expect(appUnderTest.info, isNotNull);
-      expect(appUnderTest.info.startUri, PAGE_URI);
+      test.expect(appUnderTest, test.isNotNull);
+      test.expect(appUnderTest.info, test.isNotNull);
+      test.expect(appUnderTest.info.startUri, PAGE_URI);
     });
 
-    test('builder should use URI of the first page as start URI using addPage(Page)', () {
+    test.test('builder should use URI of the first page as start URI using addPage(Page)', () {
       var page = new ConfigPageModel()
         ..uri = PAGE_URI;
 
@@ -190,9 +190,9 @@ class ApplicationBuilderTest {
                                           ..addPage(page))
                                           .build();
 
-      expect(appUnderTest, isNotNull);
-      expect(appUnderTest.info, isNotNull);
-      expect(appUnderTest.info.startUri, PAGE_URI);
+      test.expect(appUnderTest, test.isNotNull);
+      test.expect(appUnderTest.info, test.isNotNull);
+      test.expect(appUnderTest.info.startUri, PAGE_URI);
     });
   }
 }

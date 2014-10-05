@@ -40,6 +40,7 @@ class Application {
   static const String DEFAULT_LANGUAGE = "en_EN";    //TODO move const to the language manager class
   bool _isStarted = false;
   bool _isBusy = false;
+  Navigator _navigator;
 
   /**
    * Logger used in this application.
@@ -70,7 +71,7 @@ class Application {
    * Gets all background tasks if no task is loaded
    * it returns an empty list
    */
-  final HashMap<String, BackgroundTask> tasks;
+  final HashMap<String, Task> tasks;
 
   /**
    * Flag which indicates whether the
@@ -84,7 +85,7 @@ class Application {
    */
   Application(this.info, {this.logger}) :
     resources = new HashMap<String, Resource>(),
-    tasks = new HashMap<String, BackgroundTask>(),
+    tasks = new HashMap<String, Task>(),
     pages = new HashMap<String, Page>();
 
   /**
@@ -156,10 +157,10 @@ class Application {
   /**
    * Adds all background [tasks] to the application
    */
-  void addTasks(List<BackgroundTask> taskCollection) {
+  void addTasks(List<Task> taskCollection) {
     tasks.addAll(new HashMap.fromIterable(taskCollection, key: (task) {
       if(logger != null && tasks.containsKey(task.name)) {
-        logger.log(new BackgroundTaskExistsWarning(namespace, task.name));
+        logger.log(new TaskExistsWarning(namespace, task.name));
       }
 
       return task.name;
@@ -169,9 +170,9 @@ class Application {
   /**
    * Adds a single background [task] to the application
    */
-  void addTask(BackgroundTask task) {
+  void addTask(Task task) {
     if(logger != null && tasks.containsKey(task.name)) {
-      logger.log(new BackgroundTaskExistsWarning(namespace, task.name));
+      logger.log(new TaskExistsWarning(namespace, task.name));
     }
 
     tasks[task.name] = task;
