@@ -40,8 +40,12 @@ class Application implements NavigationListener {
   static const String DEFAULT_LANGUAGE = "en_EN";    //TODO move const to the language manager class
   bool _isStarted = false;
   bool _isBusy = false;
-  Navigator _navigator;
   Page _currentPage;
+
+  /**
+   *
+   */
+  final Navigator navigator;
 
   /**
    * Logger used in this application.
@@ -93,7 +97,7 @@ class Application implements NavigationListener {
     resources = new HashMap<String, Resource>(),
     tasks = new HashMap<String, Task>(),
     pages = new HashMap<String, Page>(),
-    _navigator = new Navigator();
+    navigator = new Navigator();
 
   /**
    * Loads the config and starts the application
@@ -105,10 +109,10 @@ class Application implements NavigationListener {
       completer.complete(this);
 
       return completer.future.then((instance) {
-        _navigator
+        instance.navigator
             ..logger = logger
             ..addListener(instance)
-            ..navigateTo(info.startUri);
+            ..navigateTo(instance.info.startUri);  //TODO start page parameter required
 
         _isStarted = true;
         _isBusy = false;
@@ -129,7 +133,8 @@ class Application implements NavigationListener {
       completer.complete(this);
 
       return completer.future.then((instance) {
-        _navigator.clear();
+        instance.closePage();
+        instance.navigator.clear();
 
         _isStarted = false;
         _isBusy = false;
@@ -141,14 +146,17 @@ class Application implements NavigationListener {
   }
 
   void onNavigatedTo(Navigator sender, NavigationEventArgs args) {
-    _closeCurrentPage();
-    _openPage(args);
+    closePage();
+    openPage(args.uri,
+        isNavigatedBack: args.isNavigatedBack,
+        parameter: args.parameter
+    );
   }
 
   /**
    * Closes the current displayed page
    */
-  void _closeCurrentPage() {
+  void closePage() {
     if(_currentPage != null) {
       _currentPage.close();
       _currentPage = null;
@@ -158,13 +166,19 @@ class Application implements NavigationListener {
   /**
    * Opens a specific page
    */
-  void _openPage(NavigationEventArgs args) {
-    if(pages.containsKey(args.uri)) {
-      _currentPage = pages[args.uri];
-      _currentPage.open(args);
+  void openPage(String uri, {NavigationParameter parameter, bool isNavigatedBack}) {
+    if(pages.containsKey(uri)) {
+      _currentPage = pages[uri];
+
+      _currentPage.open(
+          new NavigationEventArgs(uri,
+              isNavigatedBack: isNavigatedBack,
+              parameter: parameter
+          )
+      );
 
     } else if(logger != null) {
-      logger.log(new MissingPageWarning(namespace, args.uri));
+      logger.log(new MissingPageWarning(namespace, uri));
     }
   }
 

@@ -8,11 +8,11 @@ class Navigator {
   Navigator() :
     _listener = new List<NavigationListener>();
 
-  void navigateTo(Uri uri) {
+  void navigateTo(Uri uri, {NavigationParameter parameter}) {
     //TODO implement navigation
 
     for(var listener in _listener) {
-      var args = new NavigationEventArgs(uri);
+      var args = new NavigationEventArgs(uri, parameter: parameter);
       listener.onNavigatedTo(this, args);
     }
 
@@ -28,7 +28,7 @@ class Navigator {
       //TODO implement back navigation
 
       for(var listener in _listener) {
-        var args = new NavigationEventArgs(uri, isNavigatedBack: true);
+        var args = new NavigationEventArgs(uri, isNavigatedBack: true);  //TODO get previous navigation parameter
         listener.onNavigatedTo(this, args);
       }
     }
@@ -56,5 +56,30 @@ class NavigationListener {
 class HistoryItem {
   String previousPageUri;
   String pageUri;
+}
+
+class NavigationParameter {
+  final HashMap<String, Object> _parameter;
+
+  NavigationParameter.fromMap(Map<String, Object> parameter) : _parameter = parameter;
+
+  NavigationParameter() : _parameter = new HashMap<String, Object>();
+
+  void add(String key, Object value) {
+
+  }
+
+
+}
+
+class NavigationEventArgs implements EventArgs {
+  final NavigationParameter parameter; //TODO do not use dynamic
+  final bool isNavigatedBack;
+  final String uri;
+
+  NavigationEventArgs(this.uri, {
+    this.parameter: new NavigationParameter(),
+    this.isNavigatedBack: false
+  });
 }
 
