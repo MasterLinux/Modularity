@@ -1,22 +1,42 @@
 part of modularity.core;
 
 class Navigator {
+  static const String namespace = "modularity.core.Navigator";
   final List<NavigationListener> _listener;
-  List<HistoryItem> _history;
+  final List<HistoryItem> _history;
+  Page _currentPage;
   Logger logger;
 
+  /**
+   * Gets all pages if no page is loaded
+   * it returns an empty list
+   */
+  final HashMap<String, Page> pages;
+
   Navigator() :
-    _listener = new List<NavigationListener>();
+    pages = new HashMap<String, Page>(),
+    _listener = new List<NavigationListener>(),
+    _history = new List<HistoryItem>();
 
   void navigateTo(Uri uri, {NavigationParameter parameter}) {
-    //TODO implement navigation
-
-    for(var listener in _listener) {
+    if(pages.containsKey(uri)) {
       var args = new NavigationEventArgs(uri, parameter: parameter);
-      listener.onNavigatedTo(this, args);
-    }
+      //TODO implement hash change
+      if(_currentPage) {
+        _currentPage.close();
+      }
 
-    _history.add(uri);
+      _currentPage = pages[uri];
+      _currentPage.open(args);
+
+      for(var listener in _listener) {
+        listener.onNavigatedTo(this, _currentPage, args);
+      }
+
+      _history.add(uri);
+    } else if(logger != null) {
+      logger.log(new MissingPageWarning(namespace, uri));
+    }
   }
 
   void navigateBack() {
@@ -29,7 +49,7 @@ class Navigator {
 
       for(var listener in _listener) {
         var args = new NavigationEventArgs(uri, isNavigatedBack: true);  //TODO get previous navigation parameter
-        listener.onNavigatedTo(this, args);
+        listener.onNavigatedTo(this, _currentPage, args);
       }
     }
   }
@@ -47,10 +67,38 @@ class Navigator {
     _history.clear();
     logger = null;
   }
+
+  Page get currentPage {
+    return _currentPage;
+  }
+
+  /**
+   * Adds all [pages] in list to the application
+   */
+  void addPages(List<Page> pagesCollection) {
+    pages.addAll(new HashMap.fromIterable(pagesCollection, key: (page) {
+      if(logger != null && pages.containsKey(page.uri)) {
+        logger.log(new PageExistsWarning(namespace, page.uri));
+      }
+
+      return page.uri;
+    }));
+  }
+
+  /**
+   * Adds a single [page] to the application
+   */
+  void addPage(Page page) {
+    if(logger != null && pages.containsKey(page.uri)) {
+      logger.log(new PageExistsWarning(namespace, page.uri));
+    }
+
+    pages[page.uri] = page;
+  }
 }
 
 class NavigationListener {
-  void onNavigatedTo(Navigator sender, NavigationEventArgs args);
+  void onNavigatedTo(Navigator sender, Page page, NavigationEventArgs args);
 }
 
 class HistoryItem {
@@ -78,8 +126,8 @@ class NavigationEventArgs implements EventArgs {
   final String uri;
 
   NavigationEventArgs(this.uri, {
-    this.parameter: new NavigationParameter(),
-    this.isNavigatedBack: false
+    this.isNavigatedBack: false,
+    this.parameter
   });
 }
 

@@ -118,7 +118,7 @@ class ApplicationBuilder {
       ..version = _version
       ..name = _name;
 
-    var application = new Application(info, logger: logger)
+    var application = new Application(info, new Navigator(), logger: logger)
       ..addResources(_resources)
       ..addPages(_pages)
       ..addTasks(_tasks);

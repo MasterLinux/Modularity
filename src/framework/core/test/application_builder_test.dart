@@ -140,6 +140,14 @@ class ApplicationBuilderTest {
       test.expect(appUnderTest.resources[Resource.buildName(LANGUAGE_CODE, LANGUAGE_NAME)], test.isNotNull);
       test.expect(appUnderTest.pages[PAGE_URI], test.isNotNull);
       test.expect(appUnderTest.tasks[TASK_ID], test.isNotNull);
+
+      test.schedule(() {
+        return appUnderTest.start().then((_) {
+          test.expect(appUnderTest.navigator, test.isNotNull);
+          test.expect(appUnderTest.navigator.currentPage, test.isNotNull, reason: "start page is null");
+          test.expect(appUnderTest.navigator.currentPage.uri, PAGE_URI);
+        });
+      });
     });
 
     test.test('builder should add a pages, tasks and resources', () {
@@ -167,6 +175,14 @@ class ApplicationBuilderTest {
       test.expect(appUnderTest.resources[Resource.buildName(LANGUAGE_CODE, LANGUAGE_NAME)], test.isNotNull);
       test.expect(appUnderTest.pages[PAGE_URI], test.isNotNull);
       test.expect(appUnderTest.tasks[TASK_ID], test.isNotNull);
+
+      test.schedule(() {
+        return appUnderTest.start().then((_) {
+          test.expect(appUnderTest.navigator, test.isNotNull);
+          test.expect(appUnderTest.navigator.currentPage, test.isNotNull, reason: "start page is null");
+          test.expect(appUnderTest.navigator.currentPage.uri, PAGE_URI);
+        });
+      });
     });
 
     test.test('builder should use URI of the first page as start URI using addPages(List)', () {

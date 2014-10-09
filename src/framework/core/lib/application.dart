@@ -40,10 +40,10 @@ class Application implements NavigationListener {
   static const String DEFAULT_LANGUAGE = "en_EN";    //TODO move const to the language manager class
   bool _isStarted = false;
   bool _isBusy = false;
-  Page _currentPage;
 
   /**
-   *
+   * Gets the navigator used to navigate
+   * through pages
    */
   final Navigator navigator;
 
@@ -64,19 +64,20 @@ class Application implements NavigationListener {
    * Gets all resources tasks if no resource is loaded
    * it returns an empty list
    */
-  final HashMap<String, Resource> resources;
+  final HashMap<String, Resource> resources; //TODO move to resource manager
 
   /**
-   * Gets all pages if no page is loaded
-   * it returns an empty list
+   * Gets all registered pages
    */
-  final HashMap<String, Page> pages;
+  HashMap<String, Page> get pages {
+    return navigator.pages;
+  }
 
   /**
    * Gets all background tasks if no task is loaded
    * it returns an empty list
    */
-  final HashMap<String, Task> tasks;
+  final HashMap<String, Task> tasks; //TODO move to task queue
 
   /**
    * Flag which indicates whether the
@@ -85,19 +86,15 @@ class Application implements NavigationListener {
   bool get isStarted => _isStarted;
 
   /**
-   * Gets the current displayed page
-   */
-  Page get currentPage => _currentPage;
-
-  /**
    * Initializes the application. If [logger]
    * is set the debug mode is enabled
    */
-  Application(this.info, {this.logger}) :
+  Application(this.info, this.navigator, {this.logger}) :
     resources = new HashMap<String, Resource>(),
-    tasks = new HashMap<String, Task>(),
-    pages = new HashMap<String, Page>(),
-    navigator = new Navigator();
+    tasks = new HashMap<String, Task>()
+  {
+    this.navigator.logger = logger;
+  }
 
   /**
    * Loads the config and starts the application
@@ -108,9 +105,8 @@ class Application implements NavigationListener {
       Completer completer = new Completer();
       completer.complete(this);
 
-      return completer.future.then((instance) {
+      return completer.future.then((Application instance) {
         instance.navigator
-            ..logger = logger
             ..addListener(instance)
             ..navigateTo(instance.info.startUri);  //TODO start page parameter required
 
@@ -132,8 +128,7 @@ class Application implements NavigationListener {
       Completer completer = new Completer();
       completer.complete(this);
 
-      return completer.future.then((instance) {
-        instance.closePage();
+      return completer.future.then((Application instance) {
         instance.navigator.clear();
 
         _isStarted = false;
@@ -145,65 +140,22 @@ class Application implements NavigationListener {
     }
   }
 
-  void onNavigatedTo(Navigator sender, NavigationEventArgs args) {
-    closePage();
-    openPage(args.uri,
-        isNavigatedBack: args.isNavigatedBack,
-        parameter: args.parameter
-    );
-  }
-
-  /**
-   * Closes the current displayed page
-   */
-  void closePage() {
-    if(_currentPage != null) {
-      _currentPage.close();
-      _currentPage = null;
-    }
-  }
-
-  /**
-   * Opens a specific page
-   */
-  void openPage(String uri, {NavigationParameter parameter, bool isNavigatedBack}) {
-    if(pages.containsKey(uri)) {
-      _currentPage = pages[uri];
-
-      _currentPage.open(
-          new NavigationEventArgs(uri,
-              isNavigatedBack: isNavigatedBack,
-              parameter: parameter
-          )
-      );
-
-    } else if(logger != null) {
-      logger.log(new MissingPageWarning(namespace, uri));
-    }
+  void onNavigatedTo(Navigator sender, Page page, NavigationEventArgs args) {
+    //TODO track lifecycle
   }
 
   /**
    * Adds all [pages] in list to the application
    */
-  void addPages(List<Page> pagesCollection) {
-    pages.addAll(new HashMap.fromIterable(pagesCollection, key: (page) {
-      if(logger != null && pages.containsKey(page.uri)) {
-        logger.log(new PageExistsWarning(namespace, page.uri));
-      }
-
-      return page.uri;
-    }));
+  void addPages(List<Page> pages) {
+    navigator.addPages(pages);
   }
 
   /**
    * Adds a single [page] to the application
    */
   void addPage(Page page) {
-    if(logger != null && pages.containsKey(page.uri)) {
-      logger.log(new PageExistsWarning(namespace, page.uri));
-    }
-
-    pages[page.uri] = page;
+    navigator.addPage(page);
   }
 
   /**
