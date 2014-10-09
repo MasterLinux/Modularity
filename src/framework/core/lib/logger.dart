@@ -302,6 +302,14 @@ class ResourceExistsWarning extends WarningMessage {
       "Resource with name => \"$_name\" already exists. You have to fix the name duplicate to ensure that the application works as expected.";
 }
 
+class MissingDefaultLanguageWarning extends WarningMessage {
+  MissingDefaultLanguageWarning(String namespace) : super(namespace);
+
+  @override
+  String get message =>
+    "Application Language is not set. So it will be fall back to the default language.";
+}
+
 class MissingApplicationNameError extends ErrorMessage {
   MissingApplicationNameError(String namespace) : super(namespace);
 

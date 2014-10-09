@@ -37,7 +37,9 @@ class ApplicationInfo {
  */
 class Application implements NavigationListener {
   static const String namespace = "modularity.core.Application";
-  static const String DEFAULT_LANGUAGE = "en_EN";    //TODO move const to the language manager class
+  static const String defaultLanguage = "en_EN";    //TODO move const to the language manager class
+  static const String defaultVersion = "1.0.0";
+  static const String defaultName = "undefined";
   bool _isStarted = false;
   bool _isBusy = false;
 
@@ -94,6 +96,30 @@ class Application implements NavigationListener {
     tasks = new HashMap<String, Task>()
   {
     this.navigator.logger = logger;
+
+    if(stringUtil.isEmpty(info.language)) {
+      info.language = defaultLanguage;
+
+      if(logger != null) {
+        logger.log(new MissingDefaultLanguageWarning(namespace));
+      }
+    }
+
+    if(stringUtil.isEmpty(info.name)) {
+      info.name = defaultName;
+
+      if(logger != null) {
+        logger.log(new MissingApplicationNameError(namespace));
+      }
+    }
+
+    if(stringUtil.isEmpty(info.version)) {
+      info.version = defaultVersion;
+
+      if(logger != null) {
+        logger.log(new MissingApplicationVersionError(namespace));
+      }
+    }
   }
 
   /**

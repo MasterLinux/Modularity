@@ -19,7 +19,7 @@ class ApplicationBuilderTest {
       test.expect(appUnderTest.info.name, APP_NAME);
       test.expect(appUnderTest.info.author, test.isNull);
       test.expect(appUnderTest.info.startUri, test.isNull);
-      test.expect(appUnderTest.info.language, Application.DEFAULT_LANGUAGE);
+      test.expect(appUnderTest.info.language, Application.defaultLanguage);
       test.expect(appUnderTest.info.version, APP_VERSION);
       test.expect(appUnderTest.resources, test.isEmpty);
       test.expect(appUnderTest.pages, test.isEmpty);

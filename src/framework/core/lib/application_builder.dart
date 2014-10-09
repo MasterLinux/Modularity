@@ -113,7 +113,7 @@ class ApplicationBuilder {
   Application build() {
     var info = new ApplicationInfo()
       ..startUri = _startUri == null && _pages.isNotEmpty ? _pages.first.uri : _startUri
-      ..language = _language != null ? _language : Application.DEFAULT_LANGUAGE
+      ..language = _language != null ? _language : Application.defaultLanguage
       ..author = _author
       ..version = _version
       ..name = _name;
