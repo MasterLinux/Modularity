@@ -325,3 +325,11 @@ class MissingApplicationVersionError extends ErrorMessage {
   String get message =>
       "Application version is missing. You have to set a version number to ensure that your application runs correctly.";
 }
+
+class MissingStartUriError extends ErrorMessage {
+  MissingStartUriError(String namespace) : super(namespace);
+
+  @override
+  String get message =>
+      "Start URI is missing. You have to set a start URI or have to add a page to ensure that your application runs correctly.";
+}

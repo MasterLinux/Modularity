@@ -42,6 +42,7 @@ class Application implements NavigationListener {
   static const String defaultName = "undefined";
   bool _isStarted = false;
   bool _isBusy = false;
+  String _startUri;
 
   /**
    * Gets the navigator used to navigate
@@ -69,13 +70,6 @@ class Application implements NavigationListener {
   final HashMap<String, Resource> resources; //TODO move to resource manager
 
   /**
-   * Gets all registered pages
-   */
-  HashMap<String, Page> get pages {
-    return navigator.pages;
-  }
-
-  /**
    * Gets all background tasks if no task is loaded
    * it returns an empty list
    */
@@ -96,7 +90,13 @@ class Application implements NavigationListener {
     tasks = new HashMap<String, Task>()
   {
     this.navigator.logger = logger;
+  }
 
+  /**
+   * Gets the default language used
+   * as primary language
+   */
+  String get language {
     if(stringUtil.isEmpty(info.language)) {
       info.language = defaultLanguage;
 
@@ -105,6 +105,13 @@ class Application implements NavigationListener {
       }
     }
 
+    return info.language;
+  }
+
+  /**
+   * Gets the application name
+   */
+  String get name {
     if(stringUtil.isEmpty(info.name)) {
       info.name = defaultName;
 
@@ -113,6 +120,13 @@ class Application implements NavigationListener {
       }
     }
 
+    return info.name;
+  }
+
+  /**
+   * Gets the application version
+   */
+  String get version {
     if(stringUtil.isEmpty(info.version)) {
       info.version = defaultVersion;
 
@@ -120,6 +134,30 @@ class Application implements NavigationListener {
         logger.log(new MissingApplicationVersionError(namespace));
       }
     }
+
+    return info.version;
+  }
+
+  /**
+   * Gets the URI of the first displayed page
+   */
+  String get startUri {
+    if(stringUtil.isEmpty(info.startUri)) {
+      info.startUri = _startUri;
+
+      if(logger != null) {
+        logger.log(new MissingStartUriError(namespace));
+      }
+    }
+
+    return info.startUri;
+  }
+
+  /**
+   * Gets all registered pages
+   */
+  HashMap<String, Page> get pages {
+    return navigator.pages;
   }
 
   /**
@@ -128,10 +166,10 @@ class Application implements NavigationListener {
   Future<Application> start() {
     if(!_isBusy && !_isStarted) {
       _isBusy = true;
-      Completer completer = new Completer();
+      Completer<Application> completer = new Completer<Application>();
       completer.complete(this);
 
-      return completer.future.then((Application instance) {
+      return completer.future.then((instance) {
         instance.navigator
             ..addListener(instance)
             ..navigateTo(instance.info.startUri);  //TODO start page parameter required
@@ -151,10 +189,10 @@ class Application implements NavigationListener {
   Future<Application> stop() {
     if(!_isBusy && _isStarted) {
       _isBusy = true;
-      Completer completer = new Completer();
+      Completer<Application> completer = new Completer<Application>();
       completer.complete(this);
 
-      return completer.future.then((Application instance) {
+      return completer.future.then((instance) {
         instance.navigator.clear();
 
         _isStarted = false;
@@ -167,13 +205,17 @@ class Application implements NavigationListener {
   }
 
   void onNavigatedTo(Navigator sender, Page page, NavigationEventArgs args) {
-    //TODO track lifecycle
+    //does nothing
   }
 
   /**
    * Adds all [pages] in list to the application
    */
   void addPages(List<Page> pages) {
+    if(stringUtil.isEmpty(_startUri) && pages.isNotEmpty) {
+      _startUri = pages.first.uri;
+    }
+
     navigator.addPages(pages);
   }
 
@@ -181,6 +223,10 @@ class Application implements NavigationListener {
    * Adds a single [page] to the application
    */
   void addPage(Page page) {
+    if(stringUtil.isEmpty(_startUri)) {
+      _startUri = page.uri;
+    }
+
     navigator.addPage(page);
   }
 
