@@ -245,7 +245,7 @@ class Application implements NavigationListener {
    * Checks whether the default language is set.
    * If not the default is set.
    */
-  _validateLanguage() {
+  void _validateLanguage() {
     if (stringUtil.isEmpty(info.language)) {
       info.language = defaultLanguage;
 
@@ -259,7 +259,7 @@ class Application implements NavigationListener {
    * Checks whether the application name is set.
    * If not the default is set.
    */
-  _validateName() {
+  void _validateName() {
     if (stringUtil.isEmpty(info.name)) {
       info.name = defaultName;
 
@@ -273,7 +273,7 @@ class Application implements NavigationListener {
    * Checks whether the application version is set.
    * If not the default is set.
    */
-  _validateVersion() {
+  void _validateVersion() {
     if (stringUtil.isEmpty(info.version)) {
       info.version = defaultVersion;
 
@@ -288,7 +288,7 @@ class Application implements NavigationListener {
    * If not it tries to use the URI of
    * the first added page.
    */
-  _validateStartUri(String defaultUri) {
+  void _validateStartUri(String defaultUri) {
     if (stringUtil.isEmpty(info.startUri)) {
       info.startUri = defaultUri;
     }
