@@ -42,7 +42,6 @@ class Application implements NavigationListener {
   static const String defaultName = "undefined";
   bool _isStarted = false;
   bool _isBusy = false;
-  String _startUri;
 
   /**
    * Gets the navigator used to navigate
@@ -90,75 +89,39 @@ class Application implements NavigationListener {
     tasks = new HashMap<String, Task>()
   {
     this.navigator.logger = logger;
+
+    //validate application info
+    _validateLanguage();
+    _validateVersion();
+    _validateName();
   }
 
   /**
    * Gets the default language used
    * as primary language
    */
-  String get language {
-    if(stringUtil.isEmpty(info.language)) {
-      info.language = defaultLanguage;
 
-      if(logger != null) {
-        logger.log(new MissingDefaultLanguageWarning(namespace));
-      }
-    }
-
-    return info.language;
-  }
+  String get language => info.language;
 
   /**
    * Gets the application name
    */
-  String get name {
-    if(stringUtil.isEmpty(info.name)) {
-      info.name = defaultName;
-
-      if(logger != null) {
-        logger.log(new MissingApplicationNameError(namespace));
-      }
-    }
-
-    return info.name;
-  }
+  String get name => info.name;
 
   /**
    * Gets the application version
    */
-  String get version {
-    if(stringUtil.isEmpty(info.version)) {
-      info.version = defaultVersion;
-
-      if(logger != null) {
-        logger.log(new MissingApplicationVersionError(namespace));
-      }
-    }
-
-    return info.version;
-  }
+  String get version => info.version;
 
   /**
    * Gets the URI of the first displayed page
    */
-  String get startUri {
-    if(stringUtil.isEmpty(info.startUri)) {
-      info.startUri = _startUri;
-
-      if(logger != null) {
-        logger.log(new MissingStartUriError(namespace));
-      }
-    }
-
-    return info.startUri;
-  }
+  String get startUri => info.startUri;
 
   /**
    * Gets all registered pages
    */
-  HashMap<String, Page> get pages {
-    return navigator.pages;
-  }
+  HashMap<String, Page> get pages => navigator.pages;
 
   /**
    * Loads the config and starts the application
@@ -212,8 +175,8 @@ class Application implements NavigationListener {
    * Adds all [pages] in list to the application
    */
   void addPages(List<Page> pages) {
-    if(stringUtil.isEmpty(_startUri) && pages.isNotEmpty) {
-      _startUri = pages.first.uri;
+    if(stringUtil.isEmpty(info.startUri) && pages.isNotEmpty) {
+      _validateStartUri(pages.first.uri);
     }
 
     navigator.addPages(pages);
@@ -223,8 +186,8 @@ class Application implements NavigationListener {
    * Adds a single [page] to the application
    */
   void addPage(Page page) {
-    if(stringUtil.isEmpty(_startUri)) {
-      _startUri = page.uri;
+    if(stringUtil.isEmpty(info.startUri)) {
+      _validateStartUri(page.uri);
     }
 
     navigator.addPage(page);
@@ -276,5 +239,58 @@ class Application implements NavigationListener {
     }
 
     resources[resource.name] = resource;
+  }
+
+  /**
+   * Checks whether the default language is set.
+   * If not the default is set.
+   */
+  _validateLanguage() {
+    if (stringUtil.isEmpty(info.language)) {
+      info.language = defaultLanguage;
+
+      if (logger != null) {
+        logger.log(new MissingDefaultLanguageWarning(namespace));
+      }
+    }
+  }
+
+  /**
+   * Checks whether the application name is set.
+   * If not the default is set.
+   */
+  _validateName() {
+    if (stringUtil.isEmpty(info.name)) {
+      info.name = defaultName;
+
+      if (logger != null) {
+        logger.log(new MissingApplicationNameError(namespace));
+      }
+    }
+  }
+
+  /**
+   * Checks whether the application version is set.
+   * If not the default is set.
+   */
+  _validateVersion() {
+    if (stringUtil.isEmpty(info.version)) {
+      info.version = defaultVersion;
+
+      if (logger != null) {
+        logger.log(new MissingApplicationVersionError(namespace));
+      }
+    }
+  }
+
+  /**
+   * Checks whether a start URI is set.
+   * If not it tries to use the URI of
+   * the first added page.
+   */
+  _validateStartUri(String defaultUri) {
+    if (stringUtil.isEmpty(info.startUri)) {
+      info.startUri = defaultUri;
+    }
   }
 }

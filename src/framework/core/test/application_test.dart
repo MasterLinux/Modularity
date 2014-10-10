@@ -30,23 +30,9 @@ class ApplicationTest {
       test.expect(appUnderTest, test.isNotNull);
       test.expect(appUnderTest.logger, test.isNotNull);
       test.expect(appUnderTest.logger.messages, test.isNotNull);
-      test.expect(appUnderTest.logger.messages.isEmpty, test.isTrue, reason: "logger message queue is not empty, but should be");
-
-      test.expect(appUnderTest.logger.messages.where((msg) => msg is MissingApplicationNameError).isEmpty, test.isTrue);
-      test.expect(appUnderTest.logger.messages.where((msg) => msg is MissingApplicationVersionError).isEmpty, test.isTrue);
-      test.expect(appUnderTest.logger.messages.where((msg) => msg is MissingDefaultLanguageWarning).isEmpty, test.isTrue);
-      test.expect(appUnderTest.logger.messages.where((msg) => msg is MissingStartUriError).isEmpty, test.isTrue);
-
-      //call getter to force logging
-      test.expect(appUnderTest.name, Application.defaultName);
-      test.expect(appUnderTest.language, Application.defaultLanguage);
-      test.expect(appUnderTest.version, Application.defaultVersion);
-      test.expect(appUnderTest.startUri, test.isNull);
-
       test.expect(appUnderTest.logger.messages.where((msg) => msg is MissingApplicationNameError).isNotEmpty, test.isTrue, reason: "MissingApplicationNameError is missing");
       test.expect(appUnderTest.logger.messages.where((msg) => msg is MissingApplicationVersionError).isNotEmpty, test.isTrue, reason: "MissingApplicationVersionError is missing");
       test.expect(appUnderTest.logger.messages.where((msg) => msg is MissingDefaultLanguageWarning).isNotEmpty, test.isTrue, reason: "MissingDefaultLanguageWarning is missing");
-      test.expect(appUnderTest.logger.messages.where((msg) => msg is MissingStartUriError).isNotEmpty, test.isTrue, reason: "MissingStartUriError is missing");
     });
 
     test.test('application should be initialized', () {
@@ -72,16 +58,11 @@ class ApplicationTest {
     test.test('application should contain pages', () {
       var expectedPageCount = 3;
 
-      var appInfo = new ApplicationInfo()
-        ..name = APP_NAME
-        ..version = APP_VERSION
-        ..language = DEFAULT_LANGUAGE;
-
       var expectedFirstPage = new Page(PAGE_URI, null),
           expectedSecondPage = new Page(PAGE_URI_SECOND, null),
           expectedThirdPage = new Page(PAGE_URI_THIRD, null);
 
-      var appUnderTest = new Application(appInfo, new Navigator())
+      var appUnderTest = new Application(new ApplicationInfo(), new Navigator())
         ..addPage(expectedFirstPage)
         ..addPages(<Page>[expectedSecondPage, expectedThirdPage]);
 
@@ -102,7 +83,7 @@ class ApplicationTest {
           expectedSecondTask = new Task("test_task_2"),
           expectedThirdTask = new Task("test_task_3");
 
-      var appUnderTest = new Application(null, new Navigator())
+      var appUnderTest = new Application(new ApplicationInfo(), new Navigator())
         ..addTask(expectedFirstTask)
         ..addTasks(<Task>[expectedSecondTask, expectedThirdTask]);
 
@@ -122,7 +103,7 @@ class ApplicationTest {
       expectedSecondRes = new Resource("en_EN", "Englisch"),
       expectedThirdRes = new Resource("en_US", "Amerikanisch");
 
-      var appUnderTest = new Application(null, new Navigator())
+      var appUnderTest = new Application(new ApplicationInfo(), new Navigator())
         ..addResource(expectedFirstRes)
         ..addResources(<Resource>[expectedSecondRes, expectedThirdRes]);
 
