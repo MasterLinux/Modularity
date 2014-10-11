@@ -210,5 +210,19 @@ class ApplicationBuilderTest {
       test.expect(appUnderTest.info, test.isNotNull);
       test.expect(appUnderTest.info.startUri, PAGE_URI);
     });
+
+    test.test('builder should use custom URI instead of the the URI of the first added page', () {
+      var page = new ConfigPageModel()
+        ..uri = PAGE_URI;
+
+      var appUnderTest = (new ApplicationBuilder(APP_NAME, APP_VERSION)
+        ..startUri = START_PAGE_URI
+        ..addPage(page))
+      .build();
+
+      test.expect(appUnderTest, test.isNotNull);
+      test.expect(appUnderTest.info, test.isNotNull);
+      test.expect(appUnderTest.info.startUri, START_PAGE_URI);
+    });
   }
 }
