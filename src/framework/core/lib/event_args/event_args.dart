@@ -2,7 +2,6 @@ library modularity.core.eventArgs;
 
 part 'init_event_args.dart';
 part 'loading_state_changed_event_args.dart';
-part 'navigation_event_args.dart';
 part 'request_completed_event_args.dart';
 
 /**

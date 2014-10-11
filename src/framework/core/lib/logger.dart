@@ -80,7 +80,7 @@ class Logger {
 
   /**
    * Removes all logging
-   * messages from stack
+   * messages from logger
    */
   Future clear() {
     if(isSynchronouslyModeEnabled) {
@@ -137,7 +137,8 @@ class Logger {
   }
 
   /**
-   * Logs a [message]
+   * Add a [message] to the logger to track
+   * a specific action, event, etc.
    */
   Future log(LoggingMessage message) {
     if(isSynchronouslyModeEnabled) {
@@ -148,31 +149,6 @@ class Logger {
       return completer.future.then((_) => _logSync(message));
     }
   }
-
-  /**
-   * Logs a warning [message]
-   */
-  Future logWarning(WarningMessage message) => log(message);
-
-  /**
-   * Logs an error [message]
-   */
-  Future logError(ErrorMessage message) => log(message);
-
-  /**
-   * Logs an info [message]
-   */
-  Future logInfo(InfoMessage message) => log(message);
-
-  /**
-   * Logs a lifecycle [message]
-   */
-  Future logLifecycle(LifecycleMessage message) => log(message);
-
-  /**
-   * Logs a network [message]
-   */
-  Future logNetwork(NetworkMessage message) => log(message);
 }
 
 /**
@@ -287,20 +263,30 @@ class PageExistsWarning extends WarningMessage {
 
   @override
   String get message =>
-      "Page with URI => \"$_uri\" already exists. The new one overrides the previous added page.";
+      "Page with URI => \"$_uri\" already exists. You have to fix the name duplicate to ensure that the application works as expected.";
+}
+
+class MissingPageWarning extends WarningMessage {
+  final String _uri;
+
+  MissingPageWarning(String namespace, String uri) : _uri = uri, super(namespace);
+
+  @override
+  String get message =>
+  "Page with URI => \"$_uri\" does not exists. Please check whether a page with this URI is registered.";
 }
 
 /**
  * Warning which is used whenever a background task already exists
  */
-class BackgroundTaskExistsWarning extends WarningMessage {
+class TaskExistsWarning extends WarningMessage {
   final String _id;
 
-  BackgroundTaskExistsWarning(String namespace, String id) : _id = id, super(namespace);
+  TaskExistsWarning(String namespace, String id) : _id = id, super(namespace);
 
   @override
   String get message =>
-      "Task with ID => \"$_id\" already exists. The new one overrides the previous added task.";
+      "Task with ID => \"$_id\" already exists. You have to fix the name duplicate to ensure that the application works as expected.";
 }
 
 /**
@@ -313,7 +299,15 @@ class ResourceExistsWarning extends WarningMessage {
 
   @override
   String get message =>
-      "Resource with name => \"$_name\" already exists. The new one overrides the previous added resource.";
+      "Resource with name => \"$_name\" already exists. You have to fix the name duplicate to ensure that the application works as expected.";
+}
+
+class MissingDefaultLanguageWarning extends WarningMessage {
+  MissingDefaultLanguageWarning(String namespace) : super(namespace);
+
+  @override
+  String get message =>
+    "Application Language is not set. So it will be fall back to the default language.";
 }
 
 class MissingApplicationNameError extends ErrorMessage {
@@ -330,4 +324,12 @@ class MissingApplicationVersionError extends ErrorMessage {
   @override
   String get message =>
       "Application version is missing. You have to set a version number to ensure that your application runs correctly.";
+}
+
+class MissingStartUriError extends ErrorMessage {
+  MissingStartUriError(String namespace) : super(namespace);
+
+  @override
+  String get message =>
+      "Start URI is missing. You have to set a start URI or have to add a page to ensure that your application runs correctly.";
 }

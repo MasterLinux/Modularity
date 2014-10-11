@@ -1,6 +1,6 @@
 library modularity.template;
 
-import 'dart:html';
+import 'dart:html' as html;
 import 'dart:async';
 
 import 'exception/exception.dart';
@@ -18,9 +18,9 @@ class Template {
   }
 
   void _parse(String template) {
-    var node = new Element.html(
+    var node = new html.Element.html(
         template,
-        validator: new NodeValidatorBuilder()
+        validator: new html.NodeValidatorBuilder()
           ..allowHtml5()
           ..add(new ModularityValidator())
     );
@@ -30,13 +30,13 @@ class Template {
   }
 }
 
-class ModularityValidator implements NodeValidator {
+class ModularityValidator implements html.NodeValidator {
 
-  bool allowsAttribute(Element element, String attributeName, String value) {
+  bool allowsAttribute(html.Element element, String attributeName, String value) {
     return attributeName.startsWith('mod-'); //TODO find nicely attribute name
   }
 
-  bool allowsElement(Element element) {
+  bool allowsElement(html.Element element) {
     return true;
   }
 }

@@ -9,83 +9,83 @@ class LoggerTest {
   final String ANOTHER_MESSAGE_CATEGORY = "test_category_2";
 
   void run() {
-    test('logger should be initialized with defaults', () {
+    test.test('logger should be initialized with defaults', () {
       var expectedLoggingMessageCount = 0;
       var expectedErrorCount = 2;
       var expectedAppNameErrorCount = 1;
       var expectedAppVersionErrorCount = 1;
       var loggerUnderTest = new Logger(isSynchronouslyModeEnabled: true);
 
-      expect(loggerUnderTest, isNotNull);
-      expect(loggerUnderTest.applicationName, Logger.defaultApplicationName);
-      expect(loggerUnderTest.applicationVersion, Logger.defaultApplicationVersion);
-      expect(loggerUnderTest.errorMessages, isNotNull);
-      expect(loggerUnderTest.errorMessages.length, expectedErrorCount);
-      expect(loggerUnderTest.errorMessages.where((message) => message is MissingApplicationNameError).length, expectedAppNameErrorCount);
-      expect(loggerUnderTest.errorMessages.where((message) => message is MissingApplicationVersionError).length, expectedAppVersionErrorCount);
-      expect(loggerUnderTest.warningMessages, isNotNull);
-      expect(loggerUnderTest.warningMessages.length, expectedLoggingMessageCount);
-      expect(loggerUnderTest.networkMessages, isNotNull);
-      expect(loggerUnderTest.networkMessages.length, expectedLoggingMessageCount);
-      expect(loggerUnderTest.lifecycleMessages, isNotNull);
-      expect(loggerUnderTest.lifecycleMessages.length, expectedLoggingMessageCount);
-      expect(loggerUnderTest.infoMessages, isNotNull);
-      expect(loggerUnderTest.infoMessages.length, expectedLoggingMessageCount);
+      test.expect(loggerUnderTest, test.isNotNull);
+      test.expect(loggerUnderTest.applicationName, Logger.defaultApplicationName);
+      test.expect(loggerUnderTest.applicationVersion, Logger.defaultApplicationVersion);
+      test.expect(loggerUnderTest.errorMessages, test.isNotNull);
+      test.expect(loggerUnderTest.errorMessages.length, expectedErrorCount);
+      test.expect(loggerUnderTest.errorMessages.where((message) => message is MissingApplicationNameError).length, expectedAppNameErrorCount);
+      test.expect(loggerUnderTest.errorMessages.where((message) => message is MissingApplicationVersionError).length, expectedAppVersionErrorCount);
+      test.expect(loggerUnderTest.warningMessages, test.isNotNull);
+      test.expect(loggerUnderTest.warningMessages.length, expectedLoggingMessageCount);
+      test.expect(loggerUnderTest.networkMessages, test.isNotNull);
+      test.expect(loggerUnderTest.networkMessages.length, expectedLoggingMessageCount);
+      test.expect(loggerUnderTest.lifecycleMessages, test.isNotNull);
+      test.expect(loggerUnderTest.lifecycleMessages.length, expectedLoggingMessageCount);
+      test.expect(loggerUnderTest.infoMessages, test.isNotNull);
+      test.expect(loggerUnderTest.infoMessages.length, expectedLoggingMessageCount);
 
       //test empty parameter values
       loggerUnderTest = new Logger(applicationName: "", applicationVersion: "", isSynchronouslyModeEnabled: true);
 
-      expect(loggerUnderTest, isNotNull);
-      expect(loggerUnderTest.errorMessages.length, expectedErrorCount);
-      expect(loggerUnderTest.errorMessages.where((message) => message is MissingApplicationNameError).length, expectedAppNameErrorCount);
-      expect(loggerUnderTest.errorMessages.where((message) => message is MissingApplicationVersionError).length, expectedAppVersionErrorCount);
+      test.expect(loggerUnderTest, test.isNotNull);
+      test.expect(loggerUnderTest.errorMessages.length, expectedErrorCount);
+      test.expect(loggerUnderTest.errorMessages.where((message) => message is MissingApplicationNameError).length, expectedAppNameErrorCount);
+      test.expect(loggerUnderTest.errorMessages.where((message) => message is MissingApplicationVersionError).length, expectedAppVersionErrorCount);
 
       //test null values
       loggerUnderTest = new Logger(applicationName: null, applicationVersion: null, isSynchronouslyModeEnabled: true);
 
-      expect(loggerUnderTest, isNotNull);
-      expect(loggerUnderTest.errorMessages.length, expectedErrorCount);
-      expect(loggerUnderTest.errorMessages.where((message) => message is MissingApplicationNameError).length, expectedAppNameErrorCount);
-      expect(loggerUnderTest.errorMessages.where((message) => message is MissingApplicationVersionError).length, expectedAppVersionErrorCount);
+      test.expect(loggerUnderTest, test.isNotNull);
+      test.expect(loggerUnderTest.errorMessages.length, expectedErrorCount);
+      test.expect(loggerUnderTest.errorMessages.where((message) => message is MissingApplicationNameError).length, expectedAppNameErrorCount);
+      test.expect(loggerUnderTest.errorMessages.where((message) => message is MissingApplicationVersionError).length, expectedAppVersionErrorCount);
     });
 
-    test('logger should be initialized with app name and version', () {
+    test.test('logger should be initialized with app name and version', () {
       var expectedLoggingMessageCount = 0;
       var loggerUnderTest = new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION);
 
-      expect(loggerUnderTest, isNotNull);
-      expect(loggerUnderTest.applicationName, APP_NAME);
-      expect(loggerUnderTest.applicationVersion, APP_VERSION);
-      expect(loggerUnderTest.errorMessages, isNotNull);
-      expect(loggerUnderTest.errorMessages.length, expectedLoggingMessageCount);
-      expect(loggerUnderTest.warningMessages, isNotNull);
-      expect(loggerUnderTest.warningMessages.length, expectedLoggingMessageCount);
-      expect(loggerUnderTest.networkMessages, isNotNull);
-      expect(loggerUnderTest.networkMessages.length, expectedLoggingMessageCount);
-      expect(loggerUnderTest.lifecycleMessages, isNotNull);
-      expect(loggerUnderTest.lifecycleMessages.length, expectedLoggingMessageCount);
-      expect(loggerUnderTest.infoMessages, isNotNull);
-      expect(loggerUnderTest.infoMessages.length, expectedLoggingMessageCount);
+      test.expect(loggerUnderTest, test.isNotNull);
+      test.expect(loggerUnderTest.applicationName, APP_NAME);
+      test.expect(loggerUnderTest.applicationVersion, APP_VERSION);
+      test.expect(loggerUnderTest.errorMessages, test.isNotNull);
+      test.expect(loggerUnderTest.errorMessages.length, expectedLoggingMessageCount);
+      test.expect(loggerUnderTest.warningMessages, test.isNotNull);
+      test.expect(loggerUnderTest.warningMessages.length, expectedLoggingMessageCount);
+      test.expect(loggerUnderTest.networkMessages, test.isNotNull);
+      test.expect(loggerUnderTest.networkMessages.length, expectedLoggingMessageCount);
+      test.expect(loggerUnderTest.lifecycleMessages, test.isNotNull);
+      test.expect(loggerUnderTest.lifecycleMessages.length, expectedLoggingMessageCount);
+      test.expect(loggerUnderTest.infoMessages, test.isNotNull);
+      test.expect(loggerUnderTest.infoMessages.length, expectedLoggingMessageCount);
     });
 
-    test('logger should clear all logging messages', () {
+    test.test('logger should clear all logging messages', () {
       var expectedLoggingMessageCountBeforeClear = 2;
       var expectedLoggingMessageCountAfterClear = 0;
       var loggerUnderTest = new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION);
 
-      schedule(() {
+      test.schedule(() {
         return Future.wait([
-          loggerUnderTest.logError(new MissingApplicationVersionError(NAMESPACE)),
-          loggerUnderTest.logWarning(new PageExistsWarning(NAMESPACE, PAGE_URI))
+          loggerUnderTest.log(new MissingApplicationVersionError(NAMESPACE)),
+          loggerUnderTest.log(new PageExistsWarning(NAMESPACE, PAGE_URI))
         ]).then((_) {
-          expect(loggerUnderTest, isNotNull);
-          expect(loggerUnderTest.messages, isNotNull);
-          expect(loggerUnderTest.messages.length, expectedLoggingMessageCountBeforeClear);
+          test.expect(loggerUnderTest, test.isNotNull);
+          test.expect(loggerUnderTest.messages, test.isNotNull);
+          test.expect(loggerUnderTest.messages.length, expectedLoggingMessageCountBeforeClear);
 
-          return schedule(() {
+          return test.schedule(() {
             return loggerUnderTest.clear().then((_) {
-              expect(loggerUnderTest.messages, isNotNull);
-              expect(loggerUnderTest.messages.length, expectedLoggingMessageCountAfterClear);
+              test.expect(loggerUnderTest.messages, test.isNotNull);
+              test.expect(loggerUnderTest.messages.length, expectedLoggingMessageCountAfterClear);
 
             });
           });
@@ -93,7 +93,7 @@ class LoggerTest {
       });
     });
 
-    test('logger should notify observer on logging message received', () {
+    test.test('logger should notify observer on logging message received', () {
       var loggerUnderTest = new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION);
       var observerUnderTest = new ObserverMock();
       var expectedMessageCount = 8;
@@ -104,53 +104,53 @@ class LoggerTest {
       var expectedNetworkMessageCount = 1;
       loggerUnderTest.register(observerUnderTest);
 
-      schedule(() {
+      test.schedule(() {
         return Future.wait([
             loggerUnderTest.log(new PageExistsWarning(NAMESPACE, PAGE_URI)),
-            loggerUnderTest.logError(new ErrorMessage(NAMESPACE)),
-            loggerUnderTest.logWarning(new WarningMessage(NAMESPACE)),
-            loggerUnderTest.logInfo(new InfoMessage(NAMESPACE)),
-            loggerUnderTest.logLifecycle(new LifecycleMessage(NAMESPACE)),
-            loggerUnderTest.logNetwork(new NetworkMessage(NAMESPACE)),
+            loggerUnderTest.log(new ErrorMessage(NAMESPACE)),
+            loggerUnderTest.log(new WarningMessage(NAMESPACE)),
+            loggerUnderTest.log(new InfoMessage(NAMESPACE)),
+            loggerUnderTest.log(new LifecycleMessage(NAMESPACE)),
+            loggerUnderTest.log(new NetworkMessage(NAMESPACE)),
             loggerUnderTest.log(new CustomMessage(NAMESPACE, MESSAGE_CATEGORY)),
             loggerUnderTest.log(new CustomMessage(NAMESPACE, ANOTHER_MESSAGE_CATEGORY))
         ]).then((_) {
           //test observer
-          expect(observerUnderTest.messages, isNotNull);
-          expect(observerUnderTest.messages.length, expectedMessageCount);
-          expect(observerUnderTest.messages.where((message) => message is WarningMessage).length, expectedWarningMessageCount);
-          expect(observerUnderTest.messages.where((message) => message is NetworkMessage).length, expectedNetworkMessageCount);
-          expect(observerUnderTest.messages.where((message) => message is CustomMessage).length, expectedCustomMessageCount);
+          test.expect(observerUnderTest.messages, test.isNotNull);
+          test.expect(observerUnderTest.messages.length, expectedMessageCount);
+          test.expect(observerUnderTest.messages.where((message) => message is WarningMessage).length, expectedWarningMessageCount);
+          test.expect(observerUnderTest.messages.where((message) => message is NetworkMessage).length, expectedNetworkMessageCount);
+          test.expect(observerUnderTest.messages.where((message) => message is CustomMessage).length, expectedCustomMessageCount);
 
           //test logger
-          expect(loggerUnderTest.messages.length, expectedMessageCount);
-          expect(loggerUnderTest.errorMessages.length, expectedSpecificMessageCount);
-          expect(loggerUnderTest.warningMessages.length, expectedWarningMessageCount);
-          expect(loggerUnderTest.infoMessages.length, expectedSpecificMessageCount);
-          expect(loggerUnderTest.lifecycleMessages.length, expectedSpecificMessageCount);
-          expect(loggerUnderTest.networkMessages.length, expectedSpecificMessageCount);
-          expect(loggerUnderTest.customMessages.length, expectedCustomMessageCount);
-          expect(loggerUnderTest.getCustomMessagesOfCategory(MESSAGE_CATEGORY).length, expectedSpecificCustomMessageCount);
-          expect(loggerUnderTest.getCustomMessagesOfCategory(ANOTHER_MESSAGE_CATEGORY).length, expectedSpecificCustomMessageCount);
+          test.expect(loggerUnderTest.messages.length, expectedMessageCount);
+          test.expect(loggerUnderTest.errorMessages.length, expectedSpecificMessageCount);
+          test.expect(loggerUnderTest.warningMessages.length, expectedWarningMessageCount);
+          test.expect(loggerUnderTest.infoMessages.length, expectedSpecificMessageCount);
+          test.expect(loggerUnderTest.lifecycleMessages.length, expectedSpecificMessageCount);
+          test.expect(loggerUnderTest.networkMessages.length, expectedSpecificMessageCount);
+          test.expect(loggerUnderTest.customMessages.length, expectedCustomMessageCount);
+          test.expect(loggerUnderTest.getCustomMessagesOfCategory(MESSAGE_CATEGORY).length, expectedSpecificCustomMessageCount);
+          test.expect(loggerUnderTest.getCustomMessagesOfCategory(ANOTHER_MESSAGE_CATEGORY).length, expectedSpecificCustomMessageCount);
         });
       });
     });
 
-    test('logger should notify observer on messages cleared', () {
+    test.test('logger should notify observer on messages cleared', () {
       var loggerUnderTest = new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION);
       var observerUnderTest = new ObserverMock();
       var expectedMessageCountBeforeClear = 1;
       var expectedMessageCountAfterClear = 0;
       loggerUnderTest.register(observerUnderTest);
 
-      schedule(() {
-        return loggerUnderTest.logError(new MissingApplicationVersionError(NAMESPACE)).then((_) {
+      test.schedule(() {
+        return loggerUnderTest.log(new MissingApplicationVersionError(NAMESPACE)).then((_) {
           var actualMessages = observerUnderTest.messages.where((msg) => msg is MissingApplicationVersionError);
-          expect(observerUnderTest.messages.length, expectedMessageCountBeforeClear);
+          test.expect(observerUnderTest.messages.length, expectedMessageCountBeforeClear);
 
-          return schedule(() {
+          return test.schedule(() {
             return loggerUnderTest.clear().then((_) {
-              expect(observerUnderTest.messages.length, expectedMessageCountAfterClear);
+              test.expect(observerUnderTest.messages.length, expectedMessageCountAfterClear);
 
             });
           });
@@ -158,31 +158,31 @@ class LoggerTest {
       });
     });
 
-    test('logger should unregister observer', () {
+    test.test('logger should unregister observer', () {
       var loggerUnderTest = new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION);
       var observerUnderTest = new ObserverMock();
       loggerUnderTest.register(observerUnderTest);
       var expectedMessageCount = 1;
 
       //first message should be received
-      schedule(() {
+      test.schedule(() {
         return loggerUnderTest.log(new ErrorMessage(NAMESPACE)).then((_) {
-          expect(observerUnderTest.messages, isNotNull);
-          expect(observerUnderTest.messages.length, expectedMessageCount);
+          test.expect(observerUnderTest.messages, test.isNotNull);
+          test.expect(observerUnderTest.messages.length, expectedMessageCount);
 
           loggerUnderTest.unregister(observerUnderTest);
 
           //the second message shouldn't appear
-          return schedule(() {
+          return test.schedule(() {
             return loggerUnderTest.log(new ErrorMessage(NAMESPACE)).then((_) {
-              expect(observerUnderTest.messages, isNotNull);
-              expect(observerUnderTest.messages.length, expectedMessageCount);
+              test.expect(observerUnderTest.messages, test.isNotNull);
+              test.expect(observerUnderTest.messages.length, expectedMessageCount);
 
               //and clear shouldn't affect, too
-              return schedule(() {
+              return test.schedule(() {
                 return loggerUnderTest.clear().then((_) {
-                  expect(observerUnderTest.messages, isNotNull);
-                  expect(observerUnderTest.messages.length, expectedMessageCount);
+                  test.expect(observerUnderTest.messages, test.isNotNull);
+                  test.expect(observerUnderTest.messages.length, expectedMessageCount);
 
                 });
               });

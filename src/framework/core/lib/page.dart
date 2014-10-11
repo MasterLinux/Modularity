@@ -5,21 +5,23 @@ part of modularity.core;
  */
 class Page {
   Map<String, dynamic> _navigationParameter;
-  final List<ConfigFragmentModel> fragments;
+  final List<ConfigFragmentModel> fragments; //TODO find solution for adding fragments
   final String title;
   final String uri;
 
-  Page(this.title, this.uri, this.fragments);
+  Page(this.uri, this.title);
 
-  void navigate() {
+  /**
+   * Adds this page to the DOM
+   */
+  void open(NavigationEventArgs args) {
 
   }
 
-  void onNavigatedTo(NavigationEventArgs args) {
-
-  }
-
-  void onNavigatedBack(NavigationEventArgs args) {
+  /**
+   * Removes this page from DOM
+   */
+  void close() {
 
   }
 
@@ -28,7 +30,7 @@ class Page {
    * Whenever the parameter with the given name doesn't
    * exists it throws a [MissingNavigationParameterException].
    */
-  dynamic getNavigationParameter(String name) {
+  dynamic getNavigationParameter(String name) { //TODO do not use dynamic
     //try to get navigation parameter
     if(name != null
         && _navigationParameter != null
