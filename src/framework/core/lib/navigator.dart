@@ -63,6 +63,11 @@ class Navigator {
    * history entries
    */
   void clear() {
+    if(_currentPage != null) {
+      _currentPage.close();
+      _currentPage = null;
+    }
+
     _listener.clear();
     _history.clear();
     logger = null;

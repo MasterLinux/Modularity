@@ -211,7 +211,7 @@ class ApplicationBuilderTest {
       test.expect(appUnderTest.info.startUri, PAGE_URI);
     });
 
-    test.test('builder should use custom URI instead of the the URI of the first added page', () {
+    test.test('builder should use custom URI instead of the URI of the first added page', () {
       var page = new ConfigPageModel()
         ..uri = PAGE_URI;
 

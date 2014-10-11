@@ -4,24 +4,57 @@ class ApplicationTest {
   final String DEFAULT_LANGUAGE = "de_DE";
   final String APP_NAME = "test_app_name";
   final String APP_VERSION = "1.1.1";
+  final String START_PAGE_URI = "start_test_uri";
   final String PAGE_URI = "test_uri";
   final String PAGE_URI_SECOND = "test_uri_2";
   final String PAGE_URI_THIRD = "test_uri_3";
+  final String APP_AUTHOR = "test_author";
 
   void run() {
     test.test('application should use defaults if application info is not valid', () {
       var appUnderTest = new Application(new ApplicationInfo(), new Navigator());
 
       test.expect(appUnderTest, test.isNotNull);
+
       test.expect(appUnderTest.name, Application.defaultName);
       test.expect(appUnderTest.startUri, test.isNull);
       test.expect(appUnderTest.language, Application.defaultLanguage);
       test.expect(appUnderTest.version, Application.defaultVersion);
+
+      test.expect(appUnderTest.info.name, Application.defaultName);
+      test.expect(appUnderTest.info.startUri, test.isNull);
+      test.expect(appUnderTest.info.language, Application.defaultLanguage);
+      test.expect(appUnderTest.info.version, Application.defaultVersion);
+
       test.expect(appUnderTest.resources, test.isEmpty);
       test.expect(appUnderTest.pages, test.isEmpty);
       test.expect(appUnderTest.tasks, test.isEmpty);
       test.expect(appUnderTest.logger, test.isNull);
       test.expect(appUnderTest.navigator, test.isNotNull);
+    });
+
+    test.test('application should contain each info', () {
+      var appInfo = new ApplicationInfo()
+          ..name = APP_NAME
+          ..language = DEFAULT_LANGUAGE
+          ..startUri = START_PAGE_URI
+          ..author = APP_AUTHOR
+          ..version = APP_VERSION;
+
+      var appUnderTest = new Application(appInfo, new Navigator());
+
+      test.expect(appUnderTest, test.isNotNull);
+
+      test.expect(appUnderTest.name, APP_NAME);
+      test.expect(appUnderTest.startUri, START_PAGE_URI);
+      test.expect(appUnderTest.language, DEFAULT_LANGUAGE);
+      test.expect(appUnderTest.version, APP_VERSION);
+
+      test.expect(appUnderTest.info.name, APP_NAME);
+      test.expect(appUnderTest.info.startUri, START_PAGE_URI);
+      test.expect(appUnderTest.info.language, DEFAULT_LANGUAGE);
+      test.expect(appUnderTest.info.version, APP_VERSION);
+      test.expect(appUnderTest.info.author, APP_AUTHOR);
     });
 
     test.test('application should log logger messages on missing information', () {
@@ -44,10 +77,17 @@ class ApplicationTest {
       var appUnderTest = new Application(appInfo, new Navigator());
 
       test.expect(appUnderTest, test.isNotNull);
+
       test.expect(appUnderTest.name, APP_NAME);
       test.expect(appUnderTest.startUri, test.isNull);
       test.expect(appUnderTest.language, DEFAULT_LANGUAGE);
       test.expect(appUnderTest.version, APP_VERSION);
+
+      test.expect(appUnderTest.info.name, APP_NAME);
+      test.expect(appUnderTest.info.startUri, test.isNull);
+      test.expect(appUnderTest.info.language, DEFAULT_LANGUAGE);
+      test.expect(appUnderTest.info.version, APP_VERSION);
+
       test.expect(appUnderTest.resources, test.isEmpty);
       test.expect(appUnderTest.pages, test.isEmpty);
       test.expect(appUnderTest.tasks, test.isEmpty);
@@ -74,6 +114,26 @@ class ApplicationTest {
       test.expect(appUnderTest.pages.containsKey(expectedSecondPage.uri), test.isTrue);
       test.expect(appUnderTest.pages.containsKey(expectedThirdPage.uri), test.isTrue);
       test.expect(appUnderTest.startUri, PAGE_URI);
+      test.expect(appUnderTest.info.startUri, PAGE_URI);
+    });
+
+    test.test('application should use custom start URI instead of the URI of the first added page', () {
+      var expectedFirstPage = new Page(PAGE_URI, null),
+      expectedSecondPage = new Page(PAGE_URI_SECOND, null),
+      expectedThirdPage = new Page(PAGE_URI_THIRD, null);
+
+      var appInfo = new ApplicationInfo()
+          ..startUri = START_PAGE_URI;
+
+      var appUnderTest = new Application(appInfo, new Navigator())
+        ..addPage(expectedFirstPage)
+        ..addPages(<Page>[expectedSecondPage, expectedThirdPage]);
+
+      test.expect(appUnderTest, test.isNotNull);
+      test.expect(appUnderTest.pages, test.isNotNull);
+      test.expect(appUnderTest.pages.isNotEmpty, test.isTrue);
+      test.expect(appUnderTest.startUri, START_PAGE_URI);
+      test.expect(appUnderTest.info.startUri, START_PAGE_URI);
     });
 
     test.test('application should contain tasks', () {
@@ -116,7 +176,46 @@ class ApplicationTest {
       test.expect(appUnderTest.resources.containsKey(expectedThirdRes.name), test.isTrue);
     });
 
-    //start, stop, isStarted, info, navigator
+    test.test('application should be started and stopped correctly', () {
+      var expectedFirstPage = new Page(PAGE_URI, null),
+      expectedSecondPage = new Page(PAGE_URI_SECOND, null),
+      expectedThirdPage = new Page(PAGE_URI_THIRD, null);
+
+      var loggerUnderTest = new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION);
+
+      var appUnderTest = new Application(new ApplicationInfo(), new Navigator(), logger: loggerUnderTest)
+        ..addPages(<Page>[expectedSecondPage, expectedThirdPage])
+        ..addPage(expectedFirstPage);
+
+      test.expect(appUnderTest, test.isNotNull);
+      test.expect(appUnderTest.startUri, PAGE_URI_SECOND);
+      test.expect(appUnderTest.info.startUri, PAGE_URI_SECOND);
+
+      test.schedule(() {
+         return appUnderTest.start().then((actualApplication) {
+           test.expect(actualApplication, appUnderTest, reason: "Actual application isn't equal to the expected one");
+           test.expect(actualApplication.isStarted, test.isTrue, reason: "isStarted flag is not set to true but app is started");
+           test.expect(actualApplication.navigator, test.isNotNull);
+           test.expect(actualApplication.navigator.currentPage, test.isNotNull);
+           test.expect(actualApplication.navigator.currentPage.uri, PAGE_URI_SECOND);
+           test.expect(actualApplication.navigator.logger, test.isNotNull);
+           test.expect(actualApplication.navigator.logger, loggerUnderTest);
+           test.expect(actualApplication.navigator.logger.applicationName, APP_NAME);
+           test.expect(actualApplication.navigator.logger.applicationVersion, APP_VERSION);
+
+           test.schedule(() {
+             return appUnderTest.stop().then((actualApplication) {
+               test.expect(actualApplication, appUnderTest, reason: "Actual application isn't equal to the expected one");
+               test.expect(actualApplication.isStarted, test.isFalse, reason: "isStarted flag is not set to false but app is stopped");
+               test.expect(actualApplication.navigator.currentPage, test.isNull);
+               test.expect(actualApplication.navigator.logger, test.isNull);
+             });
+           });
+         });
+      });
+    });
+
+    //start, stop, isStarted, navigator
   }
 
 }
