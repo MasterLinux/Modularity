@@ -215,7 +215,53 @@ class ApplicationTest {
       });
     });
 
-    //start, stop, isStarted, navigator
-  }
+    test.test('application should throw exception on calling start() twice', () {
+      var expectedFirstPage = new Page(PAGE_URI, null),
+      expectedSecondPage = new Page(PAGE_URI_SECOND, null),
+      expectedThirdPage = new Page(PAGE_URI_THIRD, null);
 
+      var loggerUnderTest = new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION);
+
+      var appUnderTest = new Application(new ApplicationInfo(), new Navigator(), logger: loggerUnderTest)
+        ..addPages(<Page>[expectedSecondPage, expectedThirdPage])
+        ..addPage(expectedFirstPage);
+
+      appUnderTest.start();
+      test.expect(() => appUnderTest.start(), test.throwsA(new test.isInstanceOf<ExecutionException>()));
+    });
+
+    test.test('application should throw exception on calling stop() twice', () {
+      var expectedFirstPage = new Page(PAGE_URI, null),
+      expectedSecondPage = new Page(PAGE_URI_SECOND, null),
+      expectedThirdPage = new Page(PAGE_URI_THIRD, null);
+
+      var loggerUnderTest = new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION);
+
+      var appUnderTest = new Application(new ApplicationInfo(), new Navigator(), logger: loggerUnderTest)
+        ..addPages(<Page>[expectedSecondPage, expectedThirdPage])
+        ..addPage(expectedFirstPage);
+
+      test.schedule(() {
+        return appUnderTest.start().then((_){
+          appUnderTest.stop();
+          test.expect(() => appUnderTest.stop(), test.throwsA(new test.isInstanceOf<ExecutionException>()));
+        });
+      });
+    });
+
+    test.test('application should throw exception on calling start() and stop() concurrent', () {
+      var expectedFirstPage = new Page(PAGE_URI, null),
+      expectedSecondPage = new Page(PAGE_URI_SECOND, null),
+      expectedThirdPage = new Page(PAGE_URI_THIRD, null);
+
+      var loggerUnderTest = new Logger(applicationName: APP_NAME, applicationVersion: APP_VERSION);
+
+      var appUnderTest = new Application(new ApplicationInfo(), new Navigator(), logger: loggerUnderTest)
+        ..addPages(<Page>[expectedSecondPage, expectedThirdPage])
+        ..addPage(expectedFirstPage);
+
+      appUnderTest.start();
+      test.expect(() => appUnderTest.stop(), test.throwsA(new test.isInstanceOf<ExecutionException>()));
+    });
+  }
 }

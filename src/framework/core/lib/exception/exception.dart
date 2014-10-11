@@ -8,3 +8,11 @@ part 'missing_module_id_exception.dart';
 part 'missing_navigation_parameter_exception.dart';
 part 'missing_config_argument_exception.dart';
 part 'application_loading_exception.dart';
+
+class ExecutionException implements Exception {
+
+  String toString() {
+    return "Unable to start or stop the application"; //TODO optimize error message
+  }
+
+}

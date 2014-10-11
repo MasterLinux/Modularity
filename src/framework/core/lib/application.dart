@@ -142,7 +142,7 @@ class Application implements NavigationListener {
         return instance;
       });
     } else {
-      //throw new ExecutionException();
+      throw new ExecutionException();
     }
   }
 
@@ -163,7 +163,7 @@ class Application implements NavigationListener {
         return instance;
       });
     } else {
-      //throw new ExecutionException();
+      throw new ExecutionException();
     }
   }
 
