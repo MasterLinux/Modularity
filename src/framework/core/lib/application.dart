@@ -100,7 +100,6 @@ class Application implements NavigationListener {
    * Gets the default language used
    * as primary language
    */
-
   String get language => info.language;
 
   /**
@@ -123,9 +122,15 @@ class Application implements NavigationListener {
    */
   HashMap<String, Page> get pages => navigator.pages;
 
-  /**
-   * Loads the config and starts the application
-   */
+  /// Starts the application
+  ///
+  /// For example:
+  ///     if(!application.isStarted) {
+  ///       application.start().then((instance) {
+  ///         //the call of start() must be completed before you can stop the application
+  ///       });
+  ///     }
+  ///
   Future<Application> start() {
     if(!_isBusy && !_isStarted) {
       _isBusy = true;
@@ -141,14 +146,22 @@ class Application implements NavigationListener {
         _isBusy = false;
         return instance;
       });
+    } else if(_isBusy) {
+      throw new ExecutionException("start can only be called once");
     } else {
-      throw new ExecutionException();
+      throw new ExecutionException("application is already running");
     }
   }
 
-  /**
-   * Destructs and stops the application
-   */
+  /// Stops the application
+  ///
+  /// For example:
+  ///     if(application.isStarted) {
+  ///       application.stop().then((instance) {
+  ///         //the call of stop() must be completed before you start the application again
+  ///       });
+  ///     }
+  ///
   Future<Application> stop() {
     if(!_isBusy && _isStarted) {
       _isBusy = true;
@@ -162,8 +175,10 @@ class Application implements NavigationListener {
         _isBusy = false;
         return instance;
       });
+    } else if(_isBusy) {
+      throw new ExecutionException("stop can only be called once");
     } else {
-      throw new ExecutionException();
+      throw new ExecutionException("stop can only be called if application is currently running");
     }
   }
 

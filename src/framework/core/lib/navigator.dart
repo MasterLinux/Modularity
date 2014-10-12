@@ -1,9 +1,18 @@
 part of modularity.core;
 
+typedef NavigationStrategy NavigationStrategyFactory();
+
+NavigationStrategy _defaultNavigationStrategy() => new DefaultNavigationStrategy();
+
 class Navigator {
   static const String namespace = "modularity.core.Navigator";
+  static const String idPrefix = "navigation";
+
+  final HashMap<String, NavigationParameter> _parameterCache;
   final List<NavigationListener> _listener;
   final List<HistoryItem> _history;
+  final NavigationStrategyFactory strategy;
+  final Router _router;
   Page _currentPage;
   Logger logger;
 
@@ -13,42 +22,89 @@ class Navigator {
    */
   final HashMap<String, Page> pages;
 
-  Navigator() :
+  Navigator({this.strategy: _defaultNavigationStrategy}) :
     pages = new HashMap<String, Page>(),
+    _parameterCache = new HashMap<String, NavigationParameter>(),
     _listener = new List<NavigationListener>(),
-    _history = new List<HistoryItem>();
+    _history = new List<HistoryItem>(),
+    _router = new Router()
+  {
+    _router.root
+        ..addRoute(name: 'page', path: '/page/:uri/:id', enter: _openPage);
 
-  void navigateTo(Uri uri, {NavigationParameter parameter}) {
+    _router.listen();
+  }
+
+  void _cacheNavigationParameter(String uri, String navigationId, NavigationParameter parameter) {
+      var key = "${uri}_${navigationId}";
+      _parameterCache[key] = parameter;
+  }
+
+  NavigationParameter _getCachedNavigationParameter(String uri, String navigationId) {
+      var key = "${uri}_${navigationId}";
+      return _parameterCache[key];
+  }
+
+  void _openPage(RouteEvent e) {
+    var uri = e.parameters['uri'];
+    var navigationId = e.parameters['id'];
+
     if(pages.containsKey(uri)) {
+      var parameter = _getCachedNavigationParameter(uri, navigationId);
       var args = new NavigationEventArgs(uri, parameter: parameter);
-      //TODO implement hash change
+      var historyItem = new HistoryItem()
+        ..id = navigationId
+        ..uri = uri;
+
       if(_currentPage) {
         _currentPage.close();
       }
 
       _currentPage = pages[uri];
       _currentPage.open(args);
+      _history.add(historyItem);
 
       for(var listener in _listener) {
         listener.onNavigatedTo(this, _currentPage, args);
       }
-
-      _history.add(uri);
-    } else if(logger != null) {
+    } else {
       logger.log(new MissingPageWarning(namespace, uri));
     }
   }
 
+  /// opens a specific [Page] with the help of its [uri]
+  void navigateTo(String uri, {NavigationParameter parameter}) {
+    if(pages.containsKey(uri)) {
+      var args = new NavigationEventArgs(uri, parameter: parameter);
+      var navigationId = new UniqueId(idPrefix).build();
+      var navigationStrategy = strategy();
+
+      _cacheNavigationParameter(uri, navigationId, parameter);
+
+      _router.go('page', {'uri': uri, 'id': navigationId},
+          replace: navigationStrategy.shouldReplace(pages[uri], _currentPage)
+      );
+    }
+
+    else if(logger != null) {
+      logger.log(new MissingPageWarning(namespace, uri));
+    }
+  }
+
+  /// opens the previous [Page]
   void navigateBack() {
     //remove current page from history
     _history.removeLast();
 
     if(_history.isNotEmpty) {
-      var uri = _history.last;
+      var historyItem = _history.last;
+      var parameter = _getCachedNavigationParameter(historyItem.uri, historyItem.id);
+
+
       //TODO implement back navigation
 
       for(var listener in _listener) {
-        var args = new NavigationEventArgs(uri, isNavigatedBack: true);  //TODO get previous navigation parameter
+        var args = new NavigationEventArgs(historyItem.uri, parameter: parameter, isNavigatedBack: true);
         listener.onNavigatedTo(this, _currentPage, args);
       }
     }
@@ -58,16 +114,14 @@ class Navigator {
 
   void removeListener(NavigationListener listener) => _listener.remove(listener);
 
-  /**
-   * Removes all listener and
-   * history entries
-   */
+  /// cleans up the navigator
   void clear() {
     if(_currentPage != null) {
       _currentPage.close();
       _currentPage = null;
     }
 
+    _router.
     _listener.clear();
     _history.clear();
     logger = null;
@@ -107,8 +161,8 @@ class NavigationListener {
 }
 
 class HistoryItem {
-  String previousPageUri;
-  String pageUri;
+  String uri;
+  String id;
 }
 
 class NavigationParameter {
@@ -134,5 +188,13 @@ class NavigationEventArgs implements EventArgs {
     this.isNavigatedBack: false,
     this.parameter
   });
+}
+
+class NavigationStrategy {
+  bool shouldReplace(Page page, Page previousPage);
+}
+
+class DefaultNavigationStrategy implements NavigationStrategy {
+  bool shouldReplace(Page page, Page previousPage) => false;
 }
 
