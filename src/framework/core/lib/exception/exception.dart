@@ -10,9 +10,11 @@ part 'missing_config_argument_exception.dart';
 part 'application_loading_exception.dart';
 
 class ExecutionException implements Exception {
+  final String message;
+
+  ExecutionException(this.message);
 
   String toString() {
-    return "Unable to start or stop the application"; //TODO optimize error message
+    return message;
   }
-
 }
