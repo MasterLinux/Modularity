@@ -138,13 +138,15 @@ class Application implements NavigationListener {
       completer.complete(this);
 
       return completer.future.then((instance) {
-        instance.navigator
-            ..addListener(instance)
-            ..navigateTo(instance.info.startUri);  //TODO start page parameter required
+        instance.navigator.addListener(instance);
 
-        _isStarted = true;
-        _isBusy = false;
-        return instance;
+        //TODO start page parameter required
+        return instance.navigator.navigateTo(instance.info.startUri).then((_) {
+          _isStarted = true;
+          _isBusy = false;
+
+          return instance;
+        });
       });
     } else if(_isBusy) {
       throw new ExecutionException("start can only be called once");
