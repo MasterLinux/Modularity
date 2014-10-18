@@ -22,6 +22,8 @@ class Navigator {
    */
   final HashMap<String, Page> pages;
 
+  /// initializes the navigator with a specific [NavigationStrategy]
+  /// if no [strategy] is set the default strategy is used
   Navigator({this.strategy: _defaultNavigationStrategy}) :
     pages = new HashMap<String, Page>(),
     _parameterCache = new HashMap<String, NavigationParameter>(),
@@ -100,7 +102,6 @@ class Navigator {
       var historyItem = _history.last;
       var parameter = _getCachedNavigationParameter(historyItem.uri, historyItem.id);
 
-
       //TODO implement back navigation
 
       for(var listener in _listener) {
@@ -110,8 +111,10 @@ class Navigator {
     }
   }
 
+  /// adds a new [listener] which listen to page changes
   void addListener(NavigationListener listener) => _listener.add(listener);
 
+  /// removes a specific [listener]
   void removeListener(NavigationListener listener) => _listener.remove(listener);
 
   /// cleans up the navigator
@@ -121,12 +124,13 @@ class Navigator {
       _currentPage = null;
     }
 
-    _router.
     _listener.clear();
     _history.clear();
+    _router = null;
     logger = null;
   }
 
+  /// gets the current displayed page
   Page get currentPage {
     return _currentPage;
   }
@@ -156,7 +160,10 @@ class Navigator {
   }
 }
 
+/// interface used to listen for page changes
 class NavigationListener {
+
+  /// handler which is called whenever the page changed
   void onNavigatedTo(Navigator sender, Page page, NavigationEventArgs args);
 }
 
@@ -175,8 +182,6 @@ class NavigationParameter {
   void add(String key, Object value) {
 
   }
-
-
 }
 
 class NavigationEventArgs implements EventArgs {
