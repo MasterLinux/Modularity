@@ -10,8 +10,8 @@ class Navigator {
 
   final HashMap<String, NavigationParameter> _parameterCache;
   final List<NavigationListener> _listener;
-  final List<HistoryItem> _history;
   final NavigationStrategyFactory strategy;
+  final List<HistoryItem> _history;
   final Router _router;
   Page _currentPage;
   Logger logger;
@@ -69,7 +69,9 @@ class Navigator {
       for(var listener in _listener) {
         listener.onNavigatedTo(this, _currentPage, args);
       }
-    } else {
+    }
+
+    else if(logger != null) {
       logger.log(new MissingPageWarning(namespace, uri));
     }
   }
@@ -126,7 +128,6 @@ class Navigator {
 
     _listener.clear();
     _history.clear();
-    _router = null;
     logger = null;
   }
 
