@@ -77,7 +77,7 @@ class Navigator {
   }
 
   /// opens a specific [Page] with the help of its [uri]
-  void navigateTo(String uri, {NavigationParameter parameter}) {
+  Future navigateTo(String uri, {NavigationParameter parameter}) {
     if(pages.containsKey(uri)) {
       var args = new NavigationEventArgs(uri, parameter: parameter);
       var navigationId = new UniqueId(idPrefix).build();
@@ -85,7 +85,7 @@ class Navigator {
 
       _cacheNavigationParameter(uri, navigationId, parameter);
 
-      _router.go('page', {'uri': uri, 'id': navigationId},
+      return _router.go('page', {'uri': uri, 'id': navigationId},
           replace: navigationStrategy.shouldReplace(pages[uri], _currentPage)
       );
     }
@@ -93,10 +93,12 @@ class Navigator {
     else if(logger != null) {
       logger.log(new MissingPageWarning(namespace, uri));
     }
+
+    //TODO return future
   }
 
   /// opens the previous [Page]
-  void navigateBack() {
+  Future navigateBack() {
     //remove current page from history
     _history.removeLast();
 
@@ -111,6 +113,8 @@ class Navigator {
         listener.onNavigatedTo(this, _currentPage, args);
       }
     }
+
+    //TODO return future
   }
 
   /// adds a new [listener] which listen to page changes
