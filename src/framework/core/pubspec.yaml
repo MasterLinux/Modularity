@@ -2,6 +2,7 @@ name: core
 dependencies:
   browser: any
   route_hierarchical: any
+  xml: ">=2.0.0 <3.0.0"
   connect: "1.0.0-alpha.4"
 
 dev_dependencies:

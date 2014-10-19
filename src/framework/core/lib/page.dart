@@ -1,15 +1,22 @@
 part of modularity.core;
 
+typedef Template PageTemplateFactory();
+
+PageTemplateFactory _defaultPageTemplate() => null;
+
 /**
  *
  */
 class Page {
-  Map<String, dynamic> _navigationParameter;
-  final List<ConfigFragmentModel> fragments; //TODO find solution for adding fragments
+  static const String namespace = "modularity.core.Page";
+  NavigationParameter _navigationParameter;
+  final PageTemplateFactory template;
+  final List<Fragment> fragments;
+  final Logger logger;
   final String title;
   final String uri;
 
-  Page(this.uri, this.title);
+  Page(this.uri, this.title, {this.template: _defaultPageTemplate, this.logger}) : fragments = new List<Fragment>();
 
   /**
    * Adds this page to the DOM
@@ -25,24 +32,32 @@ class Page {
 
   }
 
+  void addFragment(Fragment fragment) => fragments.add(fragment);
+
+  void addFragments(List<Fragment> fragments) => this.fragments.addAll(fragments);
+
   /**
    * Gets a specific navigation parameter by its [name].
    * Whenever the parameter with the given name doesn't
-   * exists it throws a [MissingNavigationParameterException].
+   * exists it returns null.
    */
-  dynamic getNavigationParameter(String name) { //TODO do not use dynamic
+  Object getNavigationParameter(String name) {
+    var result = null;
+
     //try to get navigation parameter
     if(name != null
         && _navigationParameter != null
-        && _navigationParameter.containsKey(name)) {
+        && _navigationParameter.contains(name)) {
 
-      return _navigationParameter[name];
+      result = _navigationParameter[name];
     }
 
-    //if the required parameter isn't available throw exception
-    else {
-      throw new MissingNavigationParameterException(name);
+    //log if the required parameter isn't available
+    else if(logger != null) {
+      logger.log(new MissingNavigationParameterWarning(namespace, uri, name));
     }
+
+    return result;
   }
 
   //TODO page injector required to inject specific page behaviour?

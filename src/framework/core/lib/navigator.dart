@@ -187,6 +187,11 @@ class NavigationParameter {
   void add(String key, Object value) {
 
   }
+
+  /// checks whether a parameter with the given [name] exists
+  bool contains(String name) => _parameter.containsKey(name);
+
+  Object operator [](String name) => _parameter[name];
 }
 
 class NavigationEventArgs implements EventArgs {
