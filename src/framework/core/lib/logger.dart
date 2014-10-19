@@ -1,4 +1,6 @@
-part of modularity.core;
+library modularity.core.logging;
+
+import 'dart:async' show Future, Completer;
 
 class Logger {
   final List<MessageObserver> _observer = new List<MessageObserver>();
@@ -51,7 +53,7 @@ class Logger {
   /**
    * Unregisters a specific [observer]
    */
-  void unregister(MessageObserver observer) => _observer.remove(observer);
+  bool unregister(MessageObserver observer) => _observer.remove(observer);
 
   /**
    * Notifies each observer that a

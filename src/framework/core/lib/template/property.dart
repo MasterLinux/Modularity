@@ -1,4 +1,4 @@
-part of modularity.template;
+part of modularity.core.template;
 
 typedef OnElementValueChangedHandler(Property sender);
 
@@ -51,7 +51,7 @@ class Property<T> {
    * if there is no specific [Binding]
    * for the given [element]
    */
-  Property<T> bind(Element element) {
+  Property<T> bind(html.Element element) {
     ElementType type = new ElementType(element.tagName);
     unbind();
 

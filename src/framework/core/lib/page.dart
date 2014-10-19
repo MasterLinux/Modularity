@@ -2,7 +2,7 @@ part of modularity.core;
 
 typedef Template PageTemplateFactory();
 
-PageTemplateFactory _defaultPageTemplate() => null;
+PageTemplateFactory _defaultPageTemplate() => null;  //TODO return new instance of the default template
 
 /**
  *
@@ -10,31 +10,53 @@ PageTemplateFactory _defaultPageTemplate() => null;
 class Page {
   static const String namespace = "modularity.core.Page";
   NavigationParameter _navigationParameter;
-  final PageTemplateFactory template;
   final List<Fragment> fragments;
   final Logger logger;
   final String title;
   final String uri;
+  Template _template;
 
-  Page(this.uri, this.title, {this.template: _defaultPageTemplate, this.logger}) : fragments = new List<Fragment>();
+  Page(this.uri, this.title, {PageTemplateFactory templateFactory: _defaultPageTemplate, this.logger}) : fragments = new List<Fragment>() {
+    _template = templateFactory();
+  }
+
+  /// Gets the template of this page
+  Template get template => _template;
 
   /**
    * Adds this page to the DOM
    */
   void open(NavigationEventArgs args) {
-
+    for (var fragment in fragments) {
+      fragment.add();
+    }
   }
 
   /**
    * Removes this page from DOM
    */
   void close() {
-
+    for (var fragment in fragments) {
+      fragment.remove();
+    }
   }
 
-  void addFragment(Fragment fragment) => fragments.add(fragment);
+  /// adds a [Fragment] to this page
+  void addFragment(Fragment fragment) {
+    if(!fragments.contains(fragment)) {
+      fragment.register(this);
+      fragments.add(fragment);
+    } else if(logger != null) {
+      //logger.log(new ); //TODO
+    }
+  }
 
-  void addFragments(List<Fragment> fragments) => this.fragments.addAll(fragments);
+  /// adds a collection of [Fragment]s to this page
+  void addFragments(List<Fragment> fragments) {
+    for(var fragment in fragments) {
+      addFragment(fragment);
+    }
+  }
 
   /**
    * Gets a specific navigation parameter by its [name].
