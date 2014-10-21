@@ -31,108 +31,117 @@ abstract class Template {
 }
 
 class PageTemplate extends Template {
-  static const String elementHorizontal = "horizontal";
-  static const String elementVertical = "vertical";
-  static const String cssClassPage = "page";
-  static const String attributeWeight = "weight";
-  static const String attributeHeight = "height";
-  static const String attributeWidth = "width";
 
   PageTemplate(String xmlTemplate, {Logger logger}) : super(xmlTemplate, logger: logger);
 
   html.Element convert(xml.XmlDocument document) {
-    var elementType = document.rootElement.name;
-
-    html.Element template = new html.DivElement()
-        ..classes.add(cssClassPage);
-
-    if(elementType == new xml.XmlName.fromString(elementHorizontal) ||
-        elementType == new xml.XmlName.fromString(elementVertical)) {
-      template = _parseAttributes(document.rootElement, template);
-      template.classes.add(elementType);
-
-    } else if(logger != null) {
-      //TODO log invalid root error
-    }
-
-    return template;
+    return _parse(document.rootElement);
   }
 
-  html.Element _parseAttributes(xml.XmlElement xmlElement, html.Element htmlElement) {
-    for(var attribute in xmlElement.attributes) {
-      if(attribute.name == new xml.XmlName.fromString(attributeWidth)) {
-        int width = _parseAttributeValue(attribute);
-        htmlElement.style.width = "${width}px";
+  TemplateNode _parse(xml.XmlElement xmlElement) {
+    TemplateNode node = new TemplateNode(xmlElement, logger: logger);
 
-      } else if(attribute.name == new xml.XmlName.fromString(attributeHeight)) {
-        int height = _parseAttributeValue(attribute);
-        htmlElement.style.height = "${height}px";
-
-      } else if(attribute.name == new xml.XmlName.fromString(attributeWeight)) {
-        int weight = _parseAttributeValue(attribute);
-
-        //this is the root element
-        if(xmlElement.parent == null) {
-          htmlElement.style
-            ..width = "${weight}%"
-            ..height = "${weight}%";
-        }
-
-        //is inside a parent with a horizontal orientation
-        else if(xmlElement == null) {//(xmlElement.parent as xml.XmlNamed).name == new xml.XmlName.fromString(elementHorizontal)) {  //TODO check whether this works as expected
-          htmlElement.style.width = "${weight}%";
-        }
-
-        //is inside a parent with a vertical orientation
-        else {
-          htmlElement.style.height = "${weight}%";
-        }
+    for(var child in xmlElement.children) {
+      if(child.nodeType == xml.XmlNodeType.ELEMENT) {
+        node.children.add(_parse(child));
       }
     }
 
-    return htmlElement;
+    return node;
+  }
+}
+
+class Orientation {
+  final String _value;
+
+  const Orientation._internal(this._value);
+
+  toString() => 'Enum.$_value';
+
+  String get value => _value;
+
+  static const VERTICAL = const Orientation._internal("vertical");
+  static const HORIZONTAL = const Orientation._internal("horizontal");
+
+  static Orientation fromAttribute(String value) => value == HORIZONTAL.value ? HORIZONTAL : VERTICAL;
+}
+
+class TemplateNode extends html.HtmlElement {
+  static xml.XmlName _widthAttribute = new xml.XmlName.fromString("width");
+  static xml.XmlName _heightAttribute = new xml.XmlName.fromString("height");
+  static xml.XmlName _weightAttribute = new xml.XmlName.fromString("weight");
+
+  factory TemplateNode(xml.XmlElement xmlElement, {Logger logger}) {
+    var element = html.document.createElement("div");
+
+    _applyAttributes(element, xmlElement.attributes);
+    _applyElementType(element, xmlElement.name);
+    _applyOrientation(element, xmlElement.name);
+
+    return element;
   }
 
-  int _parseAttributeValue(xml.XmlAttribute attribute, {int defaultValue: 0}) {
+  TemplateNode.created() : super.created();
+
+  /**
+   * Gets the orientation of the element
+   */
+  Orientation get orientation =>
+  this.classes.contains(Orientation.HORIZONTAL.value) ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+
+  static _applyOrientation(html.HtmlElement element, xml.XmlName elementName) =>
+  element.classes.add(Orientation.fromAttribute(elementName.local).value);
+
+  static _applyElementType(html.HtmlElement element, xml.XmlName elementName) =>
+  element.classes.add(elementName.local);
+
+  static _applyAttributes(html.HtmlElement element, List<xml.XmlAttribute> attributes) {
+    for(var attribute in attributes) {
+      if(attribute.name == _widthAttribute) {
+        _applyWidth(element, attribute);
+
+      } else if(attribute.name == _heightAttribute) {
+        _applyHeight(element, attribute);
+
+      } else if(attribute.name == _weightAttribute) {
+        _applyWeight(element, attribute);
+      }
+    }
+  }
+
+  static _applyWidth(html.HtmlElement element, xml.XmlAttribute attribute) => element.style.width = "${_getAttributeValue(attribute)}px";
+
+  static _applyHeight(html.HtmlElement element, xml.XmlAttribute attribute) => element.style.height = "${_getAttributeValue(attribute)}px";
+
+  static _applyWeight(html.HtmlElement element, xml.XmlAttribute attribute) {
+    int weight = _getAttributeValue(attribute);
+
+    //this is the root element
+    if(element.parent == null) {
+      element.style
+        ..width = "${weight}%"
+        ..height = "${weight}%";
+    }
+
+    //is inside a parent with a horizontal orientation
+    else if(element.parent is TemplateNode &&
+    (element.parent as TemplateNode).orientation == Orientation.HORIZONTAL) {
+      element.style.width = "${weight}%";
+    }
+
+    //is inside a parent with a vertical orientation
+    else {
+      element.style.height = "${weight}%";
+    }
+  }
+
+  static int _getAttributeValue(xml.XmlAttribute attribute, {int defaultValue: 0}) {
     return int.parse(attribute.value, onError: (_){
-      if(logger != null) {
-        //TODO log invalid width value warning
-      }
+      //if(_logger != null) {
+      //TODO log invalid width value warning
+      //}
 
       return defaultValue;
     });
-  }
-
-
-  //TODO calculate weight in relation with all children
-  html.Element _parseWeightAttribute(html.Element element) {
-    if(element.attributes.containsKey(attributeWeight)) {
-      var weight = int.parse(element.attributes[attributeWeight], onError: (_){
-        if(logger != null) {
-          //TODO log invalid weight value warning
-        }
-
-        return 0;
-      });
-
-      //this is the root element
-      if(element.parent == null) {
-        element.style
-          ..width = "${weight}%"
-          ..height = "${weight}%";
-      }
-
-      //is inside a parent with a horizontal orientation
-      else if(element.parent.classes.contains(elementHorizontal)) {
-        element.style.width = "${weight}%";
-      }
-
-      //is inside a parent with a vertical orientation
-      else {
-        element.style.height = "${weight}%";
-      }
-    }
-
-    return element;
   }
 }

@@ -27,17 +27,17 @@ void main() {
   var tpl = new PageTemplate(
       '''
       <?xml version="1.0"?>
-      <vertical weight="20">
+      <vertical height="20">
         <header/> <!-- represents a fragment called header -->
         <horizontal>
-          <navigation/>
+          <navigation weight="10"/>
           <content/>
         </horizontal>
       </vertical>
       '''
   );
 
-  var html = tpl.template.toString();
+  print(tpl.template.outerHtml);
 
   new LoggerTest().run();
   new ApplicationBuilderTest().run();
