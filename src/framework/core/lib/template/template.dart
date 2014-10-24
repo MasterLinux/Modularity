@@ -38,12 +38,12 @@ class PageTemplate extends Template {
     return _parse(document.rootElement);
   }
 
-  TemplateNode _parse(xml.XmlElement xmlElement) {
-    TemplateNode node = new TemplateNode(xmlElement, logger: logger);
+  TemplateNode _parse(xml.XmlElement xmlElement, [Orientation contentOrientation = null]) {
+    TemplateNode node = new TemplateNode(xmlElement, contentOrientation, logger: logger);
 
     for(var child in xmlElement.children) {
       if(child.nodeType == xml.XmlNodeType.ELEMENT) {
-        node.children.add(_parse(child));
+        node.children.add(_parse(child, TemplateNode.getOrientation(node)));
       }
     }
 
@@ -71,10 +71,10 @@ class TemplateNode extends html.HtmlElement {
   static xml.XmlName _heightAttribute = new xml.XmlName.fromString("height");
   static xml.XmlName _weightAttribute = new xml.XmlName.fromString("weight");
 
-  factory TemplateNode(xml.XmlElement xmlElement, {Logger logger}) {
+  factory TemplateNode(xml.XmlElement xmlElement, Orientation contentOrientation, {Logger logger}) {
     var element = html.document.createElement("div");
 
-    _applyAttributes(element, xmlElement.attributes);
+    _applyAttributes(element, xmlElement.attributes, contentOrientation);
     _applyElementType(element, xmlElement.name);
     _applyOrientation(element, xmlElement.name);
 
@@ -83,19 +83,16 @@ class TemplateNode extends html.HtmlElement {
 
   TemplateNode.created() : super.created();
 
-  /**
-   * Gets the orientation of the element
-   */
-  Orientation get orientation =>
-  this.classes.contains(Orientation.HORIZONTAL.value) ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+  static Orientation getOrientation(html.HtmlElement element) =>
+      element.classes.contains(Orientation.HORIZONTAL.value) ? Orientation.HORIZONTAL : Orientation.VERTICAL;
 
   static _applyOrientation(html.HtmlElement element, xml.XmlName elementName) =>
-  element.classes.add(Orientation.fromAttribute(elementName.local).value);
+      element.classes.add(Orientation.fromAttribute(elementName.local).value);
 
   static _applyElementType(html.HtmlElement element, xml.XmlName elementName) =>
-  element.classes.add(elementName.local);
+      element.classes.add(elementName.local);
 
-  static _applyAttributes(html.HtmlElement element, List<xml.XmlAttribute> attributes) {
+  static _applyAttributes(html.HtmlElement element, List<xml.XmlAttribute> attributes, Orientation contentOrientation) {
     for(var attribute in attributes) {
       if(attribute.name == _widthAttribute) {
         _applyWidth(element, attribute);
@@ -104,28 +101,29 @@ class TemplateNode extends html.HtmlElement {
         _applyHeight(element, attribute);
 
       } else if(attribute.name == _weightAttribute) {
-        _applyWeight(element, attribute);
+        _applyWeight(element, attribute, contentOrientation);
       }
     }
   }
 
-  static _applyWidth(html.HtmlElement element, xml.XmlAttribute attribute) => element.style.width = "${_getAttributeValue(attribute)}px";
+  static _applyWidth(html.HtmlElement element, xml.XmlAttribute attribute) =>
+      element.style.width = "${_getAttributeValue(attribute)}px";
 
-  static _applyHeight(html.HtmlElement element, xml.XmlAttribute attribute) => element.style.height = "${_getAttributeValue(attribute)}px";
+  static _applyHeight(html.HtmlElement element, xml.XmlAttribute attribute) =>
+      element.style.height = "${_getAttributeValue(attribute)}px";
 
-  static _applyWeight(html.HtmlElement element, xml.XmlAttribute attribute) {
+  static _applyWeight(html.HtmlElement element, xml.XmlAttribute attribute, Orientation contentOrientation) {
     int weight = _getAttributeValue(attribute);
 
     //this is the root element
-    if(element.parent == null) {
+    if(contentOrientation == null) {
       element.style
         ..width = "${weight}%"
         ..height = "${weight}%";
     }
 
     //is inside a parent with a horizontal orientation
-    else if(element.parent is TemplateNode &&
-    (element.parent as TemplateNode).orientation == Orientation.HORIZONTAL) {
+    else if(contentOrientation == Orientation.HORIZONTAL) {
       element.style.width = "${weight}%";
     }
 
