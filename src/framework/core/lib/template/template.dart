@@ -1,6 +1,6 @@
 library modularity.core.template;
 
-import 'package:xml/xml.dart' as xml;
+import 'package:xml/xml.dart';
 import 'dart:html' as html;
 import 'dart:async';
 
@@ -13,37 +13,34 @@ part 'property.dart';
 
 //https://groups.google.com/a/dartlang.org/forum/#!topic/web-ui/OEPXc8KtpVE
 abstract class Template {
-  html.Element _template;
+  TemplateNode _template;
   final Logger logger;
 
   Template(String xmlTemplate, {this.logger}) {
-    _template = parse(xmlTemplate);
+    _template = convert(parse(xmlTemplate));
   }
 
-  html.Element get template => _template;
+  TemplateNode get template => _template;
 
-  html.Element parse(String xmlTemplate) {
-    var document = xml.parse(xmlTemplate);
-    return convert(document);
-  }
+  TemplateNode convert(XmlDocument document);
 
-  html.Element convert(xml.XmlDocument document);
+  html.HtmlElement toHtml() => _template.toHtml();
 }
 
 class PageTemplate extends Template {
 
   PageTemplate(String xmlTemplate, {Logger logger}) : super(xmlTemplate, logger: logger);
 
-  html.Element convert(xml.XmlDocument document) {
+  TemplateNode convert(XmlDocument document) {
     return _parse(document.rootElement);
   }
 
-  TemplateNode _parse(xml.XmlElement xmlElement, [Orientation contentOrientation = null]) {
-    TemplateNode node = new TemplateNode(xmlElement, contentOrientation, logger: logger);
+  TemplateNode _parse(XmlElement xmlElement, [TemplateNode parent = null]) {
+    TemplateNode node = new TemplateNode(xmlElement, parent, logger: logger);
 
     for(var child in xmlElement.children) {
-      if(child.nodeType == xml.XmlNodeType.ELEMENT) {
-        node.children.add(_parse(child, TemplateNode.getOrientation(node)));
+      if(child.nodeType == XmlNodeType.ELEMENT) {
+        node.children.add(_parse(child, node));
       }
     }
 
@@ -56,74 +53,127 @@ class Orientation {
 
   const Orientation._internal(this._value);
 
+  factory Orientation.fromValue(String value) => value == HORIZONTAL.value ? HORIZONTAL : VERTICAL;
+
   toString() => 'Enum.$_value';
 
   String get value => _value;
 
   static const VERTICAL = const Orientation._internal("vertical");
   static const HORIZONTAL = const Orientation._internal("horizontal");
-
-  static Orientation fromAttribute(String value) => value == HORIZONTAL.value ? HORIZONTAL : VERTICAL;
 }
 
-class TemplateNode extends html.HtmlElement {
-  static xml.XmlName _widthAttribute = new xml.XmlName.fromString("width");
-  static xml.XmlName _heightAttribute = new xml.XmlName.fromString("height");
-  static xml.XmlName _weightAttribute = new xml.XmlName.fromString("weight");
+//TODO Template node as abstract class and this one as impl -> PageTemplateNode
+class TemplateNode {
+  static XmlName _widthAttribute = new XmlName.fromString("width");
+  static XmlName _heightAttribute = new XmlName.fromString("height");
+  static XmlName _weightAttribute = new XmlName.fromString("weight");
+  static const int _defaultSize = -1;
+  Orientation _orientation;
+  String _type;
+  int _childrenWeight = 0;
+  int _weight = _defaultSize;
+  int _height = _defaultSize;
+  int _width = _defaultSize;
 
-  factory TemplateNode(xml.XmlElement xmlElement, Orientation contentOrientation, {Logger logger}) {
-    var element = html.document.createElement("div");
+  final Logger logger;
 
-    _applyAttributes(element, xmlElement.attributes, contentOrientation);
-    _applyElementType(element, xmlElement.name);
-    _applyOrientation(element, xmlElement.name);
+  final List<TemplateNode> children;
 
-    return element;
+  /// Gets the parent node or `null` if there is no parent
+  final TemplateNode parent;
+
+  TemplateNode(XmlElement element, this.parent, {this.logger: null}) :
+    this.children = new List<TemplateNode>() {
+
+    _applyAttributes(element.attributes);
+    _applyElementType(element.name);
+    _applyOrientation(element.name);
   }
 
-  TemplateNode.created() : super.created();
+  /// Gets the orientation of the content
+  Orientation get orientation => _orientation;
 
-  static Orientation getOrientation(html.HtmlElement element) =>
-      element.classes.contains(Orientation.HORIZONTAL.value) ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+  /// Gets the type of this node
+  String get type => _type;
 
-  static _applyOrientation(html.HtmlElement element, xml.XmlName elementName) =>
-      element.classes.add(Orientation.fromAttribute(elementName.local).value);
+  int get width => _width;
 
-  static _applyElementType(html.HtmlElement element, xml.XmlName elementName) =>
-      element.classes.add(elementName.local);
+  int get height => _height;
 
-  static _applyAttributes(html.HtmlElement element, List<xml.XmlAttribute> attributes, Orientation contentOrientation) {
+  int get weight => _weight;
+
+  int get childrenWeight => _childrenWeight;
+
+  /// Gets the HTML representation of this node
+  html.HtmlElement toHtml() {
+    var node = new html.DivElement();
+
+    node.classes
+        ..add(type)
+        ..add(orientation.value);
+
+    _applySize(node);
+
+    for(var child in children) {
+      node.children.add(child.toHtml());
+    }
+
+    return node;
+  }
+
+  _applyOrientation(XmlName name) =>
+      _orientation = new Orientation.fromValue(name.local);
+
+  _applyElementType(XmlName name) =>
+      _type = name.local;
+
+  //TODO implement abstract Converter class and implement each apply method as Converter
+  _applyAttributes(List<XmlAttribute> attributes) {
     for(var attribute in attributes) {
       if(attribute.name == _widthAttribute) {
-        _applyWidth(element, attribute);
+        _width = _getAttributeValue(attribute);
 
       } else if(attribute.name == _heightAttribute) {
-        _applyHeight(element, attribute);
+        _height = _getAttributeValue(attribute);
 
       } else if(attribute.name == _weightAttribute) {
-        _applyWeight(element, attribute, contentOrientation);
+        _weight = _getAttributeValue(attribute);
+
+        if(parent != null) {
+          parent._childrenWeight += _weight;
+        }
       }
     }
   }
 
-  static _applyWidth(html.HtmlElement element, xml.XmlAttribute attribute) =>
-      element.style.width = "${_getAttributeValue(attribute)}px";
+  _applySize(html.HtmlElement element) {
+    var isSizeApplied = false;
 
-  static _applyHeight(html.HtmlElement element, xml.XmlAttribute attribute) =>
-      element.style.height = "${_getAttributeValue(attribute)}px";
+    if(weight != _defaultSize) {
+      _applyWeight(element);
+      isSizeApplied = true;
+    }
 
-  static _applyWeight(html.HtmlElement element, xml.XmlAttribute attribute, Orientation contentOrientation) {
-    int weight = _getAttributeValue(attribute);
+    if(!isSizeApplied && height != _defaultSize) {
+      element.style.height = "${height}px";
+    }
 
+    if(!isSizeApplied && width != _defaultSize) {
+      element.style.width = "${width}px";
+    }
+  }
+
+  _applyWeight(html.HtmlElement element) {
     //this is the root element
-    if(contentOrientation == null) {
+    if(parent == null) {
       element.style
         ..width = "${weight}%"
         ..height = "${weight}%";
     }
 
     //is inside a parent with a horizontal orientation
-    else if(contentOrientation == Orientation.HORIZONTAL) {
+    else if(parent.orientation == Orientation.HORIZONTAL) {
       element.style.width = "${weight}%";
     }
 
@@ -133,11 +183,11 @@ class TemplateNode extends html.HtmlElement {
     }
   }
 
-  static int _getAttributeValue(xml.XmlAttribute attribute, {int defaultValue: 0}) {
+  int _getAttributeValue(XmlAttribute attribute, {int defaultValue: _defaultSize}) {
     return int.parse(attribute.value, onError: (_){
-      //if(_logger != null) {
-      //TODO log invalid width value warning
-      //}
+      if(logger != null) {
+        //TODO log invalid width value warning
+      }
 
       return defaultValue;
     });

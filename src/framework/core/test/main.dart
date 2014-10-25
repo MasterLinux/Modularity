@@ -37,7 +37,7 @@ void main() {
       '''
   );
 
-  print(tpl.template.outerHtml);
+  print(tpl.toHtml().outerHtml);
 
   new LoggerTest().run();
   new ApplicationBuilderTest().run();
