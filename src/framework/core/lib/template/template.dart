@@ -1,30 +1,90 @@
 library modularity.core.template;
 
+import 'package:quiver/core.dart' show hash2;
 import 'package:xml/xml.dart';
 import 'dart:html' as html;
 import 'dart:async';
 
 import 'exception/exception.dart';
-import '../logger.dart' show Logger;
+import '../logger.dart' show Logger, ErrorMessage;
 
 part 'element_type.dart';
 part 'binding.dart';
 part 'property.dart';
 
-//https://groups.google.com/a/dartlang.org/forum/#!topic/web-ui/OEPXc8KtpVE
-abstract class Template {
-  TemplateNode _template;
+abstract class Converter<TIn, TOut> {
+  TOut convert(TIn value);
+  TIn convertBack(TOut value);
+}
+
+abstract class TemplateAttributeConverter<TIn> extends Converter<TIn, TemplateAttribute> {}
+
+class PageTemplateAttributeConverter extends TemplateAttributeConverter<XmlAttribute> {
+  static XmlName _widthAttributeName = new XmlName.fromString("width");
+  static XmlName _heightAttributeName = new XmlName.fromString("height");
+  static XmlName _weightAttributeName = new XmlName.fromString("weight");
   final Logger logger;
 
-  Template(String xmlTemplate, {this.logger}) {
-    _template = convert(parse(xmlTemplate));
+  PageTemplateAttributeConverter({this.logger});
+
+  TemplateAttribute convert(XmlAttribute value) {
+    TemplateAttribute attribute;
+
+    if(value.name == _widthAttributeName) {
+      attribute = new WidthAttribute.fromXmlAttribute(value, logger:logger);
+
+    } else if(value.name == _heightAttributeName) {
+      attribute = new WidthAttribute.fromXmlAttribute(value, logger:logger);
+
+    } else if(value.name == _weightAttributeName) {
+      attribute = new WidthAttribute.fromXmlAttribute(value, logger:logger);
+
+    } else {
+      //TODO log unknown attribute error
+    }
+
+    return attribute;
   }
 
-  TemplateNode get template => _template;
+  XmlAttribute convertBack(TemplateAttribute value) {
+    //TODO throw exception
+  }
 
+}
+
+abstract class TemplateConverter<TOut> extends Converter<Template, TOut> {}
+
+class HtmlTemplateConverter extends TemplateConverter<html.HtmlElement> {
+
+  html.HtmlElement convert(Template template) {
+    var node = new html.DivElement();
+
+    //TODO implement
+
+    return node;
+  }
+
+  Template convertBack(html.HtmlElement element) {
+
+  }
+
+}
+
+/// Represents a template
+abstract class Template {
+  final Logger logger;
+  TemplateNode _node;
+
+  /// Initializes the template with a [xmlTemplate]
+  Template(String xmlTemplate, {this.logger}) {
+    _node = convert(parse(xmlTemplate));
+  }
+
+  /// Gets the [TemplateNode] of this template
+  TemplateNode get node => _node;
+
+  /// Converts the [XMLDocument] to its [TemplateNode] representation
   TemplateNode convert(XmlDocument document);
-
-  html.HtmlElement toHtml() => _template.toHtml();
 }
 
 class PageTemplate extends Template {
@@ -36,7 +96,7 @@ class PageTemplate extends Template {
   }
 
   TemplateNode _parse(XmlElement xmlElement, [TemplateNode parent = null]) {
-    TemplateNode node = new TemplateNode(xmlElement, parent, logger: logger);
+    TemplateNode node = new PageTemplateNode(xmlElement, parent, logger: logger);
 
     for(var child in xmlElement.children) {
       if(child.nodeType == XmlNodeType.ELEMENT) {
@@ -63,91 +123,63 @@ class Orientation {
   static const HORIZONTAL = const Orientation._internal("horizontal");
 }
 
-//TODO Template node as abstract class and this one as impl -> PageTemplateNode
-class TemplateNode {
-  static XmlName _widthAttribute = new XmlName.fromString("width");
-  static XmlName _heightAttribute = new XmlName.fromString("height");
-  static XmlName _weightAttribute = new XmlName.fromString("weight");
-  static const int _defaultSize = -1;
-  Orientation _orientation;
-  String _type;
-  int _childrenWeight = 0;
-  int _weight = _defaultSize;
-  int _height = _defaultSize;
-  int _width = _defaultSize;
 
+
+abstract class TemplateNode {
   final Logger logger;
 
+  /// Gets the name of this node
+  final String name;
+
+  ///
   final List<TemplateNode> children;
+
+  final List<TemplateAttribute> attributes;
 
   /// Gets the parent node or `null` if there is no parent
   final TemplateNode parent;
 
-  TemplateNode(XmlElement element, this.parent, {this.logger: null}) :
-    this.children = new List<TemplateNode>() {
-
+  TemplateNode(XmlElement element, {this.parent, this.logger}) :
+      this.attributes = new List<TemplateAttribute>(),
+      this.children = new List<TemplateNode>(),
+      this.name = element.name.local {
     _applyAttributes(element.attributes);
-    _applyElementType(element.name);
-    _applyOrientation(element.name);
   }
 
-  /// Gets the orientation of the content
-  Orientation get orientation => _orientation;
+  TemplateAttributeConverter get attributeConverter;
 
-  /// Gets the type of this node
-  String get type => _type;
+  _applyAttributes(List<XmlAttribute> xmlAttributes) {
+    var converter = attributeConverter;
 
-  int get width => _width;
+    for(var xmlAttribute in xmlAttributes) {
+      var attribute = converter.convert(xmlAttribute);
 
-  int get height => _height;
-
-  int get weight => _weight;
-
-  int get childrenWeight => _childrenWeight;
-
-  /// Gets the HTML representation of this node
-  html.HtmlElement toHtml() {
-    var node = new html.DivElement();
-
-    node.classes
-        ..add(type)
-        ..add(orientation.value);
-
-    _applySize(node);
-
-    for(var child in children) {
-      node.children.add(child.toHtml());
-    }
-
-    return node;
-  }
-
-  _applyOrientation(XmlName name) =>
-      _orientation = new Orientation.fromValue(name.local);
-
-  _applyElementType(XmlName name) =>
-      _type = name.local;
-
-  //TODO implement abstract Converter class and implement each apply method as Converter
-  _applyAttributes(List<XmlAttribute> attributes) {
-    for(var attribute in attributes) {
-      if(attribute.name == _widthAttribute) {
-        _width = _getAttributeValue(attribute);
-
-      } else if(attribute.name == _heightAttribute) {
-        _height = _getAttributeValue(attribute);
-
-      } else if(attribute.name == _weightAttribute) {
-        _weight = _getAttributeValue(attribute);
-
-        if(parent != null) {
-          parent._childrenWeight += _weight;
-        }
+      if(attribute != null) {
+        children.add(attribute);
       }
     }
   }
+}
 
-  _applySize(html.HtmlElement element) {
+class PageTemplateNode extends TemplateNode {
+
+  PageTemplateNode(XmlElement element, PageTemplateNode parent, {Logger logger}) :
+      super(element, parent: parent, logger: logger);
+
+  TemplateAttributeConverter get attributeConverter => new PageTemplateAttributeConverter(logger: logger);
+
+}
+
+//TODO needs data-binding
+/// 1) Register allowed attributes
+/// 2) Read XML
+/// 3) Set name
+/// 4) Iterate trough attrs -> tplAttr.fromXmlAttr(xmlAttr);
+
+//TODO orientation node
+
+/*
+_applySize(html.HtmlElement element) {
     var isSizeApplied = false;
 
     if(weight != _defaultSize) {
@@ -173,7 +205,7 @@ class TemplateNode {
     }
 
     //is inside a parent with a horizontal orientation
-    else if(parent.orientation == Orientation.HORIZONTAL) {
+    else if((parent as PageTemplateNode).orientation == Orientation.HORIZONTAL) {
       element.style.width = "${weight}%";
     }
 
@@ -182,14 +214,98 @@ class TemplateNode {
       element.style.height = "${weight}%";
     }
   }
+ */
 
-  int _getAttributeValue(XmlAttribute attribute, {int defaultValue: _defaultSize}) {
+/// logger messages
+
+/// Warning which is used whenever a value of an attribute isn't valid
+class AttributeParsingError extends ErrorMessage {
+  final String nodeType;
+  final String attributeName;
+  final String attributeValue;
+
+  AttributeParsingError(String namespace, this.nodeType, this.attributeName, this.attributeValue) : super(namespace);
+
+  @override
+  String get message =>
+      "Unable to parse value of attribute => \"$nodeType.$attributeName\". An integer value is expected but was => \"$attributeValue\"";
+}
+
+
+/// attributes
+
+/// Base class of a template attribute
+/// It is used to parse a XML attribute
+/// to its final representation, like a
+/// CSS class, etc.
+abstract class TemplateAttribute<TValue> {
+  final Logger logger;
+  final String name;
+  TValue value;
+
+  TemplateAttribute(this.name, {this.logger});
+
+  TemplateAttribute.fromXmlAttribute(XmlAttribute attribute, {this.logger}) :
+      this.name = attribute.name.local {
+      value = _parseValue(attribute);
+  }
+
+  /// Get the value of the XML attribute
+  TValue _parseValue(XmlAttribute attribute);
+
+  /// Compares this attribute with another one
+  bool operator ==(TemplateAttribute another)
+      => another.name == name && another.value == value;
+
+  /// Gets the hash code of this attribute
+  int get hashCode => hash2(name, value);
+}
+
+/// Attribute used for attributes with integer values
+/// Tries to parse the value of the XML attribute to an integer,
+/// whenever the parsing fails it falls back to `0`
+///
+///     <NodeName attributeName="42"></NodeName>
+///
+abstract class IntegerAttribute extends TemplateAttribute<int> {
+  static const String namespace = "modularity.core.template.TemplateNode";
+
+  IntegerAttribute(String name, {Logger logger}) : super(name, logger: logger);
+
+  IntegerAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
+      super.fromXmlAttribute(attribute, logger:logger);
+
+  int _parseValue(XmlAttribute attribute) {
     return int.parse(attribute.value, onError: (_){
       if(logger != null) {
-        //TODO log invalid width value warning
+        logger.log(new AttributeParsingError(namespace, name, attribute.name.local, attribute.value));
       }
 
-      return defaultValue;
+      return 0;
     });
   }
+}
+
+/// Representation of a width attribute
+class WidthAttribute extends IntegerAttribute {
+  WidthAttribute({Logger logger}) : super("width", logger: logger);
+
+  WidthAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
+      super.fromXmlAttribute(attribute, logger:logger);
+}
+
+/// Representation of a height attribute
+class HeightAttribute extends IntegerAttribute {
+  HeightAttribute({Logger logger}) : super("height", logger: logger);
+
+  HeightAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
+      super.fromXmlAttribute(attribute, logger:logger);
+}
+
+/// Representation of a weight attribute
+class WeightAttribute extends IntegerAttribute {
+  WeightAttribute({Logger logger}) : super("weight", logger: logger);
+
+  WeightAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
+      super.fromXmlAttribute(attribute, logger:logger);
 }
