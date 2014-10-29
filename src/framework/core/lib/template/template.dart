@@ -6,7 +6,7 @@ import 'dart:html' as html;
 import 'dart:async';
 
 import 'exception/exception.dart';
-import '../logger.dart' show Logger, ErrorMessage;
+import '../logger.dart' show Logger, ErrorMessage, WarningMessage;
 
 part 'element_type.dart';
 part 'binding.dart';
@@ -17,46 +17,111 @@ abstract class Converter<TIn, TOut> {
   TIn convertBack(TOut value);
 }
 
-abstract class TemplateAttributeConverter<TIn> extends Converter<TIn, TemplateAttribute> {}
+abstract class TemplateNodeConverter<TIn> extends Converter<TIn, TemplateNode> {}
 
-class PageTemplateAttributeConverter extends TemplateAttributeConverter<XmlAttribute> {
-  static XmlName _widthAttributeName = new XmlName.fromString("width");
-  static XmlName _heightAttributeName = new XmlName.fromString("height");
-  static XmlName _weightAttributeName = new XmlName.fromString("weight");
+/// Converter used to convert a [XmlElement] to a [TemplateNode]
+class PageTemplateNodeConverter extends TemplateNodeConverter<XmlElement> {
   final Logger logger;
 
+  PageTemplateNodeConverter({this.logger});
+
+  /// Converts a [XmlElement] to a [TemplateNode]
+  TemplateNode convert(XmlElement value) {
+    return _convert(value);
+  }
+
+  TemplateNode _convert(XmlElement xmlElement, {TemplateNode parent}) {
+    TemplateNode node = _createNode(xmlElement, parent);
+
+    for(var child in xmlElement.children) {
+      if(child.nodeType == XmlNodeType.ELEMENT) {
+        node.children.add(_convert(child, parent: node));
+      }
+    }
+
+    return node;
+  }
+
+  TemplateNode _createNode(XmlElement xmlElement, TemplateNode parent) {
+    TemplateNode node;
+
+    switch(xmlElement.name.local) {
+      case VerticalNode.xmlName:
+        node = new VerticalNode(xmlElement, parent, logger: logger);
+        break;
+
+      case HorizontalNode.xmlName:
+        node = new HorizontalNode(xmlElement, parent, logger: logger);
+        break;
+
+      default:
+        node = new PageNode(xmlElement, parent, logger: logger);
+        break;
+    }
+
+    return node;
+  }
+
+  /// This method isn't implemented yet. It throws an exception
+  XmlElement convertBack(TemplateNode value) {
+    //TODO throw exception
+  }
+}
+
+abstract class TemplateAttributeConverter<TIn> extends Converter<TIn, TemplateAttribute> {}
+
+/// Converter used to convert a [XmlAttribute] to a [TemplateAttribute]
+class PageTemplateAttributeConverter extends TemplateAttributeConverter<XmlAttribute> {
+  static const String namespace = "modularity.core.template.PageTemplateAttributeConverter";
+  final Logger logger;
+
+  /// Initializes the converter
   PageTemplateAttributeConverter({this.logger});
 
+  /// Converts a [XMLAttribute] to a [TemplateAttribute]
   TemplateAttribute convert(XmlAttribute value) {
     TemplateAttribute attribute;
 
-    if(value.name == _widthAttributeName) {
-      attribute = new WidthAttribute.fromXmlAttribute(value, logger:logger);
+    switch(value.name.local) {
+      case WidthAttribute.xmlName:
+        attribute = new WidthAttribute.fromXmlAttribute(value, logger:logger);
+        break;
 
-    } else if(value.name == _heightAttributeName) {
-      attribute = new WidthAttribute.fromXmlAttribute(value, logger:logger);
+      case HeightAttribute.xmlName:
+        attribute = new HeightAttribute.fromXmlAttribute(value, logger:logger);
+        break;
 
-    } else if(value.name == _weightAttributeName) {
-      attribute = new WidthAttribute.fromXmlAttribute(value, logger:logger);
+      case WeightAttribute.xmlName:
+        attribute = new WeightAttribute.fromXmlAttribute(value, logger:logger);
+        break;
 
-    } else {
-      //TODO log unknown attribute error
+      default:
+        if(logger != null) {
+          logger.log(new UnsupportedAttributeWarning(namespace, value.name.local));
+        }
+        break;
     }
 
     return attribute;
   }
 
+  /// This method isn't implemented yet. It throws an exception
   XmlAttribute convertBack(TemplateAttribute value) {
     //TODO throw exception
   }
-
 }
 
+/// Converter used to convert a [Template] to another format
 abstract class TemplateConverter<TOut> extends Converter<Template, TOut> {}
 
+/// Converter used to convert a [Template] to HTML
 class HtmlTemplateConverter extends TemplateConverter<html.HtmlElement> {
 
   html.HtmlElement convert(Template template) {
+    return _convert(template.node);
+  }
+
+  html.HtmlElement _convert(TemplateNode templateNode) {
     var node = new html.DivElement();
 
     //TODO implement
@@ -65,47 +130,33 @@ class HtmlTemplateConverter extends TemplateConverter<html.HtmlElement> {
   }
 
   Template convertBack(html.HtmlElement element) {
-
+    //TODO throw exception
   }
 
 }
 
-/// Represents a template
-abstract class Template {
+/// Representation of a template
+abstract class Template<TIn> {
   final Logger logger;
   TemplateNode _node;
 
   /// Initializes the template with a [xmlTemplate]
-  Template(String xmlTemplate, {this.logger}) {
-    _node = convert(parse(xmlTemplate));
+  Template(TIn template, {this.logger}) {
+    _node = nodeConverter.convert(template);
   }
 
   /// Gets the [TemplateNode] of this template
   TemplateNode get node => _node;
 
-  /// Converts the [XMLDocument] to its [TemplateNode] representation
-  TemplateNode convert(XmlDocument document);
+  TemplateNodeConverter<TIn> get nodeConverter;
 }
 
-class PageTemplate extends Template {
+class PageTemplate extends Template<XmlElement> {
 
-  PageTemplate(String xmlTemplate, {Logger logger}) : super(xmlTemplate, logger: logger);
+  PageTemplate(String xmlTemplate, {Logger logger}) :
+      super(parse(xmlTemplate).rootElement, logger: logger);
 
-  TemplateNode convert(XmlDocument document) {
-    return _parse(document.rootElement);
-  }
-
-  TemplateNode _parse(XmlElement xmlElement, [TemplateNode parent = null]) {
-    TemplateNode node = new PageTemplateNode(xmlElement, parent, logger: logger);
-
-    for(var child in xmlElement.children) {
-      if(child.nodeType == XmlNodeType.ELEMENT) {
-        node.children.add(_parse(child, node));
-      }
-    }
-
-    return node;
-  }
+  TemplateNodeConverter get nodeConverter => new PageTemplateNodeConverter(logger:logger);
 }
 
 class Orientation {
@@ -151,19 +202,51 @@ abstract class TemplateNode {
   _applyAttributes(List<XmlAttribute> xmlAttributes) {
     var converter = attributeConverter;
 
-    for(var xmlAttribute in xmlAttributes) {
-      var attribute = converter.convert(xmlAttribute);
+    if(converter != null) {
+      for(var xmlAttribute in xmlAttributes) {
+        var attribute = converter.convert(xmlAttribute);
 
-      if(attribute != null) {
-        children.add(attribute);
+        if(attribute != null) {
+          children.add(attribute);
+        }
       }
+    } else if(logger != null && attributes.length > 0){
+      //TODO show warning if converter is null but there are attributes
     }
   }
 }
 
-class PageTemplateNode extends TemplateNode {
+//TODO rename
+class OrientationNode extends TemplateNode {
+  Orientation _orientation;
 
-  PageTemplateNode(XmlElement element, PageTemplateNode parent, {Logger logger}) :
+  OrientationNode(XmlElement element, TemplateNode parent, {Logger logger}) :
+      super(element, parent: parent, logger: logger) {
+    _orientation = new Orientation.fromValue(element.name.local);
+  }
+
+  TemplateAttributeConverter get attributeConverter => null;
+
+  Orientation get orientation => _orientation;
+}
+
+class HorizontalNode extends OrientationNode {
+  static const xmlName = "horizontal";
+
+  HorizontalNode(XmlElement element, TemplateNode parent, {Logger logger}) :
+      super(element, parent, logger: logger);
+}
+
+class VerticalNode extends OrientationNode {
+  static const xmlName = "vertical";
+
+  VerticalNode(XmlElement element, TemplateNode parent, {Logger logger}) :
+      super(element, parent, logger: logger);
+}
+
+class PageNode extends TemplateNode {
+
+  PageNode(XmlElement element, TemplateNode parent, {Logger logger}) :
       super(element, parent: parent, logger: logger);
 
   TemplateAttributeConverter get attributeConverter => new PageTemplateAttributeConverter(logger: logger);
@@ -219,16 +302,26 @@ _applySize(html.HtmlElement element) {
 /// logger messages
 
 /// Warning which is used whenever a value of an attribute isn't valid
-class AttributeParsingError extends ErrorMessage {
-  final String nodeType;
+class IntegerAttributeParsingError extends ErrorMessage {
+  final String nodeName;
   final String attributeName;
   final String attributeValue;
 
-  AttributeParsingError(String namespace, this.nodeType, this.attributeName, this.attributeValue) : super(namespace);
+  IntegerAttributeParsingError(String namespace, this.nodeName, this.attributeName, this.attributeValue) : super(namespace);
 
   @override
   String get message =>
-      "Unable to parse value of attribute => \"$nodeType.$attributeName\". An integer value is expected but was => \"$attributeValue\"";
+      "Unable to parse value of attribute => \"$nodeName.$attributeName\". An integer value is expected but was => \"$attributeValue\"";
+}
+
+class UnsupportedAttributeWarning extends WarningMessage {
+  final String attributeName;
+
+  UnsupportedAttributeWarning(String namespace, this.attributeName) : super(namespace);
+
+  @override
+  String get message =>
+      "Attribute => \"$attributeName\" isn't supported by the current template type. You should remove all unsupported attributes for a better parsing performance";
 }
 
 
@@ -268,7 +361,7 @@ abstract class TemplateAttribute<TValue> {
 ///     <NodeName attributeName="42"></NodeName>
 ///
 abstract class IntegerAttribute extends TemplateAttribute<int> {
-  static const String namespace = "modularity.core.template.TemplateNode";
+  static const String namespace = "modularity.core.template.IntegerAttribute";
 
   IntegerAttribute(String name, {Logger logger}) : super(name, logger: logger);
 
@@ -278,7 +371,7 @@ abstract class IntegerAttribute extends TemplateAttribute<int> {
   int _parseValue(XmlAttribute attribute) {
     return int.parse(attribute.value, onError: (_){
       if(logger != null) {
-        logger.log(new AttributeParsingError(namespace, name, attribute.name.local, attribute.value));
+        logger.log(new IntegerAttributeParsingError(namespace, name, attribute.name.local, attribute.value));
       }
 
       return 0;
@@ -288,7 +381,9 @@ abstract class IntegerAttribute extends TemplateAttribute<int> {
 
 /// Representation of a width attribute
 class WidthAttribute extends IntegerAttribute {
-  WidthAttribute({Logger logger}) : super("width", logger: logger);
+  static const String xmlName = "width";
+
+  WidthAttribute({Logger logger}) : super(xmlName, logger: logger);
 
   WidthAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
       super.fromXmlAttribute(attribute, logger:logger);
@@ -296,7 +391,9 @@ class WidthAttribute extends IntegerAttribute {
 
 /// Representation of a height attribute
 class HeightAttribute extends IntegerAttribute {
-  HeightAttribute({Logger logger}) : super("height", logger: logger);
+  static const String xmlName = "height";
+
+  HeightAttribute({Logger logger}) : super(xmlName, logger: logger);
 
   HeightAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
       super.fromXmlAttribute(attribute, logger:logger);
@@ -304,7 +401,9 @@ class HeightAttribute extends IntegerAttribute {
 
 /// Representation of a weight attribute
 class WeightAttribute extends IntegerAttribute {
-  WeightAttribute({Logger logger}) : super("weight", logger: logger);
+  static const String xmlName = "weight";
+
+  WeightAttribute({Logger logger}) : super(xmlName, logger: logger);
 
   WeightAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
       super.fromXmlAttribute(attribute, logger:logger);
