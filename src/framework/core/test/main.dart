@@ -37,7 +37,9 @@ void main() {
       '''
   );
 
-  //print(tpl.toHtml().outerHtml);
+  var node = new HtmlTemplateConverter().convert(tpl);
+
+  print(node.outerHtml);
 
   new LoggerTest().run();
   new ApplicationBuilderTest().run();

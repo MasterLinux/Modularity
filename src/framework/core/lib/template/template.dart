@@ -31,7 +31,7 @@ class PageTemplateNodeConverter extends TemplateNodeConverter<XmlElement> {
   }
 
   TemplateNode _convert(XmlElement xmlElement, {TemplateNode parent}) {
-    TemplateNode node = _createNode(xmlElement, parent);
+    var node = _createNode(xmlElement, parent);
 
     for(var child in xmlElement.children) {
       if(child.nodeType == XmlNodeType.ELEMENT) {
@@ -118,15 +118,56 @@ abstract class TemplateConverter<TOut> extends Converter<Template, TOut> {}
 class HtmlTemplateConverter extends TemplateConverter<html.HtmlElement> {
 
   html.HtmlElement convert(Template template) {
-    return _convert(template.node);
+    return _convert(template.node as PageNode);
   }
 
-  html.HtmlElement _convert(TemplateNode templateNode) {
+  html.HtmlElement _convert(PageNode templateNode) {
     var node = new html.DivElement();
 
-    //TODO implement
+    var contentOrientation = templateNode.parent is HorizontalNode ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+    var contentWeight = templateNode.parent is PageNode ? (templateNode.parent as PageNode).contentWeight : 100;
+    var weight = templateNode.weight;
+    var height = templateNode.height;
+    var width = templateNode.width;
+
+    node.classes.add(templateNode.name);
+
+    //set size
+    if(weight != null) {
+      _applyWeight(node, contentOrientation, contentWeight, weight);
+    } else {
+      _applySize(node, width, height);
+    }
+
+    for(var child in templateNode.children) {
+      node.children.add(_convert(child));
+    }
 
     return node;
+  }
+
+  _applyWeight(html.DivElement element, Orientation contentOrientation, int contentWeight, int weight) {
+    var size = contentWeight * weight / 100;
+
+    switch(contentOrientation) {
+      case Orientation.HORIZONTAL:
+        element.style.width = "${size}%";
+        break;
+
+      default:
+        element.style.height = "${size}%";
+        break;
+    }
+  }
+
+  _applySize(html.DivElement element, int width, int height) {
+    if(width != null) {
+      element.style.width = "${width}%";
+    }
+
+    if(height != null) {
+      element.style.height = "${height}%";
+    }
   }
 
   Template convertBack(html.HtmlElement element) {
@@ -199,6 +240,20 @@ abstract class TemplateNode {
 
   TemplateAttributeConverter get attributeConverter;
 
+  //TODO user [] operator?
+  /// Gets the value of a specific attribute
+  getAttributeValue(String attributeName, {defaultValue}) {
+    var attribute = attributes.firstWhere(
+            (attribute) => attribute.name == attributeName, orElse: () => null
+    );
+
+    if(attribute != null) {
+      defaultValue = attribute.value;
+    }
+
+    return defaultValue;
+  }
+
   _applyAttributes(List<XmlAttribute> xmlAttributes) {
     var converter = attributeConverter;
 
@@ -207,7 +262,7 @@ abstract class TemplateNode {
         var attribute = converter.convert(xmlAttribute);
 
         if(attribute != null) {
-          children.add(attribute);
+          attributes.add(attribute);
         }
       }
     } else if(logger != null && attributes.length > 0){
@@ -216,12 +271,46 @@ abstract class TemplateNode {
   }
 }
 
+class PageNode extends TemplateNode {
+
+  PageNode(XmlElement element, TemplateNode parent, {Logger logger}) :
+      super(element, parent: parent, logger: logger);
+
+  TemplateAttributeConverter get attributeConverter => new PageTemplateAttributeConverter(logger: logger);
+
+  /// Gets the weight of the node or `null` if not set
+  int get weight => getAttributeValue(WeightAttribute.xmlName);
+
+  /// Gets the height of the node or `null` if not set
+  int get height => getAttributeValue(HeightAttribute.xmlName);
+
+  /// Gets the width of the node or `null` if not set
+  int get width => getAttributeValue(WidthAttribute.xmlName);
+
+  /// Gets the weight sum of each node child or `null` if no child has a weight
+  int get contentWeight {
+    int weightSum = null;
+
+    for(var child in children) {
+      if(child is PageNode) {
+        var childWeight = (child as PageNode).weight;
+
+        if(childWeight != null) {
+          weightSum = weightSum == null ? childWeight : weightSum += childWeight;
+        }
+      }
+    }
+
+    return weightSum;
+  }
+}
+
 //TODO rename
-class OrientationNode extends TemplateNode {
+class OrientationNode extends PageNode {
   Orientation _orientation;
 
   OrientationNode(XmlElement element, TemplateNode parent, {Logger logger}) :
-      super(element, parent: parent, logger: logger) {
+      super(element, parent, logger: logger) {
     _orientation = new Orientation.fromValue(element.name.local);
   }
 
@@ -244,14 +333,7 @@ class VerticalNode extends OrientationNode {
       super(element, parent, logger: logger);
 }
 
-class PageNode extends TemplateNode {
 
-  PageNode(XmlElement element, TemplateNode parent, {Logger logger}) :
-      super(element, parent: parent, logger: logger);
-
-  TemplateAttributeConverter get attributeConverter => new PageTemplateAttributeConverter(logger: logger);
-
-}
 
 //TODO needs data-binding
 /// 1) Register allowed attributes
