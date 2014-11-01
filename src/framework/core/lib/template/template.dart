@@ -19,12 +19,14 @@ abstract class Converter<TIn, TOut> {
   TIn convertBack(TOut value);
 }
 
-/// Representation of a template
+/// A template is an abstraction layer
+/// between an input format like a XML document
+/// and a specific output format like HTML
 abstract class Template<TIn> {
   final Logger logger;
   TemplateNode _node;
 
-  /// Initializes the template with a [xmlTemplate]
+  /// Initializes the template with a specific input format of type [TIn]
   Template(TIn template, {this.logger}) {
     _node = nodeConverter.convert(template);
   }
@@ -32,23 +34,24 @@ abstract class Template<TIn> {
   /// Gets the [TemplateNode] of this template
   TemplateNode get node => _node;
 
+  /// Gets the [TemplateNodeConverter] to convert the given input to a [TemplateNode]
   TemplateNodeConverter<TIn> get nodeConverter;
 }
 
-/// converter
-
+/// Converter used to convert a specific input of type [TIn] to a [TemplateNode]
 abstract class TemplateNodeConverter<TIn> extends Converter<TIn, TemplateNode> {}
 
+/// Converter used to convert a specific input of type [TIn] to a [TemplateAttribute]
 abstract class TemplateAttributeConverter<TIn> extends Converter<TIn, TemplateAttribute> {}
 
-/// Converter used to convert a [Template] to another format
+/// Converter used to convert a [Template] to another format of type [TOut]
 abstract class TemplateConverter<TOut> extends Converter<Template, TOut> {}
 
-
-
-/// template nodes
-
-/// Representation of a template node
+/// This node is similar to a XML or HTML node
+/// and can contain [attributes] and node [children].
+/// A template node is generated with the help of
+/// a [XmlElement] and can be converted in any
+/// format using a [TemplateNodeConverter].
 abstract class TemplateNode {
   final Logger logger;
 
@@ -63,13 +66,15 @@ abstract class TemplateNode {
   /// Gets the parent node or `null` if there is no parent
   final TemplateNode parent;
 
-  TemplateNode(XmlElement element, {this.parent, this.logger}) :
+  /// Initializes the [TemplateNode] with the help of a [XmlElement]
+  TemplateNode(XmlElement element, {this.parent, this.logger}) :  //TODO use TIn instead of XmlElement and create a new XmlTemplateNode
       this.attributes = new List<TemplateAttribute>(),
       this.children = new List<TemplateNode>(),
       this.name = element.name.local {
     _applyAttributes(element.attributes);
   }
 
+  /// Gets the [TemplateAttributeConverter] used to convert a XML attribute to a [TemplateAttribute]
   TemplateAttributeConverter get attributeConverter;
 
   /// Gets the value of a specific attribute
@@ -102,35 +107,7 @@ abstract class TemplateNode {
   }
 }
 
-/// logger messages
-
-/// Warning which is used whenever a value of an attribute isn't valid
-class IntegerAttributeParsingError extends ErrorMessage {
-  final String nodeName;
-  final String attributeName;
-  final String attributeValue;
-
-  IntegerAttributeParsingError(String namespace, this.nodeName, this.attributeName, this.attributeValue) : super(namespace);
-
-  @override
-  String get message =>
-      "Unable to parse value of attribute => \"$nodeName.$attributeName\". An integer value is expected but was => \"$attributeValue\"";
-}
-
-class UnsupportedAttributeWarning extends WarningMessage {
-  final String attributeName;
-
-  UnsupportedAttributeWarning(String namespace, this.attributeName) : super(namespace);
-
-  @override
-  String get message =>
-      "Attribute => \"$attributeName\" isn't supported by the current template type. You should remove all unsupported attributes for a better parsing performance";
-}
-
-
-/// attributes
-
-/// Base class of a template attribute
+/// Base class of a [TemplateAttribute]
 /// It is used to parse a XML attribute
 /// to its final representation, like a
 /// CSS class, etc.
@@ -157,7 +134,7 @@ abstract class TemplateAttribute<TValue> {
   int get hashCode => hash2(name, value);
 }
 
-/// Attribute used for attributes with integer values
+/// Attribute used for XML attributes with integer values
 /// Tries to parse the value of the XML attribute to an integer,
 /// whenever the parsing fails it falls back to `0`
 ///
@@ -181,3 +158,28 @@ abstract class IntegerAttribute extends TemplateAttribute<int> {
     });
   }
 }
+
+/// Error which is used whenever a value of an attribute isn't valid
+class IntegerAttributeParsingError extends ErrorMessage {
+  final String nodeName;
+  final String attributeName;
+  final String attributeValue;
+
+  IntegerAttributeParsingError(String namespace, this.nodeName, this.attributeName, this.attributeValue) : super(namespace);
+
+  @override
+  String get message =>
+  "Unable to parse value of attribute => \"$nodeName.$attributeName\". An integer value is expected but was => \"$attributeValue\"";
+}
+
+/// Warning which is used whenever an attribute isn't supported
+class UnsupportedAttributeWarning extends WarningMessage {
+  final String attributeName;
+
+  UnsupportedAttributeWarning(String namespace, this.attributeName) : super(namespace);
+
+  @override
+  String get message =>
+  "Attribute => \"$attributeName\" isn't supported by the current template type. You should remove all unsupported attributes for a better parsing performance";
+}
+
