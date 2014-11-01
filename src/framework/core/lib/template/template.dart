@@ -8,175 +8,15 @@ import 'dart:async';
 import 'exception/exception.dart';
 import '../logger.dart' show Logger, ErrorMessage, WarningMessage;
 
-part 'element_type.dart';
-part 'binding.dart';
-part 'property.dart';
+part 'page_template.dart';
+part 'element_type.dart'; //TODO remove?
+part 'binding.dart'; //TODO remove?
+part 'property.dart'; //TODO remove?
 
+//TODO move to utilities namespace
 abstract class Converter<TIn, TOut> {
   TOut convert(TIn value);
   TIn convertBack(TOut value);
-}
-
-abstract class TemplateNodeConverter<TIn> extends Converter<TIn, TemplateNode> {}
-
-/// Converter used to convert a [XmlElement] to a [TemplateNode]
-class PageTemplateNodeConverter extends TemplateNodeConverter<XmlElement> {
-  final Logger logger;
-
-  PageTemplateNodeConverter({this.logger});
-
-  /// Converts a [XmlElement] to a [TemplateNode]
-  TemplateNode convert(XmlElement value) {
-    return _convert(value);
-  }
-
-  TemplateNode _convert(XmlElement xmlElement, {TemplateNode parent}) {
-    var node = _createNode(xmlElement, parent);
-
-    for(var child in xmlElement.children) {
-      if(child.nodeType == XmlNodeType.ELEMENT) {
-        node.children.add(_convert(child, parent: node));
-      }
-    }
-
-    return node;
-  }
-
-  TemplateNode _createNode(XmlElement xmlElement, TemplateNode parent) {
-    TemplateNode node;
-
-    switch(xmlElement.name.local) {
-      case VerticalNode.xmlName:
-        node = new VerticalNode(xmlElement, parent, logger: logger);
-        break;
-
-      case HorizontalNode.xmlName:
-        node = new HorizontalNode(xmlElement, parent, logger: logger);
-        break;
-
-      default:
-        node = new PageNode(xmlElement, parent, logger: logger);
-        break;
-    }
-
-    return node;
-  }
-
-  /// This method isn't implemented yet. It throws an exception
-  XmlElement convertBack(TemplateNode value) {
-    //TODO throw exception
-  }
-}
-
-abstract class TemplateAttributeConverter<TIn> extends Converter<TIn, TemplateAttribute> {}
-
-/// Converter used to convert a [XmlAttribute] to a [TemplateAttribute]
-class PageNodeAttributeConverter extends TemplateAttributeConverter<XmlAttribute> {
-  static const String namespace = "modularity.core.template.PageNodeAttributeConverter";
-  final Logger logger;
-
-  /// Initializes the converter
-  PageNodeAttributeConverter({this.logger});
-
-  /// Converts a [XMLAttribute] to a [TemplateAttribute]
-  TemplateAttribute convert(XmlAttribute value) {
-    TemplateAttribute attribute;
-
-    switch(value.name.local) {
-      case WidthAttribute.xmlName:
-        attribute = new WidthAttribute.fromXmlAttribute(value, logger:logger);
-        break;
-
-      case HeightAttribute.xmlName:
-        attribute = new HeightAttribute.fromXmlAttribute(value, logger:logger);
-        break;
-
-      case WeightAttribute.xmlName:
-        attribute = new WeightAttribute.fromXmlAttribute(value, logger:logger);
-        break;
-
-      default:
-        if(logger != null) {
-          logger.log(new UnsupportedAttributeWarning(namespace, value.name.local));
-        }
-        break;
-    }
-
-    return attribute;
-  }
-
-  /// This method isn't implemented yet. It throws an exception
-  XmlAttribute convertBack(TemplateAttribute value) {
-    //TODO throw exception
-  }
-}
-
-/// Converter used to convert a [Template] to another format
-abstract class TemplateConverter<TOut> extends Converter<Template, TOut> {}
-
-/// Converter used to convert a [Template] to HTML
-class HtmlTemplateConverter extends TemplateConverter<html.HtmlElement> {
-
-  html.HtmlElement convert(Template template) {
-    return _convert(template.node as PageNode);
-  }
-
-  html.HtmlElement _convert(PageNode templateNode) {
-    var node = new html.DivElement();
-
-    var contentOrientation = templateNode.parent is HorizontalNode ? Orientation.HORIZONTAL : Orientation.VERTICAL;
-    var contentWeight = templateNode.parent is PageNode ? (templateNode.parent as PageNode).contentWeight : null;
-    var weight = templateNode.weight;
-    var height = templateNode.height;
-    var width = templateNode.width;
-
-    node.classes.add(templateNode.name);
-
-    //set size
-    if(weight != null || contentWeight != null) {
-      _applyWeight(node, contentOrientation, contentWeight, weight);
-    } else {
-      _applySize(node, width, height);
-    }
-
-    for(var child in templateNode.children) {
-      node.children.add(_convert(child));
-    }
-
-    return node;
-  }
-
-  _applyWeight(html.DivElement element, Orientation contentOrientation, int contentWeight, int weight) {
-    contentWeight = contentWeight != null ? contentWeight : WeightAttribute.defaultWeight;
-    weight = weight != null ? weight : 0;
-
-    var size = WeightAttribute.defaultWeight * weight / contentWeight;
-
-    switch(contentOrientation) {
-      case Orientation.HORIZONTAL:
-        element.style.width = "${size}%";
-        break;
-
-      default:
-        element.style.height = "${size}%";
-        break;
-    }
-  }
-
-  _applySize(html.DivElement element, int width, int height) {
-    if(width != null) {
-      element.style.width = "${width}px";   //TODO allow % and px?
-    }
-
-    if(height != null) {
-      element.style.height = "${height}px";
-    }
-  }
-
-  Template convertBack(html.HtmlElement element) {
-    //TODO throw exception
-  }
-
 }
 
 /// Representation of a template
@@ -195,31 +35,20 @@ abstract class Template<TIn> {
   TemplateNodeConverter<TIn> get nodeConverter;
 }
 
-class PageTemplate extends Template<XmlElement> {
+/// converter
 
-  PageTemplate(String xmlTemplate, {Logger logger}) :
-      super(parse(xmlTemplate).rootElement, logger: logger);
+abstract class TemplateNodeConverter<TIn> extends Converter<TIn, TemplateNode> {}
 
-  TemplateNodeConverter get nodeConverter => new PageTemplateNodeConverter(logger:logger);
-}
+abstract class TemplateAttributeConverter<TIn> extends Converter<TIn, TemplateAttribute> {}
 
-class Orientation {
-  final String _value;
-
-  const Orientation._internal(this._value);
-
-  factory Orientation.fromValue(String value) => value == HORIZONTAL.value ? HORIZONTAL : VERTICAL;
-
-  toString() => 'Enum.$_value';
-
-  String get value => _value;
-
-  static const VERTICAL = const Orientation._internal("vertical");
-  static const HORIZONTAL = const Orientation._internal("horizontal");
-}
+/// Converter used to convert a [Template] to another format
+abstract class TemplateConverter<TOut> extends Converter<Template, TOut> {}
 
 
 
+/// template nodes
+
+/// Representation of a template node
 abstract class TemplateNode {
   final Logger logger;
 
@@ -243,7 +72,6 @@ abstract class TemplateNode {
 
   TemplateAttributeConverter get attributeConverter;
 
-  //TODO user [] operator?
   /// Gets the value of a specific attribute
   getAttributeValue(String attributeName, {defaultValue}) {
     var attribute = attributes.firstWhere(
@@ -273,116 +101,6 @@ abstract class TemplateNode {
     }
   }
 }
-
-class PageNode extends TemplateNode {
-
-  PageNode(XmlElement element, TemplateNode parent, {Logger logger}) :
-      super(element, parent: parent, logger: logger);
-
-  TemplateAttributeConverter get attributeConverter => new PageNodeAttributeConverter(logger: logger);
-
-  /// Gets the weight of the node or `null` if not set
-  int get weight => getAttributeValue(WeightAttribute.xmlName);
-
-  /// Gets the height of the node or `null` if not set
-  int get height => getAttributeValue(HeightAttribute.xmlName);
-
-  /// Gets the width of the node or `null` if not set
-  int get width => getAttributeValue(WidthAttribute.xmlName);
-
-  /// Gets the weight sum of each node child or `null` if no child has a weight
-  int get contentWeight {
-    int weightSum = null;
-
-    for(var child in children) {
-      if(child is PageNode) {
-        var childWeight = (child as PageNode).weight;
-
-        if(childWeight != null) {
-          weightSum = weightSum == null ? childWeight : weightSum += childWeight;
-        }
-      }
-    }
-
-    return weightSum;
-  }
-}
-
-//TODO rename
-class OrientationNode extends PageNode {
-  Orientation _orientation;
-
-  OrientationNode(XmlElement element, TemplateNode parent, {Logger logger}) :
-      super(element, parent, logger: logger) {
-    _orientation = new Orientation.fromValue(element.name.local);
-  }
-
-  TemplateAttributeConverter get attributeConverter => new PageNodeAttributeConverter(logger: logger);
-
-  Orientation get orientation => _orientation;
-}
-
-class HorizontalNode extends OrientationNode {
-  static const xmlName = "horizontal";
-
-  HorizontalNode(XmlElement element, TemplateNode parent, {Logger logger}) :
-      super(element, parent, logger: logger);
-}
-
-class VerticalNode extends OrientationNode {
-  static const xmlName = "vertical";
-
-  VerticalNode(XmlElement element, TemplateNode parent, {Logger logger}) :
-      super(element, parent, logger: logger);
-}
-
-
-
-//TODO needs data-binding
-/// 1) Register allowed attributes
-/// 2) Read XML
-/// 3) Set name
-/// 4) Iterate trough attrs -> tplAttr.fromXmlAttr(xmlAttr);
-
-//TODO orientation node
-
-/*
-_applySize(html.HtmlElement element) {
-    var isSizeApplied = false;
-
-    if(weight != _defaultSize) {
-      _applyWeight(element);
-      isSizeApplied = true;
-    }
-
-    if(!isSizeApplied && height != _defaultSize) {
-      element.style.height = "${height}px";
-    }
-
-    if(!isSizeApplied && width != _defaultSize) {
-      element.style.width = "${width}px";
-    }
-  }
-
-  _applyWeight(html.HtmlElement element) {
-    //this is the root element
-    if(parent == null) {
-      element.style
-        ..width = "${weight}%"
-        ..height = "${weight}%";
-    }
-
-    //is inside a parent with a horizontal orientation
-    else if((parent as PageTemplateNode).orientation == Orientation.HORIZONTAL) {
-      element.style.width = "${weight}%";
-    }
-
-    //is inside a parent with a vertical orientation
-    else {
-      element.style.height = "${weight}%";
-    }
-  }
- */
 
 /// logger messages
 
@@ -462,35 +180,4 @@ abstract class IntegerAttribute extends TemplateAttribute<int> {
       return 0;
     });
   }
-}
-
-/// Representation of a width attribute
-class WidthAttribute extends IntegerAttribute {
-  static const String xmlName = "width";
-
-  WidthAttribute({Logger logger}) : super(xmlName, logger: logger);
-
-  WidthAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
-      super.fromXmlAttribute(attribute, logger:logger);
-}
-
-/// Representation of a height attribute
-class HeightAttribute extends IntegerAttribute {
-  static const String xmlName = "height";
-
-  HeightAttribute({Logger logger}) : super(xmlName, logger: logger);
-
-  HeightAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
-      super.fromXmlAttribute(attribute, logger:logger);
-}
-
-/// Representation of a weight attribute
-class WeightAttribute extends IntegerAttribute {
-  static const String xmlName = "weight";
-  static const int defaultWeight = 100;
-
-  WeightAttribute({Logger logger}) : super(xmlName, logger: logger);
-
-  WeightAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
-      super.fromXmlAttribute(attribute, logger:logger);
 }
