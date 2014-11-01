@@ -1,5 +1,33 @@
 part of modularity.core.template;
 
+/// Template used for page layouts.
+///
+/// #Template nodes
+/// A [PageTemplate] template supports a small set of predefined [TemplateNode]s like the [HorizontalNode], etc.
+/// In addition it allows the usage of custom nodes. These custom nodes must be handled by the app developer for
+/// example by defining CSS classes. Each predefined [TemplateNode] has a lowercase name. A custom node should be
+/// named in CamelCase like the example below.
+///
+/// ### horizontal
+/// Used to arrange all children horizontal
+///
+/// ### vertical
+/// Used to arrange all children vertical
+///
+/// #Example
+///     var template = new PageTemplate(
+///         '''
+///         <?xml version="1.0"?>
+///         <vertical height="20">
+///           <Header />
+///           <horizontal>
+///             <Navigation weight="10" />
+///             <Content />
+///           </horizontal>
+///         </vertical>
+///         '''
+///     );
+///
 class PageTemplate extends Template<XmlElement> {
 
   PageTemplate(String xmlTemplate, {Logger logger}) :
@@ -7,9 +35,6 @@ class PageTemplate extends Template<XmlElement> {
 
   TemplateNodeConverter get nodeConverter => new PageTemplateNodeConverter(logger:logger);
 }
-
-
-/// converter
 
 /// Converter used to convert a [XmlElement] to a [TemplateNode]
 class PageTemplateNodeConverter extends TemplateNodeConverter<XmlElement> {
@@ -54,7 +79,7 @@ class PageTemplateNodeConverter extends TemplateNodeConverter<XmlElement> {
     return node;
   }
 
-  /// This method isn't implemented yet. It throws an exception
+  /// This method isn't implemented yet. It throws an [UnimplementedError]
   XmlElement convertBack(TemplateNode value) {
     throw new UnimplementedError("Converting back to a XML element isn't supported yet.");
   }
@@ -95,7 +120,7 @@ class PageNodeAttributeConverter extends TemplateAttributeConverter<XmlAttribute
     return attribute;
   }
 
-  /// This method isn't implemented yet. It throws an exception
+  /// This method isn't implemented yet. It throws an [UnimplementedError]
   XmlAttribute convertBack(TemplateAttribute value) {
     throw new UnimplementedError("Converting back to a XML attribute isn't supported yet.");
   }
@@ -104,6 +129,7 @@ class PageNodeAttributeConverter extends TemplateAttributeConverter<XmlAttribute
 /// Converter used to convert a [Template] to HTML
 class HtmlTemplateConverter extends TemplateConverter<html.HtmlElement> {
 
+  /// Converts a [Template] to HTML
   html.HtmlElement convert(Template template) {
     return _convert(template.node as PageNode);
   }
@@ -160,62 +186,85 @@ class HtmlTemplateConverter extends TemplateConverter<html.HtmlElement> {
     }
   }
 
+  /// This method isn't implemented yet. It throws an [UnimplementedError]
   Template convertBack(html.HtmlElement element) {
     throw new UnimplementedError("Converting back to a template isn't supported yet.");
   }
-
 }
 
-
-/// enums
-
+/// Enum which represents a vertical or horizontal orientation
 class Orientation {
   final String _value;
 
   const Orientation._internal(this._value);
 
+  /// Creates an [Orientation] by its [value]. Whenever the [value] isn't valid it returns a [Orientation.VERTICAL] enum
   factory Orientation.fromValue(String value) => value == HORIZONTAL.value ? HORIZONTAL : VERTICAL;
 
   toString() => 'Enum.$_value';
 
+  /// Gets the [String] representaion of the orientation
   String get value => _value;
 
   static const VERTICAL = const Orientation._internal("vertical");
   static const HORIZONTAL = const Orientation._internal("horizontal");
 }
 
-
-/// attributes
-
-/// Representation of a width attribute
+/// Represents the width of a node
 class WidthAttribute extends IntegerAttribute {
+
+  /// The XML name of the attribute
   static const String xmlName = "width";
 
+  /// Creates a new [WidthAttribute]
   WidthAttribute({Logger logger}) : super(xmlName, logger: logger);
 
+  /// Creates a [WidthAttribute] with the help of a [XmlAttribute]
   WidthAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
-  super.fromXmlAttribute(attribute, logger:logger);
+      super.fromXmlAttribute(attribute, logger:logger);
 }
 
-/// Representation of a height attribute
+/// Represents the height of a node
 class HeightAttribute extends IntegerAttribute {
+
+  /// The XML name of the attribute
   static const String xmlName = "height";
 
+  /// Creates a new [HeightAttribute]
   HeightAttribute({Logger logger}) : super(xmlName, logger: logger);
 
+  /// Creates a [HeightAttribute] with the help of a [XmlAttribute]
   HeightAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
-  super.fromXmlAttribute(attribute, logger:logger);
+      super.fromXmlAttribute(attribute, logger:logger);
 }
 
-/// Representation of a weight attribute
+/// Representation of a weight.
+///
+/// #Example
+///     var template = new PageTemplate(
+///         '''
+///         <?xml version="1.0"?>
+///         <vertical> <!-- has a content weight of 3 -->
+///           <Content weight="2" /> <!-- is twice as height as the Navigation node -->
+///           <Navigation weight="1" />
+///         </vertical>
+///         '''
+///     );
+///
 class WeightAttribute extends IntegerAttribute {
+
+  /// The XML name of the attribute
   static const String xmlName = "weight";
+
+  /// The default node width in percent
   static const int defaultWeight = 100;
 
+  /// Creates a new [WeightAttribute]
   WeightAttribute({Logger logger}) : super(xmlName, logger: logger);
 
+  /// Creates a [WeightAttribute] with the help of a [XmlAttribute]
   WeightAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
-  super.fromXmlAttribute(attribute, logger:logger);
+      super.fromXmlAttribute(attribute, logger:logger);
 }
 
 
