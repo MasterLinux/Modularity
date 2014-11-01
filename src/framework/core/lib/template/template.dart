@@ -71,12 +71,12 @@ class PageTemplateNodeConverter extends TemplateNodeConverter<XmlElement> {
 abstract class TemplateAttributeConverter<TIn> extends Converter<TIn, TemplateAttribute> {}
 
 /// Converter used to convert a [XmlAttribute] to a [TemplateAttribute]
-class PageTemplateAttributeConverter extends TemplateAttributeConverter<XmlAttribute> {
-  static const String namespace = "modularity.core.template.PageTemplateAttributeConverter";
+class PageNodeAttributeConverter extends TemplateAttributeConverter<XmlAttribute> {
+  static const String namespace = "modularity.core.template.PageNodeAttributeConverter";
   final Logger logger;
 
   /// Initializes the converter
-  PageTemplateAttributeConverter({this.logger});
+  PageNodeAttributeConverter({this.logger});
 
   /// Converts a [XMLAttribute] to a [TemplateAttribute]
   TemplateAttribute convert(XmlAttribute value) {
@@ -125,7 +125,7 @@ class HtmlTemplateConverter extends TemplateConverter<html.HtmlElement> {
     var node = new html.DivElement();
 
     var contentOrientation = templateNode.parent is HorizontalNode ? Orientation.HORIZONTAL : Orientation.VERTICAL;
-    var contentWeight = templateNode.parent is PageNode ? (templateNode.parent as PageNode).contentWeight : 100;
+    var contentWeight = templateNode.parent is PageNode ? (templateNode.parent as PageNode).contentWeight : null;
     var weight = templateNode.weight;
     var height = templateNode.height;
     var width = templateNode.width;
@@ -133,7 +133,7 @@ class HtmlTemplateConverter extends TemplateConverter<html.HtmlElement> {
     node.classes.add(templateNode.name);
 
     //set size
-    if(weight != null) {
+    if(weight != null || contentWeight != null) {
       _applyWeight(node, contentOrientation, contentWeight, weight);
     } else {
       _applySize(node, width, height);
@@ -147,7 +147,10 @@ class HtmlTemplateConverter extends TemplateConverter<html.HtmlElement> {
   }
 
   _applyWeight(html.DivElement element, Orientation contentOrientation, int contentWeight, int weight) {
-    var size = contentWeight * weight / 100;
+    contentWeight = contentWeight != null ? contentWeight : WeightAttribute.defaultWeight;
+    weight = weight != null ? weight : 0;
+
+    var size = WeightAttribute.defaultWeight * weight / contentWeight;
 
     switch(contentOrientation) {
       case Orientation.HORIZONTAL:
@@ -162,11 +165,11 @@ class HtmlTemplateConverter extends TemplateConverter<html.HtmlElement> {
 
   _applySize(html.DivElement element, int width, int height) {
     if(width != null) {
-      element.style.width = "${width}%";
+      element.style.width = "${width}px";   //TODO allow % and px?
     }
 
     if(height != null) {
-      element.style.height = "${height}%";
+      element.style.height = "${height}px";
     }
   }
 
@@ -276,7 +279,7 @@ class PageNode extends TemplateNode {
   PageNode(XmlElement element, TemplateNode parent, {Logger logger}) :
       super(element, parent: parent, logger: logger);
 
-  TemplateAttributeConverter get attributeConverter => new PageTemplateAttributeConverter(logger: logger);
+  TemplateAttributeConverter get attributeConverter => new PageNodeAttributeConverter(logger: logger);
 
   /// Gets the weight of the node or `null` if not set
   int get weight => getAttributeValue(WeightAttribute.xmlName);
@@ -314,7 +317,7 @@ class OrientationNode extends PageNode {
     _orientation = new Orientation.fromValue(element.name.local);
   }
 
-  TemplateAttributeConverter get attributeConverter => null;
+  TemplateAttributeConverter get attributeConverter => new PageNodeAttributeConverter(logger: logger);
 
   Orientation get orientation => _orientation;
 }
@@ -484,6 +487,7 @@ class HeightAttribute extends IntegerAttribute {
 /// Representation of a weight attribute
 class WeightAttribute extends IntegerAttribute {
   static const String xmlName = "weight";
+  static const int defaultWeight = 100;
 
   WeightAttribute({Logger logger}) : super(xmlName, logger: logger);
 
