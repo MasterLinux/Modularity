@@ -50,7 +50,7 @@ profile
 
 # Dart
 packages/
-pubspec.lock  // Except for application packages
+pubspec.lock
 .project
 .buildlog
 *.js_
@@ -59,7 +59,7 @@ pubspec.lock  // Except for application packages
 *.dart.js
 
 # IntelliJ
-*.iml         
-*.ipr         
-*.iws         
-.idea/        
+*.iml
+*.ipr
+*.iws
+.idea/
