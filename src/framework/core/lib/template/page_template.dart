@@ -30,24 +30,57 @@ part of modularity.core.template;
 ///
 class PageTemplate extends Template<XmlElement> {
 
+  /// Initializes the [PageTemplate]
   PageTemplate(String xmlTemplate, {Logger logger}) :
-  super(parse(xmlTemplate).rootElement, logger: logger);
+      super(parse(xmlTemplate).rootElement, logger: logger);
 
+  /// Gets the converter to convert a [XmlNode] to a [PageTemplateNode]
   TemplateNodeConverter get nodeConverter => new PageTemplateNodeConverter(logger:logger);
+}
+
+/// This node is similar to a XML or HTML node
+/// and can contain [attributes] and node [children].
+/// A template node is generated with the help of
+/// a [XmlElement] and can be converted in any
+/// format using a [TemplateNodeConverter].
+abstract class PageTemplateNode extends TemplateNode {
+
+  /// Initializes the [PageTemplateNode] with the help of a [XmlElement]
+  PageTemplateNode(XmlElement element, {PageTemplateNode parent, Logger logger}) :
+      super(element.name.local, parent: parent, logger: logger) {
+    _applyAttributes(element.attributes);
+  }
+
+  _applyAttributes(List<XmlAttribute> xmlAttributes) {
+    var converter = attributeConverter;
+
+    if(converter != null) {
+      for(var xmlAttribute in xmlAttributes) {
+        var attribute = converter.convert(xmlAttribute);
+
+        if(attribute != null) {
+          attributes.add(attribute);
+        }
+      }
+    } else if(logger != null && attributes.length > 0) {
+      //TODO show warning if converter is null but there are attributes
+    }
+  }
 }
 
 /// Converter used to convert a [XmlElement] to a [TemplateNode]
 class PageTemplateNodeConverter extends TemplateNodeConverter<XmlElement> {
   final Logger logger;
 
+  /// Initializes the converter
   PageTemplateNodeConverter({this.logger});
 
-  /// Converts a [XmlElement] to a [TemplateNode]
-  TemplateNode convert(XmlElement value) {
+  /// Converts a [XmlElement] to a [PageTemplateNode]
+  PageTemplateNode convert(XmlElement value) {
     return _convert(value);
   }
 
-  TemplateNode _convert(XmlElement xmlElement, {TemplateNode parent}) {
+  PageTemplateNode _convert(XmlElement xmlElement, {PageTemplateNode parent}) {
     var node = _createNode(xmlElement, parent);
 
     for(var child in xmlElement.children) {
@@ -59,8 +92,8 @@ class PageTemplateNodeConverter extends TemplateNodeConverter<XmlElement> {
     return node;
   }
 
-  TemplateNode _createNode(XmlElement xmlElement, TemplateNode parent) {
-    TemplateNode node;
+  PageTemplateNode _createNode(XmlElement xmlElement, PageTemplateNode parent) {
+    PageTemplateNode node;
 
     switch(xmlElement.name.local) {
       case VerticalNode.xmlName:
@@ -80,7 +113,7 @@ class PageTemplateNodeConverter extends TemplateNodeConverter<XmlElement> {
   }
 
   /// This method isn't implemented yet. It throws an [UnimplementedError]
-  XmlElement convertBack(TemplateNode value) {
+  XmlElement convertBack(PageTemplateNode value) {
     throw new UnimplementedError("Converting back to a XML element isn't supported yet.");
   }
 }
@@ -270,10 +303,10 @@ class WeightAttribute extends IntegerAttribute {
 
 /// nodes
 
-class PageNode extends TemplateNode {
+class PageNode extends PageTemplateNode {
 
-  PageNode(XmlElement element, TemplateNode parent, {Logger logger}) :
-  super(element, parent: parent, logger: logger);
+  PageNode(XmlElement element, PageTemplateNode parent, {Logger logger}) :
+      super(element, parent: parent, logger: logger);
 
   TemplateAttributeConverter get attributeConverter => new PageNodeAttributeConverter(logger: logger);
 
@@ -307,8 +340,8 @@ class PageNode extends TemplateNode {
 class OrientationNode extends PageNode {
   Orientation _orientation;
 
-  OrientationNode(XmlElement element, TemplateNode parent, {Logger logger}) :
-  super(element, parent, logger: logger) {
+  OrientationNode(XmlElement element, PageTemplateNode parent, {Logger logger}) :
+      super(element, parent, logger: logger) {
     _orientation = new Orientation.fromValue(element.name.local);
   }
 
@@ -320,13 +353,13 @@ class OrientationNode extends PageNode {
 class HorizontalNode extends OrientationNode {
   static const xmlName = "horizontal";
 
-  HorizontalNode(XmlElement element, TemplateNode parent, {Logger logger}) :
-  super(element, parent, logger: logger);
+  HorizontalNode(XmlElement element, PageTemplateNode parent, {Logger logger}) :
+      super(element, parent, logger: logger);
 }
 
 class VerticalNode extends OrientationNode {
   static const xmlName = "vertical";
 
-  VerticalNode(XmlElement element, TemplateNode parent, {Logger logger}) :
-  super(element, parent, logger: logger);
+  VerticalNode(XmlElement element, PageTemplateNode parent, {Logger logger}) :
+      super(element, parent, logger: logger);
 }

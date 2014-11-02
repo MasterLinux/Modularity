@@ -42,32 +42,26 @@ abstract class TemplateAttributeConverter<TIn> extends Converter<TIn, TemplateAt
 /// Converter used to convert a [Template] to another format of type [TOut]
 abstract class TemplateConverter<TOut> extends Converter<Template, TOut> {}
 
-/// This node is similar to a XML or HTML node
-/// and can contain [attributes] and node [children].
-/// A template node is generated with the help of
-/// a [XmlElement] and can be converted in any
-/// format using a [TemplateNodeConverter].
+/// Represents a node similar to a XML or HTML node.
 abstract class TemplateNode {
   final Logger logger;
 
   /// Gets the name of this node
   final String name;
 
-  ///
+  /// A list of this node's children
   final List<TemplateNode> children;
 
+  /// A list of this node's attributes
   final List<TemplateAttribute> attributes;
 
   /// Gets the parent node or `null` if there is no parent
   final TemplateNode parent;
 
   /// Initializes the [TemplateNode] with the help of a [XmlElement]
-  TemplateNode(XmlElement element, {this.parent, this.logger}) :  //TODO use TIn instead of XmlElement and create a new XmlTemplateNode
+  TemplateNode(this.name, {this.parent, this.logger}) :
       this.attributes = new List<TemplateAttribute>(),
-      this.children = new List<TemplateNode>(),
-      this.name = element.name.local {
-    _applyAttributes(element.attributes);
-  }
+      this.children = new List<TemplateNode>();
 
   /// Gets the [TemplateAttributeConverter] used to convert a XML attribute to a [TemplateAttribute]
   TemplateAttributeConverter get attributeConverter;
@@ -84,22 +78,6 @@ abstract class TemplateNode {
 
     return defaultValue;
   }
-
-  _applyAttributes(List<XmlAttribute> xmlAttributes) {
-    var converter = attributeConverter;
-
-    if(converter != null) {
-      for(var xmlAttribute in xmlAttributes) {
-        var attribute = converter.convert(xmlAttribute);
-
-        if(attribute != null) {
-          attributes.add(attribute);
-        }
-      }
-    } else if(logger != null && attributes.length > 0){
-      //TODO show warning if converter is null but there are attributes
-    }
-  }
 }
 
 /// Base class of a [TemplateAttribute]
@@ -108,11 +86,17 @@ abstract class TemplateNode {
 /// CSS class, etc.
 abstract class TemplateAttribute<TValue> {
   final Logger logger;
+
+  /// Gets the name of the attribute
   final String name;
+
+  /// Gets or sets the value of the attribute
   TValue value;
 
+  /// Initializes the template attribute with a [name]
   TemplateAttribute(this.name, {this.logger});
 
+  /// Initializes the attribute with the help of a [XmlAttribute]
   TemplateAttribute.fromXmlAttribute(XmlAttribute attribute, {this.logger}) :
       this.name = attribute.name.local {
       value = _parseValue(attribute);
@@ -138,8 +122,10 @@ abstract class TemplateAttribute<TValue> {
 abstract class IntegerAttribute extends TemplateAttribute<int> {
   static const String namespace = "modularity.core.template.IntegerAttribute";
 
+  /// Initializes the attribute with a [name]
   IntegerAttribute(String name, {Logger logger}) : super(name, logger: logger);
 
+  /// Initializes the attribute with the help of a [XmlAttribute]
   IntegerAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
       super.fromXmlAttribute(attribute, logger:logger);
 
@@ -164,7 +150,7 @@ class IntegerAttributeParsingError extends ErrorMessage {
 
   @override
   String get message =>
-  "Unable to parse value of attribute => \"$nodeName.$attributeName\". An integer value is expected but was => \"$attributeValue\"";
+      "Unable to parse value of attribute => \"$nodeName.$attributeName\". An integer value is expected but was => \"$attributeValue\"";
 }
 
 /// Warning which is used whenever an attribute isn't supported
@@ -175,6 +161,6 @@ class UnsupportedAttributeWarning extends WarningMessage {
 
   @override
   String get message =>
-  "Attribute => \"$attributeName\" isn't supported by the current template type. You should remove all unsupported attributes for a better parsing performance";
+      "Attribute => \"$attributeName\" isn't supported by the current template type. You should remove all unsupported attributes for a better parsing performance";
 }
 
