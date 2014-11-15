@@ -1,4 +1,4 @@
-part of modularity.core.template;
+//part of modularity.core.template;
 
 typedef OnElementValueChangedHandler(Property sender);
 

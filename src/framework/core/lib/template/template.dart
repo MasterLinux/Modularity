@@ -3,16 +3,11 @@ library modularity.core.template;
 import 'package:quiver/core.dart' show hash2;
 import 'package:xml/xml.dart';
 import 'dart:html' as html;
-import 'dart:async'; //TODO remove?
 
-import 'exception/exception.dart'; //TODO remove?
 import '../utility/converter.dart' show Converter;
 import '../logger.dart' show Logger, ErrorMessage, WarningMessage;
 
 part 'page_template.dart';
-part 'element_type.dart'; //TODO remove?
-part 'binding.dart'; //TODO remove?
-part 'property.dart'; //TODO remove?
 
 /// A template is an abstraction layer
 /// between an input format like a XML document

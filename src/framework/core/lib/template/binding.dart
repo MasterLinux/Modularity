@@ -1,4 +1,4 @@
-part of modularity.core.template;
+//part of modularity.core.template;
 
 abstract class Binding<TElement extends html.Element, TProperty> {
   Property<TProperty> property;
