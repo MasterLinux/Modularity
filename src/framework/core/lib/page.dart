@@ -1,8 +1,6 @@
 part of modularity.core;
 
-/**
- *
- */
+/// Representation of a page
 class Page {
   static const String namespace = "modularity.core.Page";
   NavigationParameter _navigationParameter;
@@ -13,6 +11,8 @@ class Page {
   final String title;
   final String uri;
 
+  /// Initializes the page with its [uri] and [title]. The title is usually used by navigation modules
+  /// to create menu entries automatically
   Page(this.uri, this.title, {PageTemplate template, this.logger}) : fragments = new List<Fragment>() {
     //load default template
     if (template == null) {
@@ -29,8 +29,10 @@ class Page {
    * Adds this page to the DOM
    */
   void open(NavigationEventArgs args) {
+    _navigationParameter = args.parameter;
+
     for (var fragment in fragments) {
-      fragment.add();
+      fragment.add(args.isNavigatedBack);
     }
   }
 
@@ -80,7 +82,7 @@ class Page {
 
     //log if the required parameter isn't available
     else if(logger != null) {
-      logger.log(new MissingNavigationParameterWarning(namespace, uri, name));
+      logger.log(new MissingParameterWarning(namespace, uri, name));
     }
 
     return result;

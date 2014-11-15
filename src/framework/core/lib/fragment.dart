@@ -61,9 +61,11 @@ class Fragment {
 
   /**
    * Adds the fragment and all its
-   * modules to DOM.
+   * modules to the DOM. The [isNavigatedBack]
+   * flag indicates whether this fragment is
+   * re-added 'caused by a back navigation
    */
-  void add() {
+  void add(bool isNavigatedBack) {
     //TODO add fragment template
 
     for(var module in _modules) {

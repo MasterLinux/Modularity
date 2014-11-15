@@ -316,6 +316,16 @@ class FragmentExistsWarning extends WarningMessage {
       "Fragment with ID => \"$_id\" is already added to page with URI => \"$_uri\". You have to fix the duplicate to ensure that the application works as expected.";
 }
 
+class ParameterExistsWarning extends WarningMessage {
+  final String _name;
+
+  ParameterExistsWarning(String namespace, String name) : _name = name, super(namespace);
+
+  @override
+  String get message =>
+      "Parameter with name => \"$_name\" already exists. You have to fix the duplicate to ensure that the application works as expected.";
+}
+
 class MissingDefaultLanguageWarning extends WarningMessage {
   MissingDefaultLanguageWarning(String namespace) : super(namespace);
 
@@ -324,15 +334,15 @@ class MissingDefaultLanguageWarning extends WarningMessage {
       "Application Language is not set. So it will be fall back to the default language.";
 }
 
-class MissingNavigationParameterWarning extends WarningMessage {
+class MissingParameterWarning extends WarningMessage {
   final String _name;
   final String _uri;
 
-  MissingNavigationParameterWarning(String namespace, String uri, String name) : _name = name, _uri = uri, super(namespace);
+  MissingParameterWarning(String namespace, String uri, String name) : _name = name, _uri = uri, super(namespace);
 
   @override
   String get message =>
-      "Navigation parameter with name => \"$_name\" is missing. Check whether the given parameter name for page with URI => \"$_uri\" is correct.";
+      "Parameter with name => \"$_name\" is missing. Check whether the given parameter name for page with URI => \"$_uri\" is correct.";
 }
 
 class MissingApplicationNameError extends ErrorMessage {

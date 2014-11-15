@@ -58,7 +58,7 @@ class Navigator {
         ..id = navigationId
         ..uri = uri;
 
-      if(_currentPage) {
+      if(_currentPage != null) {
         _currentPage.close();
       }
 
@@ -166,7 +166,7 @@ class Navigator {
 }
 
 /// interface used to listen for page changes
-class NavigationListener {
+abstract class NavigationListener {
 
   /// handler which is called whenever the page changed
   void onNavigatedTo(Navigator sender, Page page, NavigationEventArgs args);
@@ -177,20 +177,31 @@ class HistoryItem {
   String id;
 }
 
+/// Represents a set of parameter used to pass information to another page while navigating
 class NavigationParameter {
+  static const String namespace = "modularity.core.NavigationParameter";
   final HashMap<String, Object> _parameter;
+  final Logger logger;
 
-  NavigationParameter.fromMap(Map<String, Object> parameter) : _parameter = parameter;
+  /// Initializes the parameter set with the help of a [Map]
+  NavigationParameter.fromMap(Map<String, Object> parameter, {this.logger}) : _parameter = parameter;
 
-  NavigationParameter() : _parameter = new HashMap<String, Object>();
+  /// Initializes an empty parameter set
+  NavigationParameter({this.logger}) : _parameter = new HashMap<String, Object>();
 
-  void add(String key, Object value) {
+  /// adds a new parameter [value] by its [name]
+  void add(String name, Object value) {
+    if(!contains(name)) {
 
+    } else if(logger != null) {
+      logger.log(new ParameterExistsWarning(namespace, name));
+    }
   }
 
   /// checks whether a parameter with the given [name] exists
   bool contains(String name) => _parameter.containsKey(name);
 
+  /// gets a specific parameter by its [name]
   Object operator [](String name) => _parameter[name];
 }
 
@@ -205,7 +216,7 @@ class NavigationEventArgs implements EventArgs {
   });
 }
 
-class NavigationStrategy {
+abstract class NavigationStrategy {
   bool shouldReplace(Page page, Page previousPage);
 }
 
