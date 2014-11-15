@@ -97,7 +97,7 @@ abstract class TemplateAttribute<TValue> {
   TemplateAttribute(this.name, {this.logger});
 
   /// Initializes the attribute with the help of a [XmlAttribute]
-  TemplateAttribute.fromXmlAttribute(XmlAttribute attribute, {this.logger}) :
+  TemplateAttribute.fromXmlAttribute(XmlAttribute attribute, {this.logger}) :  //TODO use TIn instead of XmlAttribute
       this.name = attribute.name.local {
       value = _parseValue(attribute);
   }
