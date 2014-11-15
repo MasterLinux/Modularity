@@ -21,6 +21,11 @@ abstract class Template<TIn> {
     _node = nodeConverter.convert(template);
   }
 
+  /// Initializes the template from a file
+  Template.fromFile(String filePath, {this.logger}) {
+    this(null as TIn, logger: logger);     //TODO implement
+  }
+
   /// Gets the [TemplateNode] of this template
   TemplateNode get node => _node;
 

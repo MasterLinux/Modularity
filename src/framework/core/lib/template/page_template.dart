@@ -38,6 +38,20 @@ class PageTemplate extends Template<XmlElement> {
   TemplateNodeConverter get nodeConverter => new PageTemplateNodeConverter(logger:logger);
 }
 
+/// Default template for pages
+class DefaultPageTemplate extends PageTemplate {
+  static const _defaultTemplate =
+      '''
+        <?xml version="1.0"?>
+        <vertical>
+        </vertical>
+      '''; //TODO load from file
+
+  /// Initializes the [PageTemplate]
+  DefaultPageTemplate({Logger logger}) :
+      super(_defaultTemplate, logger: logger);
+}
+
 /// This node is similar to a XML or HTML node
 /// and can contain [attributes] and node [children].
 /// A template node is generated with the help of

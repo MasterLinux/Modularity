@@ -304,6 +304,18 @@ class ResourceExistsWarning extends WarningMessage {
       "Resource with name => \"$_name\" already exists. You have to fix the name duplicate to ensure that the application works as expected.";
 }
 
+/// Warning which is used whenever a fragment is already added
+class FragmentExistsWarning extends WarningMessage {
+  final String _uri;
+  final String _id;
+
+  FragmentExistsWarning(String namespace, String pageUri, String fragmentId) : _id = fragmentId, _uri = pageUri, super(namespace);
+
+  @override
+  String get message =>
+      "Fragment with ID => \"$_id\" is already added to page with URI => \"$_uri\". You have to fix the duplicate to ensure that the application works as expected.";
+}
+
 class MissingDefaultLanguageWarning extends WarningMessage {
   MissingDefaultLanguageWarning(String namespace) : super(namespace);
 

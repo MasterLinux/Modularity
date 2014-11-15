@@ -1,27 +1,29 @@
 part of modularity.core;
 
-typedef Template PageTemplateFactory();
-
-PageTemplateFactory _defaultPageTemplate() => null;  //TODO return new instance of the default template
-
 /**
  *
  */
 class Page {
   static const String namespace = "modularity.core.Page";
   NavigationParameter _navigationParameter;
+  PageTemplate _template;
+
   final List<Fragment> fragments;
   final Logger logger;
   final String title;
   final String uri;
-  Template _template;
 
-  Page(this.uri, this.title, {PageTemplateFactory templateFactory: _defaultPageTemplate, this.logger}) : fragments = new List<Fragment>() {
-    _template = templateFactory();
+  Page(this.uri, this.title, {PageTemplate template, this.logger}) : fragments = new List<Fragment>() {
+    //load default template
+    if (template == null) {
+      template = new DefaultPageTemplate(logger: logger);
+    }
+
+    _template = template;
   }
 
   /// Gets the template of this page
-  Template get template => _template;
+  PageTemplate get template => _template;
 
   /**
    * Adds this page to the DOM
@@ -46,8 +48,10 @@ class Page {
     if(!fragments.contains(fragment)) {
       fragment.register(this);
       fragments.add(fragment);
-    } else if(logger != null) {
-      //logger.log(new ); //TODO
+    }
+
+    else if(logger != null) {
+      logger.log(new FragmentExistsWarning(namespace, uri, fragment.id));
     }
   }
 
