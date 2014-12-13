@@ -23,7 +23,7 @@ abstract class Template<TIn> {
 
   /// Initializes the template from a file
   Template.fromFile(String filePath, {this.logger}) {
-    this(null as TIn, logger: logger);     //TODO implement
+    //this(null as TIn, logger: logger);     //TODO implement
   }
 
   /// Gets the [TemplateNode] of this template
@@ -81,7 +81,7 @@ abstract class TemplateNode {
 }
 
 /// Base class of a [TemplateAttribute]
-/// It is used to parse a XML attribute
+/// It is used to parse TIn attributes
 /// to its final representation, like a
 /// CSS class, etc.
 abstract class TemplateAttribute<TValue> {
@@ -96,61 +96,12 @@ abstract class TemplateAttribute<TValue> {
   /// Initializes the template attribute with a [name]
   TemplateAttribute(this.name, {this.logger});
 
-  /// Initializes the attribute with the help of a [XmlAttribute]
-  TemplateAttribute.fromXmlAttribute(XmlAttribute attribute, {this.logger}) :  //TODO use TIn instead of XmlAttribute
-      this.name = attribute.name.local {
-      value = _parseValue(attribute);
-  }
-
-  /// Get the value of the XML attribute
-  TValue _parseValue(XmlAttribute attribute);
-
   /// Compares this attribute with another one
   bool operator ==(TemplateAttribute another)
       => another.name == name && another.value == value;
 
   /// Gets the hash code of this attribute
   int get hashCode => hash2(name, value);
-}
-
-/// Attribute used for XML attributes with integer values
-/// Tries to parse the value of the XML attribute to an integer,
-/// whenever the parsing fails it falls back to `0`
-///
-///     <NodeName attributeName="42"></NodeName>
-///
-abstract class IntegerAttribute extends TemplateAttribute<int> {
-  static const String namespace = "modularity.core.template.IntegerAttribute";
-
-  /// Initializes the attribute with a [name]
-  IntegerAttribute(String name, {Logger logger}) : super(name, logger: logger);
-
-  /// Initializes the attribute with the help of a [XmlAttribute]
-  IntegerAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
-      super.fromXmlAttribute(attribute, logger:logger);
-
-  int _parseValue(XmlAttribute attribute) {
-    return int.parse(attribute.value, onError: (_){
-      if(logger != null) {
-        logger.log(new IntegerAttributeParsingError(namespace, name, attribute.name.local, attribute.value));
-      }
-
-      return 0;
-    });
-  }
-}
-
-/// Error which is used whenever a value of an attribute isn't valid
-class IntegerAttributeParsingError extends ErrorMessage {
-  final String nodeName;
-  final String attributeName;
-  final String attributeValue;
-
-  IntegerAttributeParsingError(String namespace, this.nodeName, this.attributeName, this.attributeValue) : super(namespace);
-
-  @override
-  String get message =>
-      "Unable to parse value of attribute => \"$nodeName.$attributeName\". An integer value is expected but was => \"$attributeValue\"";
 }
 
 /// Warning which is used whenever an attribute isn't supported

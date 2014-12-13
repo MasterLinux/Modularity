@@ -377,3 +377,62 @@ class VerticalNode extends OrientationNode {
   VerticalNode(XmlElement element, PageTemplateNode parent, {Logger logger}) :
       super(element, parent, logger: logger);
 }
+
+/// Base class of a [PageTemplateAttribute]
+/// It is used to parse a XML attribute
+/// to its final representation, like a
+/// CSS class, etc.
+abstract class PageTemplateAttribute<TValue> extends TemplateAttribute<TValue> {
+
+  /// Initializes the template attribute with a [name]
+  PageTemplateAttribute(String name, {Logger logger}) : super(name, logger: logger);
+
+  /// Initializes the attribute with the help of a [XmlAttribute]
+  PageTemplateAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
+  super(attribute.name.local, logger: logger) {
+    value = _parseValue(attribute);
+  }
+
+  /// Get the value of the XML attribute
+  TValue _parseValue(XmlAttribute attribute);
+}
+
+/// Attribute used for XML attributes with integer values
+/// Tries to parse the value of the XML attribute to an integer,
+/// whenever the parsing fails it falls back to `0`
+///
+///     <NodeName attributeName="42"></NodeName>
+///
+abstract class IntegerAttribute extends PageTemplateAttribute<int> {
+  static const String namespace = "modularity.core.template.IntegerAttribute";
+
+  /// Initializes the attribute with a [name]
+  IntegerAttribute(String name, {Logger logger}) : super(name, logger: logger);
+
+  /// Initializes the attribute with the help of a [XmlAttribute]
+  IntegerAttribute.fromXmlAttribute(XmlAttribute attribute, {Logger logger}) :
+  super.fromXmlAttribute(attribute, logger:logger);
+
+  int _parseValue(XmlAttribute attribute) {
+    return int.parse(attribute.value, onError: (_){
+      if(logger != null) {
+        logger.log(new IntegerAttributeParsingError(namespace, name, attribute.name.local, attribute.value));
+      }
+
+      return 0;
+    });
+  }
+}
+
+/// Error which is used whenever a value of an attribute isn't valid
+class IntegerAttributeParsingError extends ErrorMessage {
+  final String nodeName;
+  final String attributeName;
+  final String attributeValue;
+
+  IntegerAttributeParsingError(String namespace, this.nodeName, this.attributeName, this.attributeValue) : super(namespace);
+
+  @override
+  String get message =>
+  "Unable to parse value of attribute => \"$nodeName.$attributeName\". An integer value is expected but was => \"$attributeValue\"";
+}
