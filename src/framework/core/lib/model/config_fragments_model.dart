@@ -5,15 +5,13 @@ class ConfigFragmentsModel extends Model<ConfigFragmentModel> {}
 class ConfigFragmentModel extends ObjectModel {
 
   /**
-   * Optional fragment title
+   * The ID of the parent node in which
+   * this fragment is placed
    */
-  String title;
+  String parentId;
 
   /**
-   *
+   * All contained modules of the fragment
    */
-  String parent;
-
-
   ConfigModulesModel modules;
 }

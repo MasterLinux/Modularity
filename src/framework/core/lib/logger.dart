@@ -316,6 +316,17 @@ class FragmentExistsWarning extends WarningMessage {
       "Fragment with ID => \"$_id\" is already added to page with URI => \"$_uri\". You have to fix the duplicate to ensure that the application works as expected.";
 }
 
+class ModuleExistsWarning extends WarningMessage {
+  final String _fragmentId;
+  final String _moduleId;
+
+  ModuleExistsWarning(String namespace, String moduleId, String fragmentId) : _fragmentId = fragmentId, _moduleId = moduleId, super(namespace);
+
+  @override
+  String get message =>
+      "Module with ID => \"$_moduleId\" is already added to fragment with ID => \"$_fragmentId\". You have to fix the duplicate to ensure that the application works as expected.";
+}
+
 class ParameterExistsWarning extends WarningMessage {
   final String _name;
 

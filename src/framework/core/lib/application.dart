@@ -207,6 +207,8 @@ class Application implements NavigationListener {
       _validateStartUri(page.uri);
     }
 
+    page.context = new ApplicationContext(this);
+
     navigator.addPage(page);
   }
 

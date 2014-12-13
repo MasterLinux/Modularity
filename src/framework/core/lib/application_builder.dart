@@ -54,13 +54,34 @@ class ApplicationBuilder {
   }
 
   /**
-   * Adds a single [page] to the application
+   * Adds a [Page] to the application with the help
+   * of a [ConfigPageModel]
    */
-  void addPage(ConfigPageModel page) {
-    if(_pages.where((p) => p.uri == page.uri).isEmpty) {
-      _pages.add(new Page(page.uri, page.title));
+  void addPage(ConfigPageModel pageConfig) {
+    if(_pages.where((p) => p.uri == pageConfig.uri).isEmpty) {
+      var page = new Page(pageConfig.uri, pageConfig.title, logger:logger);
+
+      //construct fragments
+      for(var fragmentConfig in pageConfig.fragments.objects) {
+        var fragment = new Fragment(fragmentConfig.parentId, logger:logger);
+
+        //construct modules
+        for(var moduleConfig in fragmentConfig.modules.objects) {
+          fragment.addModule(new AnnotatedModule(
+              moduleConfig.lib,
+              moduleConfig.name,
+              moduleConfig.config,
+              logger: logger
+          ));
+        }
+
+        page.addFragment(fragment);
+      }
+
+      _pages.add(page);
+
     } else if(logger != null) {
-      logger.log(new PageExistsWarning(namespace, page.uri));
+      logger.log(new PageExistsWarning(namespace, pageConfig.uri));
     }
   }
 

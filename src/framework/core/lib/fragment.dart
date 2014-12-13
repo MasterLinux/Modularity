@@ -1,75 +1,68 @@
 part of modularity.core;
 
 class Fragment {
-  List<AnnotatedModule> _modules;
-  String _title;
-  String _id;
+  static const String namespace = "modularity.core.Fragment";
+  List<AnnotatedModule> modules;
+  ApplicationContext _context;
+  final Logger logger;
 
   /**
-   * Prefix used for the node ID.
+   * The ID of the fragment which is identical to
+   * its specific page template node in which
+   * the fragment is placed
    */
-  final String ID_PREFIX = "fragment";
+  final String id;
 
   /**
-   * Gets the parent page of the fragment.
+   * Initializes the fragment with its ID.
    */
-  Page _page;
+  Fragment(this.id, {this.logger});
 
   /**
-   * Gets the title of the fragment.
+   * Sets the application context
    */
-  final String title;
-
-  /**
-   * Initializes the fragment.
-   */
-  Fragment(this.title, modules) {
-    _id = new UniqueId(ID_PREFIX).build();
-    _loadModules(modules);
+  void set context(ApplicationContext context) {
+    _context = context;
+    _context.fragment = this;
   }
 
   /**
-   * Gets the unique ID of the fragment.
-   * This ID is used as node ID.
+   * Gets the application context
    */
-  String get id => _id;
-
-  /// registers the parent [page]
-  void register(Page page) {
-    _page = page;
+  ApplicationContext get context {
+    return _context;
   }
 
-  /**
-   * Loads all modules with the help
-   * of the config.
-   */
-  void _loadModules(ConfigModulesModel modulesConfig) {
-    _modules = [];
-
-    //creates all modules of this fragment
-    for(var module in modulesConfig.objects) {
-      _modules.add(
-          new AnnotatedModule(
-            module.lib,
-            module.name,
-            this,
-            module.config
-          )
-      );
+  /// adds a collection of [AnnotatedModule]s to the fragment
+  void addModules(List<AnnotatedModule> modules) {
+    for(var module in modules) {
+      addModule(module);
     }
   }
 
   /**
-   * Adds the fragment and all its
-   * modules to the DOM. The [isNavigatedBack]
+   * Adds a module to the fragment
+   */
+  void addModule(AnnotatedModule module) {
+    if(!modules.contains(module)) {
+      module.context = context;
+      modules.add(module);
+    }
+
+    else if(logger != null) {
+      logger.log(new ModuleExistsWarning(namespace, module.id, id));
+    }
+  }
+
+  /**
+   * Adds all its modules of the fragment to
+   * the DOM. The [isNavigatedBack]
    * flag indicates whether this fragment is
    * re-added 'caused by a back navigation
    */
-  void add(bool isNavigatedBack) {
-    //TODO add fragment template
-
-    for(var module in _modules) {
-      module.add();
+  void addToDOM(bool isNavigatedBack) {
+    for(var module in modules) {
+      module.add(isNavigatedBack);
     }
   }
 
@@ -77,12 +70,10 @@ class Fragment {
    * Remove the fragment and all its
    * modules from DOM.
    */
-  void remove() {
-    for(var module in _modules) {
+  void removeFromDOM() {
+    for(var module in modules) {
       module.remove();
     }
-
-    //TODO remove fragment template
   }
 
   /**
@@ -91,17 +82,17 @@ class Fragment {
    * also when an error occurred.
    */
   void onRequestCompleted(RequestCompletedEventArgs args) {
-    //TODO allow to catch this event to manipulate fragment -> via config? or via callback?
-
-    for(var module in _modules) {
+    for(var module in modules) {
       module.onRequestCompleted(args);
     }
   }
 
+  /**
+   * This event handler is invoked whenever the loading state
+   * is changed.
+   */
   void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
-    //TODO allow to catch this event to manipulate fragment
-
-    for(var module in _modules) {
+    for(var module in modules) {
       module.onLoadingStateChanged(args);
     }
   }
