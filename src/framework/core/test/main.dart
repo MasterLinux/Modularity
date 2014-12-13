@@ -6,6 +6,8 @@ import 'package:unittest/html_config.dart';
 import '../lib/exception/exception.dart';
 import '../lib/model/model.dart';
 import '../lib/core.dart';
+import '../lib/logger.dart';
+import '../lib/template/template.dart';
 import 'mock/mock.dart';
 
 import 'dart:async';
@@ -21,6 +23,23 @@ part 'application_test.dart';
  */
 void main() {
   useHtmlConfiguration();
+
+  var tpl = new PageTemplate(
+      '''
+      <?xml version="1.0"?>
+      <vertical height="20">
+        <header/> <!-- represents a fragment called header -->
+        <horizontal>
+          <navigation weight="10"/>
+          <content/>
+        </horizontal>
+      </vertical>
+      '''
+  );
+
+  var node = new HtmlTemplateConverter().convert(tpl);
+
+  print(node.outerHtml);
 
   new LoggerTest().run();
   new ApplicationBuilderTest().run();

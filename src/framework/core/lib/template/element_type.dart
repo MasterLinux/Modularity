@@ -1,4 +1,4 @@
-part of modularity.template;
+//part of modularity.core.template;
 
 class ElementType {
   static const UNKNOWN = const ElementType._(0);

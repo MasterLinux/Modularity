@@ -1,6 +1,6 @@
-part of modularity.template;
+//part of modularity.core.template;
 
-abstract class Binding<TElement extends Element, TProperty> {
+abstract class Binding<TElement extends html.Element, TProperty> {
   Property<TProperty> property;
   TElement element;
 
@@ -31,7 +31,7 @@ abstract class Binding<TElement extends Element, TProperty> {
   }
 }
 
-abstract class TwoWayBinding<TElement extends Element, TProperty> extends Binding<TElement, TProperty> {
+abstract class TwoWayBinding<TElement extends html.Element, TProperty> extends Binding<TElement, TProperty> {
 
   TwoWayBinding(element, property) : super(element, property);
 
@@ -46,7 +46,7 @@ abstract class TwoWayBinding<TElement extends Element, TProperty> extends Bindin
 /**
  * One-way binding for divs
  */
-class DivBinding<T> extends Binding<DivElement, T> {
+class DivBinding<T> extends Binding<html.DivElement, T> {
   DivBinding(element, property) : super(element, property);
 
   void notifyPropertyChanged() {
@@ -57,7 +57,7 @@ class DivBinding<T> extends Binding<DivElement, T> {
 /**
  * Two-way binding for input fields
  */
-class InputBinding<T> extends TwoWayBinding<InputElement, T> {
+class InputBinding<T> extends TwoWayBinding<html.InputElement, T> {
   StreamSubscription _subscription; //TODO add generic type
 
   InputBinding(element, property) : super(element, property) {

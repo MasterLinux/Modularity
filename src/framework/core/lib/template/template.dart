@@ -1,42 +1,117 @@
-library modularity.template;
+library modularity.core.template;
 
+import 'package:quiver/core.dart' show hash2;
+import 'package:xml/xml.dart';
 import 'dart:html' as html;
-import 'dart:async';
 
-import 'exception/exception.dart';
+import '../utility/converter.dart' show Converter;
+import '../logger.dart' show Logger, ErrorMessage, WarningMessage;
 
-part 'element_type.dart';
-part 'binding.dart';
-part 'property.dart';
+part 'page_template.dart';
 
-//https://groups.google.com/a/dartlang.org/forum/#!topic/web-ui/OEPXc8KtpVE
-class Template {
-  final String template;
+/// A template is an abstraction layer
+/// between an input format like a XML document
+/// and a specific output format like HTML
+abstract class Template<TIn> {
+  final Logger logger;
+  TemplateNode _node;
 
-  Template.from(this.template) {
-    var n = _parse(template);
+  /// Initializes the template with a specific input format of type [TIn]
+  Template(TIn template, {this.logger}) {
+    _node = nodeConverter.convert(template);
   }
 
-  void _parse(String template) {
-    var node = new html.Element.html(
-        template,
-        validator: new html.NodeValidatorBuilder()
-          ..allowHtml5()
-          ..add(new ModularityValidator())
+  /// Initializes the template from a file
+  Template.fromFile(String filePath, {this.logger}) {
+    //this(null as TIn, logger: logger);     //TODO implement
+  }
+
+  /// Gets the [TemplateNode] of this template
+  TemplateNode get node => _node;
+
+  /// Gets the [TemplateNodeConverter] to convert the given input to a [TemplateNode]
+  TemplateNodeConverter<TIn> get nodeConverter;
+}
+
+/// Converter used to convert a specific input of type [TIn] to a [TemplateNode]
+abstract class TemplateNodeConverter<TIn> extends Converter<TIn, TemplateNode> {}
+
+/// Converter used to convert a specific input of type [TIn] to a [TemplateAttribute]
+abstract class TemplateAttributeConverter<TIn> extends Converter<TIn, TemplateAttribute> {}
+
+/// Converter used to convert a [Template] to another format of type [TOut]
+abstract class TemplateConverter<TOut> extends Converter<Template, TOut> {}
+
+/// Represents a node similar to a XML or HTML node.
+abstract class TemplateNode {
+  final Logger logger;
+
+  /// Gets the name of this node
+  final String name;
+
+  /// A list of this node's children
+  final List<TemplateNode> children;
+
+  /// A list of this node's attributes
+  final List<TemplateAttribute> attributes;
+
+  /// Gets the parent node or `null` if there is no parent
+  final TemplateNode parent;
+
+  /// Initializes the [TemplateNode] with the help of a [XmlElement]
+  TemplateNode(this.name, {this.parent, this.logger}) :
+      this.attributes = new List<TemplateAttribute>(),
+      this.children = new List<TemplateNode>();
+
+  /// Gets the [TemplateAttributeConverter] used to convert a XML attribute to a [TemplateAttribute]
+  TemplateAttributeConverter get attributeConverter;
+
+  /// Gets the value of a specific attribute
+  getAttributeValue(String attributeName, {defaultValue}) {
+    var attribute = attributes.firstWhere(
+            (attribute) => attribute.name == attributeName, orElse: () => null
     );
 
+    if(attribute != null) {
+      defaultValue = attribute.value;
+    }
 
-    return node;
+    return defaultValue;
   }
 }
 
-class ModularityValidator implements html.NodeValidator {
+/// Base class of a [TemplateAttribute]
+/// It is used to parse TIn attributes
+/// to its final representation, like a
+/// CSS class, etc.
+abstract class TemplateAttribute<TValue> {
+  final Logger logger;
 
-  bool allowsAttribute(html.Element element, String attributeName, String value) {
-    return attributeName.startsWith('mod-'); //TODO find nicely attribute name
-  }
+  /// Gets the name of the attribute
+  final String name;
 
-  bool allowsElement(html.Element element) {
-    return true;
-  }
+  /// Gets or sets the value of the attribute
+  TValue value;
+
+  /// Initializes the template attribute with a [name]
+  TemplateAttribute(this.name, {this.logger});
+
+  /// Compares this attribute with another one
+  bool operator ==(TemplateAttribute another)
+      => another.name == name && another.value == value;
+
+  /// Gets the hash code of this attribute
+  int get hashCode => hash2(name, value);
 }
+
+/// Warning which is used whenever an attribute isn't supported
+class UnsupportedAttributeWarning extends WarningMessage {
+  final String attributeName;
+
+  UnsupportedAttributeWarning(String namespace, this.attributeName) : super(namespace);
+
+  @override
+  String get message =>
+      "Attribute => \"$attributeName\" isn't supported by the current template type. You should remove all unsupported attributes for a better parsing performance";
+}
+

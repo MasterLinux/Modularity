@@ -13,7 +13,7 @@ class Fragment {
   /**
    * Gets the parent page of the fragment.
    */
-  final Page page;
+  Page _page;
 
   /**
    * Gets the title of the fragment.
@@ -23,7 +23,7 @@ class Fragment {
   /**
    * Initializes the fragment.
    */
-  Fragment(this.page, this.title, modules) {
+  Fragment(this.title, modules) {
     _id = new UniqueId(ID_PREFIX).build();
     _loadModules(modules);
   }
@@ -33,6 +33,11 @@ class Fragment {
    * This ID is used as node ID.
    */
   String get id => _id;
+
+  /// registers the parent [page]
+  void register(Page page) {
+    _page = page;
+  }
 
   /**
    * Loads all modules with the help
@@ -56,9 +61,11 @@ class Fragment {
 
   /**
    * Adds the fragment and all its
-   * modules to DOM.
+   * modules to the DOM. The [isNavigatedBack]
+   * flag indicates whether this fragment is
+   * re-added 'caused by a back navigation
    */
-  void add() {
+  void add(bool isNavigatedBack) {
     //TODO add fragment template
 
     for(var module in _modules) {
