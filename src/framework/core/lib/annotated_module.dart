@@ -14,28 +14,22 @@ class AnnotatedModule {
 
   ClassMirror _reflectedClass;
   InstanceMirror _instance;
-  ModuleContext _context;
 
-  String _uniqueId;
   Module _meta;
+  String _id;
+
+  /**
+   * Gets or sets the application context
+   */
+  ApplicationContext context;
 
   /**
    * Gets the unique ID of the module.
    * Each instance of a module has
    * its own unique ID.
    */
-  String get uniqueId {
-    return _uniqueId;
-  }
-
-  /**
-   * Gets the module context, used
-   * to get the current displayed
-   * page and to communicate with
-   * other modules.
-   */
-  ModuleContext get context {
-    return _context;
+  String get id {
+    return _id;
   }
 
   /**
@@ -56,9 +50,7 @@ class AnnotatedModule {
    * of a class which uses the module annotations.
    */
   AnnotatedModule(this.lib, this.name, this.fragment, this.config) {
-    _uniqueId = new UniqueId(ID_PREFIX).build();
-    _context = new ModuleContext(this);
-
+    _id = new UniqueId(ID_PREFIX).build();
     onInit(new InitEventArgs(this.config));
   }
 

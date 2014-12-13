@@ -4,6 +4,7 @@ part of modularity.core;
 class Page {
   static const String namespace = "modularity.core.Page";
   NavigationParameter _navigationParameter;
+  ApplicationContext _context;
   PageTemplate _template;
 
   final List<Fragment> fragments;
@@ -20,6 +21,21 @@ class Page {
     }
 
     _template = template;
+  }
+
+  /**
+   * Sets the application context
+   */
+  void set context(ApplicationContext context) {
+    _context = context;
+    _context.page = this;
+  }
+
+  /**
+   * Gets the application context
+   */
+  ApplicationContext get context {
+    return _context;
   }
 
   /// Gets the template of this page
@@ -48,7 +64,7 @@ class Page {
   /// adds a [Fragment] to this page
   void addFragment(Fragment fragment) {
     if(!fragments.contains(fragment)) {
-      fragment.register(this);
+      fragment.context = context;
       fragments.add(fragment);
     }
 

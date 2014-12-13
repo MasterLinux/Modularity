@@ -63,6 +63,12 @@ class Application implements NavigationListener {
   final ApplicationInfo info;
 
   /**
+   * Gets the application context which
+   * is an interface to all global information
+   */
+  final ApplicationContext context;
+
+  /**
    * Gets all resources tasks if no resource is loaded
    * it returns an empty list
    */
@@ -86,9 +92,11 @@ class Application implements NavigationListener {
    */
   Application(this.info, this.navigator, {this.logger}) :
     resources = new HashMap<String, Resource>(),
-    tasks = new HashMap<String, Task>()
+    tasks = new HashMap<String, Task>(),
+    context = new ApplicationContext()
   {
     this.navigator.logger = logger;
+    context.application = this;
 
     //validate application info
     _validateLanguage();
@@ -207,6 +215,7 @@ class Application implements NavigationListener {
       _validateStartUri(page.uri);
     }
 
+    page.context = context;
     navigator.addPage(page);
   }
 
