@@ -8,9 +8,9 @@ part of modularity.core;
  */
 class AnnotatedModule {
   final Map<String, Object> config;
-  final Fragment fragment;
   final String name;
   final String lib;
+  final Logger logger;
 
   ClassMirror _reflectedClass;
   InstanceMirror _instance;
@@ -49,7 +49,7 @@ class AnnotatedModule {
    * Initializes the module with the help
    * of a class which uses the module annotations.
    */
-  AnnotatedModule(this.lib, this.name, this.fragment, this.config) {
+  AnnotatedModule(this.lib, this.name, this.config, {this.logger}) {
     _id = new UniqueId(ID_PREFIX).build();
     onInit(new InitEventArgs(this.config));
   }
@@ -57,7 +57,7 @@ class AnnotatedModule {
   /**
    * Adds the template of the module to DOM.
    */
-  void add() {
+  void add(bool isNavigatedBack) {
     onBeforeAdd();
 
     //TODO add template to DOM

@@ -48,7 +48,7 @@ class Page {
     _navigationParameter = args.parameter;
 
     for (var fragment in fragments) {
-      fragment.add(args.isNavigatedBack);
+      fragment.addToDOM(args.isNavigatedBack);
     }
   }
 
@@ -57,7 +57,7 @@ class Page {
    */
   void close() {
     for (var fragment in fragments) {
-      fragment.remove();
+      fragment.removeFromDOM();
     }
   }
 
@@ -103,6 +103,4 @@ class Page {
 
     return result;
   }
-
-  //TODO page injector required to inject specific page behaviour?
 }

@@ -4,7 +4,7 @@ class Fragment {
   static const String namespace = "modularity.core.Fragment";
   List<AnnotatedModule> modules;
   ApplicationContext _context;
-  Logger logger;  //TODO replace with a singleton pattern
+  final Logger logger;
 
   /**
    * The ID of the fragment which is identical to
@@ -16,7 +16,7 @@ class Fragment {
   /**
    * Initializes the fragment with its ID.
    */
-  Fragment(this.id);
+  Fragment(this.id, {this.logger});
 
   /**
    * Sets the application context
@@ -31,6 +31,13 @@ class Fragment {
    */
   ApplicationContext get context {
     return _context;
+  }
+
+  /// adds a collection of [AnnotatedModule]s to the fragment
+  void addModules(List<AnnotatedModule> modules) {
+    for(var module in modules) {
+      addModule(module);
+    }
   }
 
   /**
@@ -48,37 +55,14 @@ class Fragment {
   }
 
   /**
-   * Loads all modules with the help
-   * of the config.
-   */
-  /*
-  void _loadModules(ConfigModulesModel modulesConfig) {
-    _modules = [];
-
-    //creates all modules of this fragment
-    for(var module in modulesConfig.objects) {
-      _modules.add(
-          new AnnotatedModule(
-            module.lib,
-            module.name,
-            this,
-            module.config
-          )
-      );
-    }
-  } */
-
-  /**
    * Adds all its modules of the fragment to
    * the DOM. The [isNavigatedBack]
    * flag indicates whether this fragment is
    * re-added 'caused by a back navigation
    */
-  void add(bool isNavigatedBack) {
-    //TODO add fragment template
-
+  void addToDOM(bool isNavigatedBack) {
     for(var module in modules) {
-      module.add();
+      module.add(isNavigatedBack);
     }
   }
 
@@ -86,12 +70,10 @@ class Fragment {
    * Remove the fragment and all its
    * modules from DOM.
    */
-  void remove() {
+  void removeFromDOM() {
     for(var module in modules) {
       module.remove();
     }
-
-    //TODO remove fragment template
   }
 
   /**
@@ -100,16 +82,16 @@ class Fragment {
    * also when an error occurred.
    */
   void onRequestCompleted(RequestCompletedEventArgs args) {
-    //TODO allow to catch this event to manipulate fragment -> via config? or via callback?
-
     for(var module in modules) {
       module.onRequestCompleted(args);
     }
   }
 
+  /**
+   * This event handler is invoked whenever the loading state
+   * is changed.
+   */
   void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
-    //TODO allow to catch this event to manipulate fragment
-
     for(var module in modules) {
       module.onLoadingStateChanged(args);
     }
