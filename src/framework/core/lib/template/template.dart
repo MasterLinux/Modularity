@@ -43,7 +43,7 @@ abstract class TemplateAttributeConverter<TIn> extends Converter<TIn, TemplateAt
 abstract class TemplateConverter<TOut> extends Converter<Template, TOut> {}
 
 /// Represents a node similar to a XML or HTML node.
-abstract class TemplateNode {
+abstract class TemplateNode<TIn> {
   final Logger logger;
 
   /// Gets the name of this node
@@ -59,12 +59,26 @@ abstract class TemplateNode {
   final TemplateNode parent;
 
   /// Initializes the [TemplateNode] with the help of a [XmlElement]
-  TemplateNode(this.name, {this.parent, this.logger}) :
+  TemplateNode(this.name, List<TIn> attributes, {this.parent, this.logger}) :
       this.attributes = new List<TemplateAttribute>(),
-      this.children = new List<TemplateNode>();
+      this.children = new List<TemplateNode>() {
+    _applyAttributes(attributes);
+  }
 
   /// Gets the [TemplateAttributeConverter] used to convert a XML attribute to a [TemplateAttribute]
   TemplateAttributeConverter get attributeConverter;
+
+  void _applyAttributes(List<TIn> attributes) {
+    var converter = attributeConverter;
+
+    if(converter != null) {
+      for(var attribute in attributes) {
+        this.attributes.add(converter.convert(attribute)); //TODO check whether attribute is already added
+      }
+    } else if(logger != null && attributes.length > 0) {
+      //TODO show warning if converter is null but there are attributes
+    }
+  }
 
   /// Gets the value of a specific attribute
   getAttributeValue(String attributeName, {defaultValue}) {
@@ -93,8 +107,8 @@ abstract class TemplateAttribute<TValue> {
   /// Gets or sets the value of the attribute
   TValue value;
 
-  /// Initializes the template attribute with a [name]
-  TemplateAttribute(this.name, {this.logger});
+  /// Initializes the template attribute with a [name] and its [value]
+  TemplateAttribute(this.name, this.value, {this.logger});
 
   /// Compares this attribute with another one
   bool operator ==(TemplateAttribute another)
