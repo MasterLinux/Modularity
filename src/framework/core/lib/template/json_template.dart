@@ -1,14 +1,51 @@
 part of modularity.core.template;
 
+/// Template which converts a JSON template string into a Template.
+///
+/// Example:
+///     var template = new JsonTemplate(
+///     '''
+///     {
+///       "type": "StackPanel",
+///       "attributes": [{
+///         "name": "orientation",
+///         "value": "horizontal"
+///       }],
+///       "children": [{
+///         "type": "Button",
+///         "attributes": [{
+///           "name": "title",
+///           "value": "Cancel"
+///         }],
+///         "children": []
+///       }, {
+///         "type": "Button",
+///         "attributes": [{
+///           "name": "title",
+///           "value": "OK"
+///         }],
+///         "children": []
+///       }]
+///     }
+///     '''
+///     );
+///
+///     // The TemplateNode which can be converted
+///     // to a HTML node
+///     var node = template.node;
 ///
 class JsonTemplate extends Template<String> {
 
-  JsonTemplate(String template, {Logger: logger}) :
+  /// Initializes the [JsonTemplate] with the help of
+  /// a JSON [template] string
+  JsonTemplate(String template, {Logger logger}) :
     super(template, logger: logger);
 
   TemplateNodeConverter get nodeConverter => new JsonTemplateNodeConverter(logger);
 }
 
+
+/// Converts a JSON template string into a [TemplateNode]
 class JsonTemplateNodeConverter extends TemplateNodeConverter<String> {
   static const String _mapKeyAttributes = 'attributes';
   static const String _mapKeyChildren = 'children';
@@ -43,14 +80,17 @@ class JsonTemplateNodeConverter extends TemplateNodeConverter<String> {
   }
 }
 
+/// Represents a JSON [TemplateNode]
 class JsonTemplateNode extends TemplateNode<Map> {
 
-  JsonTemplateNode(String name, List<Map> attributes, {JsonTemplateNode parent, Logger logger: logger}) :
+  JsonTemplateNode(String name, List<Map> attributes, {JsonTemplateNode parent, Logger logger}) :
     super(name, attributes, parent: parent, logger: logger);
 
   TemplateAttributeConverter get attributeConverter => new JsonTemplateAttributeConverter(logger);
 }
 
+
+/// Converts a JSON object represented by a [Map] into an attribute
 class JsonTemplateAttributeConverter extends TemplateAttributeConverter<Map> {
   static const String _mapKeyValue = 'value';
   static const String _mapKeyName = 'name';
@@ -71,9 +111,9 @@ class JsonTemplateAttributeConverter extends TemplateAttributeConverter<Map> {
   }
 }
 
+/// Represents a JSON [TemplateAttribute]
 class JsonTemplateAttribute extends TemplateAttribute<String> {
 
   JsonTemplateAttribute(String name, String value, {Logger logger}) :
     super(name, value, logger: logger);
-
 }

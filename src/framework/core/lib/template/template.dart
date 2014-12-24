@@ -6,8 +6,10 @@ import 'dart:html' as html;
 
 import '../utility/converter.dart' show Converter;
 import '../logger.dart' show Logger, ErrorMessage, WarningMessage;
+import 'dart:convert' show JSON;
 
-part 'page_template.dart';
+part 'json_template.dart';
+part 'json_template_to_html_converter.dart';
 
 /// A template is an abstraction layer
 /// between an input format like a XML document
