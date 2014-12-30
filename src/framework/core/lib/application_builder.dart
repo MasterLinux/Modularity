@@ -70,6 +70,7 @@ class ApplicationBuilder {
           fragment.addModule(new AnnotatedModule(
               moduleConfig.lib,
               moduleConfig.name,
+              moduleConfig.template,
               moduleConfig.config,
               logger: logger
           ));

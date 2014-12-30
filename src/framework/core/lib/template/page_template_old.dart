@@ -434,5 +434,5 @@ class IntegerAttributeParsingError extends ErrorMessage {
 
   @override
   String get message =>
-  "Unable to parse value of attribute => \"$nodeName.$attributeName\". An integer value is expected but was => \"$attributeValue\"";
+    "Unable to parse value of attribute => \"$nodeName.$attributeName\". An integer value is expected but was => \"$attributeValue\"";
 }

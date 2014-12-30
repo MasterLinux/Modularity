@@ -24,7 +24,7 @@ part 'application_test.dart';
 void main() {
   useHtmlConfiguration();
 
-  var tpl = new PageTemplate(
+  var tpl = new HtmlTemplate(
       '''
       <?xml version="1.0"?>
       <vertical height="20">

@@ -34,7 +34,7 @@ part of modularity.core.template;
 ///     // to a HTML node
 ///     var node = template.node;
 ///
-class JsonTemplate extends Template<String> {
+abstract class JsonTemplate extends Template<String> {
 
   /// Initializes the [JsonTemplate] with the help of
   /// a JSON [template] string

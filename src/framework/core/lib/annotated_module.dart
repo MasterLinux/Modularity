@@ -8,10 +8,12 @@ part of modularity.core;
  */
 class AnnotatedModule {
   final Map<String, Object> config;
+  final Logger logger;
   final String name;
   final String lib;
-  final Logger logger;
 
+  HtmlTemplate _template;
+  ApplicationContext _context;
   ClassMirror _reflectedClass;
   InstanceMirror _instance;
 
@@ -41,6 +43,11 @@ class AnnotatedModule {
   }
 
   /**
+   * Gets the template of the module
+   */
+  HtmlTemplate get template => _template;
+
+  /**
    * Prefix used for the node ID
    */
   final String ID_PREFIX = "module";
@@ -49,8 +56,9 @@ class AnnotatedModule {
    * Initializes the module with the help
    * of a class which uses the module annotations.
    */
-  AnnotatedModule(this.lib, this.name, this.config, {this.logger}) {
+  AnnotatedModule(this.lib, this.name, String template, this.config, {this.logger}) {
     _id = new UniqueId(ID_PREFIX).build();
+    _template = new HtmlTemplate(_id, template, logger: logger);
     onInit(new InitEventArgs(this.config));
   }
 
@@ -59,9 +67,7 @@ class AnnotatedModule {
    */
   void add(bool isNavigatedBack) {
     onBeforeAdd();
-
-    //TODO add template to DOM
-
+    template.render(context.fragment.id);
     onAdded();
   }
 
@@ -70,9 +76,7 @@ class AnnotatedModule {
    */
   void remove() {
     onBeforeRemove();
-
-    //TODO remove template from DOM
-
+    template.destroy();
     onRemoved();
   }
 

@@ -14,7 +14,7 @@ part 'json_template_to_html_converter.dart';
 /// A template is an abstraction layer
 /// between an input format like a XML document
 /// and a specific output format like HTML
-abstract class Template<TIn> {
+abstract class Template<TIn> { //TODO TOut required?
   final Logger logger;
   TemplateNode _node;
 
