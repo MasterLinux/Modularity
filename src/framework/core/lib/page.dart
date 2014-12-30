@@ -48,7 +48,7 @@ class Page {
     _navigationParameter = args.parameter;
 
     for (var fragment in fragments) {
-      fragment.addToDOM(args.isNavigatedBack);
+      fragment.addToDOM(args);
     }
   }
 

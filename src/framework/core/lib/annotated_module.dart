@@ -54,7 +54,7 @@ class AnnotatedModule {
 
   /**
    * Initializes the module with the help
-   * of a class which uses the module annotations.
+   * of a class which uses module annotations.
    */
   AnnotatedModule(this.lib, this.name, String template, this.config, {this.logger}) {
     _id = new UniqueId(ID_PREFIX).build();
@@ -65,10 +65,10 @@ class AnnotatedModule {
   /**
    * Adds the template of the module to DOM.
    */
-  void add(bool isNavigatedBack) {
-    onBeforeAdd();
+  void add(NavigationEventArgs args) {
+    onBeforeAdd(args);
     template.render(context.fragment.id);
-    onAdded();
+    onAdded(args);
   }
 
   /**
@@ -179,10 +179,10 @@ class AnnotatedModule {
    * This event handler is invoked when the module will be created,
    * but before the template of the module is added to the DOM.
    */
-  void onBeforeAdd() {
+  void onBeforeAdd(NavigationEventArgs args) {
     _invokeHandlerWhere(
             (meta) => meta.hasReflectee && meta.reflectee is OnBeforeAddAnnotation,
-            _reflectedClass, _instance
+            _reflectedClass, _instance, args
     );
   }
 
@@ -190,10 +190,10 @@ class AnnotatedModule {
    * This event handler is invoked when the template
    * of the module is completely added to DOM.
    */
-  void onAdded() {
+  void onAdded(NavigationEventArgs args) {
     _invokeHandlerWhere(
             (meta) => meta.hasReflectee && meta.reflectee is OnAddedAnnotation,
-            _reflectedClass, _instance
+            _reflectedClass, _instance, args
     );
   }
 

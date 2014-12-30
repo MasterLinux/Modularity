@@ -56,13 +56,13 @@ class Fragment {
 
   /**
    * Adds all its modules of the fragment to
-   * the DOM. The [isNavigatedBack]
+   * the DOM. The [args.isNavigatedBack]
    * flag indicates whether this fragment is
    * re-added 'caused by a back navigation
    */
-  void addToDOM(bool isNavigatedBack) {
+  void addToDOM(NavigationEventArgs args) {
     for(var module in modules) {
-      module.add(isNavigatedBack);
+      module.add(args);
     }
   }
 
