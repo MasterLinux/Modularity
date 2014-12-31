@@ -9,7 +9,7 @@ import '../logger.dart' show Logger, ErrorMessage, WarningMessage;
 import 'dart:convert' show JSON;
 
 part 'json_template.dart';
-part 'json_template_to_html_converter.dart';
+part 'html_template.dart';
 
 /// A template is an abstraction layer
 /// between an input format like a XML document
