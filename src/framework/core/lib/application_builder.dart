@@ -67,7 +67,7 @@ class ApplicationBuilder {
 
         //construct modules
         for(var moduleConfig in fragmentConfig.modules.objects) {
-          fragment.addModule(new AnnotatedModule(
+          fragment.addModule(new Module(
               moduleConfig.lib,
               moduleConfig.name,
               moduleConfig.template,

@@ -22,10 +22,10 @@
  *         void initModule(ModuleContext context, InitEventArgs args) { ... }
  *
  *         @OnBeforeAdd
- *         void onBeforeAddEventHandler() { ... }
+ *         void onBeforeAddEventHandler(NavigationEventArgs args) { ... }
  *
  *         @OnAdded
- *         void onAddedEventHandler() { ... }
+ *         void onAddedEventHandler(NavigationEventArgs args) { ... }
  *
  *         @OnBeforeRemove
  *         void onBeforeRemoveEventHandler() { ... }

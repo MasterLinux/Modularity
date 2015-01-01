@@ -6,7 +6,7 @@ part of modularity.core;
  * modules with the help of its library
  * and class name.
  */
-class AnnotatedModule {
+class Module {
   final Map<String, Object> config;
   final Logger logger;
   final String name;
@@ -17,7 +17,7 @@ class AnnotatedModule {
   ClassMirror _reflectedClass;
   InstanceMirror _instance;
 
-  Module _meta;
+  annotations.Module _meta;
   String _id;
 
   /**
@@ -38,7 +38,7 @@ class AnnotatedModule {
    * Gets the meta information
    * of this module.
    */
-  Module get meta {
+  annotations.Module get meta {
     return _meta;
   }
 
@@ -56,7 +56,7 @@ class AnnotatedModule {
    * Initializes the module with the help
    * of a class which uses module annotations.
    */
-  AnnotatedModule(this.lib, this.name, String template, this.config, {this.logger}) {
+  Module(this.lib, this.name, String template, this.config, {this.logger}) {
     _id = new UniqueId(ID_PREFIX).build();
     _template = new HtmlTemplate(_id, template, logger: logger);
     onInit(new InitEventArgs(this.config));
@@ -114,7 +114,7 @@ class AnnotatedModule {
 
     var metadata = _reflectedClass.metadata;
     var annotation = metadata.firstWhere(
-      (meta) => meta.hasReflectee && meta.reflectee is Module,
+      (meta) => meta.hasReflectee && meta.reflectee is annotations.Module,
       orElse: () => null
     );
 
@@ -123,7 +123,7 @@ class AnnotatedModule {
 
     //get module information for registration
     if(annotation != null && name != null) {
-      _meta = annotation.reflectee as Module;
+      _meta = annotation.reflectee as annotations.Module;
 
       //try to invoke onInit handler of module, if handler doesn't exists throw exception
       if(!_tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
@@ -160,7 +160,7 @@ class AnnotatedModule {
 
         //get onInit annotation
         var annotation = methodMirror.metadata.firstWhere(
-          (meta) => meta.hasReflectee && meta.reflectee is OnInitAnnotation,
+          (meta) => meta.hasReflectee && meta.reflectee is annotations.OnInitAnnotation,
           orElse: () => null
         );
 
@@ -181,7 +181,7 @@ class AnnotatedModule {
    */
   void onBeforeAdd(NavigationEventArgs args) {
     _invokeHandlerWhere(
-            (meta) => meta.hasReflectee && meta.reflectee is OnBeforeAddAnnotation,
+            (meta) => meta.hasReflectee && meta.reflectee is annotations.OnBeforeAddAnnotation,
             _reflectedClass, _instance, args
     );
   }
@@ -192,7 +192,7 @@ class AnnotatedModule {
    */
   void onAdded(NavigationEventArgs args) {
     _invokeHandlerWhere(
-            (meta) => meta.hasReflectee && meta.reflectee is OnAddedAnnotation,
+            (meta) => meta.hasReflectee && meta.reflectee is annotations.OnAddedAnnotation,
             _reflectedClass, _instance, args
     );
   }
@@ -204,7 +204,7 @@ class AnnotatedModule {
    */
   void onBeforeRemove() {
     _invokeHandlerWhere(
-            (meta) => meta.hasReflectee && meta.reflectee is OnBeforeRemoveAnnotation,
+            (meta) => meta.hasReflectee && meta.reflectee is annotations.OnBeforeRemoveAnnotation,
             _reflectedClass, _instance
     );
   }
@@ -215,7 +215,7 @@ class AnnotatedModule {
    */
   void onRemoved() {
     _invokeHandlerWhere(
-        (meta) => meta.hasReflectee && meta.reflectee is OnRemovedAnnotation,
+        (meta) => meta.hasReflectee && meta.reflectee is annotations.OnRemovedAnnotation,
         _reflectedClass, _instance
     );
   }
@@ -228,7 +228,7 @@ class AnnotatedModule {
   void onRequestCompleted(RequestCompletedEventArgs args) {
     _invokeHandlerWhere(
             (meta) => meta.hasReflectee
-              && meta.reflectee is OnRequestCompleted
+              && meta.reflectee is annotations.OnRequestCompleted
               && (
                   (meta.reflectee.requestId == args.requestId
                   && meta.reflectee.isErrorHandler == args.isErrorOccurred)
@@ -246,7 +246,7 @@ class AnnotatedModule {
   void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
     _invokeHandlerWhere(
       (meta) => meta.hasReflectee
-        && meta.reflectee is OnLoadingStateChanged
+        && meta.reflectee is annotations.OnLoadingStateChanged
         && (meta.reflectee.isLoading == args.isLoading || meta.reflectee.isDefault),
       _reflectedClass, _instance, args
     );

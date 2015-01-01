@@ -54,7 +54,7 @@ class HtmlTemplate extends JsonTemplate {
     if(parent != null) {
       parent.nodes.add(_templateNode);
     } else if(logger != null) {
-      logger.log(new ParentNodeNotFoundError(namespace, parentId));
+      logger.log(new UnknownParentNodeError(namespace, parentId));
     }
   }
 
@@ -66,10 +66,10 @@ class HtmlTemplate extends JsonTemplate {
 
 
 /// Error which is used whenever the parent node isn't found
-class ParentNodeNotFoundError extends ErrorMessage {
+class UnknownParentNodeError extends ErrorMessage {
   final String parentId;
 
-  ParentNodeNotFoundError(String namespace, this.parentId) : super(namespace);
+  UnknownParentNodeError(String namespace, this.parentId) : super(namespace);
 
   @override
   String get message =>
