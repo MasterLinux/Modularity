@@ -1,5 +1,6 @@
-//part of modularity.core.template;
+part of modularity.core.template;
 
+/// Binding which allows the update of a HTML element on property change
 abstract class Binding<TElement extends html.Element, TProperty> {
   Property<TProperty> property;
   TElement element;
@@ -31,6 +32,8 @@ abstract class Binding<TElement extends html.Element, TProperty> {
   }
 }
 
+/// Binding for bidirectional communication. If the property is updated the HTML element will be notified.
+/// And if the HTML element is updated the property will be set.
 abstract class TwoWayBinding<TElement extends html.Element, TProperty> extends Binding<TElement, TProperty> {
 
   TwoWayBinding(element, property) : super(element, property);
@@ -46,23 +49,27 @@ abstract class TwoWayBinding<TElement extends html.Element, TProperty> extends B
 /**
  * One-way binding for divs
  */
-class DivBinding<T> extends Binding<html.DivElement, T> {
+class DivBinding extends Binding<html.DivElement, String> {
   DivBinding(element, property) : super(element, property);
 
   void notifyPropertyChanged() {
     element.innerHtml = property.value;
+  }
+
+  void onUnbind() {
+    //does nothing
   }
 }
 
 /**
  * Two-way binding for input fields
  */
-class InputBinding<T> extends TwoWayBinding<html.InputElement, T> {
-  StreamSubscription _subscription; //TODO add generic type
+class InputBinding extends TwoWayBinding<html.InputElement, String> {
+  StreamSubscription _subscription;
 
-  InputBinding(element, property) : super(element, property) {
+  InputBinding(html.Element element, property) : super(element, property) {
     _subscription = element.onChange.listen((event) {
-       notifyElementChanged();
+      notifyElementChanged();
     });
   }
 
@@ -71,7 +78,7 @@ class InputBinding<T> extends TwoWayBinding<html.InputElement, T> {
   }
 
   void notifyElementChanged() {
-    property.notifyElementChanged(element.value);
+    property.notifyElementValueChanged(element.value);
   }
 
   void onUnbind() {
@@ -81,5 +88,4 @@ class InputBinding<T> extends TwoWayBinding<html.InputElement, T> {
       _subscription = null;
     }
   }
-
 }

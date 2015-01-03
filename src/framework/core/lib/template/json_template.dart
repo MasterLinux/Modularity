@@ -49,6 +49,7 @@ abstract class JsonTemplate extends Template<String> {
 class JsonTemplateNodeConverter extends TemplateNodeConverter<String> {
   static const String _mapKeyAttributes = 'attributes';
   static const String _mapKeyChildren = 'children';
+  static const String _mapKeyEvents = 'events';
   static const String _mapKeyType = 'type';
   final Logger logger;
 
@@ -66,11 +67,22 @@ class JsonTemplateNodeConverter extends TemplateNodeConverter<String> {
 
   TemplateNode _convert(Map template, {TemplateNode parent}) {
     var children = template[_mapKeyChildren];
+    var events = template[_mapKeyEvents];
+
     var node = new JsonTemplateNode(
         template[_mapKeyType],
         template[_mapKeyAttributes],
         parent: parent, logger: logger
     );
+
+    //add all event bindings
+    if(events != null) {
+      var converter = new JsonTemplateEventConverter();
+
+      for(var event in events) {
+        node.events.add(converter.convert(event));
+      }
+    }
 
     for(var child in children) {
       node.children.add(_convert(child));
@@ -82,9 +94,11 @@ class JsonTemplateNodeConverter extends TemplateNodeConverter<String> {
 
 /// Represents a JSON [TemplateNode]
 class JsonTemplateNode extends TemplateNode<Map> {
+  final List<JsonTemplateEvent> events;
 
   JsonTemplateNode(String name, List<Map> attributes, {JsonTemplateNode parent, Logger logger}) :
-    super(name, attributes, parent: parent, logger: logger);
+    super(name, attributes, parent: parent, logger: logger),
+    events = new List<JsonTemplateEvent>();
 
   TemplateAttributeConverter get attributeConverter => new JsonTemplateAttributeConverter(logger);
 }
@@ -116,4 +130,55 @@ class JsonTemplateAttribute extends TemplateAttribute<String> {
 
   JsonTemplateAttribute(String name, String value, {Logger logger}) :
     super(name, value, logger: logger);
+}
+
+/// Converts a JSON event map to a [JsonTemplateEvent].
+///
+/// Example:
+///     //TODO describe input JSON
+///     var event = new JsonTemplateEventConverter().convert(eventJsonMap);
+///
+class JsonTemplateEventConverter extends Converter<Map, JsonTemplateEvent> {
+  static const String _mapKeyEventType = 'type';
+  static const String _mapKeyEventBinding = 'binding';
+
+  JsonTemplateEvent convert(Map value) {
+    return new JsonTemplateEvent(value[_mapKeyEventType])
+      ..parameter.addAll(parseParameterList(value[_mapKeyEventBinding]));
+  }
+
+  Map convertBack(JsonTemplateEvent value) {
+    throw new UnimplementedError("Converting back to a JSON map isn't supported yet.");
+  }
+
+  /// Parses the [parameterList] string to a [List] of [JsonTemplateEventParameter]
+  /// The [] string looks like the following string `#openPage(index:#index=1,element:#el)`
+  List<JsonTemplateEventParameter> parseParameterList(String parameterList) {
+    var list = new List<JsonTemplateEventParameter>();
+
+
+
+    return list; //TODO implement parser
+  }
+}
+
+
+class JsonTemplateEvent {
+  final String callbackName;
+  final List<JsonTemplateEventParameter> parameter;
+
+  JsonTemplateEvent(this.callbackName) :
+    parameter = new List<JsonTemplateEventParameter>();
+
+  void parseParameterList(String parameterList) {
+
+  }
+}
+
+class JsonTemplateEventParameter {
+  final String propertyName;
+  final String name;
+  final String value;
+
+  JsonTemplateEventParameter(this.propertyName, this.name, this.value);
 }

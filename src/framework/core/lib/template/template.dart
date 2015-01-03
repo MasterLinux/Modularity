@@ -7,9 +7,12 @@ import 'dart:html' as html;
 import '../utility/converter.dart' show Converter;
 import '../logger.dart' show Logger, ErrorMessage, WarningMessage;
 import 'dart:convert' show JSON;
+import 'dart:async' show StreamSubscription;
 
 part 'json_template.dart';
 part 'html_template.dart';
+part 'binding.dart';
+part 'property.dart';
 
 /// A template is an abstraction layer
 /// between an input format like a XML document
@@ -21,11 +24,6 @@ abstract class Template<TIn> { //TODO TOut required?
   /// Initializes the template with a specific input format of type [TIn]
   Template(TIn template, {this.logger}) {
     _node = nodeConverter.convert(template);
-  }
-
-  /// Initializes the template from a file
-  Template.fromFile(String filePath, {this.logger}) {
-    //this(null as TIn, logger: logger);     //TODO implement
   }
 
   /// Gets the [TemplateNode] of this template
