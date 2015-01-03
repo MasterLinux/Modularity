@@ -57,7 +57,8 @@ A property binding can be defined by using the `bindings` field which is an arra
 
 ```json
 "bindings": [{
-  "attributeName": "#propertyName"
+  "attribute": "title",
+  "property": "title"
 }]
 ```
 
@@ -65,7 +66,8 @@ An event binding is defined by using the `events` field which is also an array o
 
 ```json
 "events": [{
-  "click": "#openPage(index:#index=1,element:#el)"
+  "type": "click",
+  "binding": "openPage(index:#index=1,element:#el)"
 }]
 ```
 
@@ -83,11 +85,12 @@ A parameter consists of a name `index:`, the name of a property to bind `#index`
   "children": [{
     "type": "Button",
     "bindings": [{
-      "title": "#title"
+      "attribute": "title",
+      "property": "title"
     }],
     "events": [{
       "type": "click",
-      "binding": "#openPage(index:#index=1,element:#el)"
+      "binding": "openPage(index:#index=1,element:#el)"
     }],
     "attributes": [{
       "name": "title",

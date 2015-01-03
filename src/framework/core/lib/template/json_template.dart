@@ -49,6 +49,7 @@ abstract class JsonTemplate extends Template<String> {
 class JsonTemplateNodeConverter extends TemplateNodeConverter<String> {
   static const String _mapKeyAttributes = 'attributes';
   static const String _mapKeyChildren = 'children';
+  static const String _mapKeyBindings = 'bindings';
   static const String _mapKeyEvents = 'events';
   static const String _mapKeyType = 'type';
   final Logger logger;
@@ -67,6 +68,7 @@ class JsonTemplateNodeConverter extends TemplateNodeConverter<String> {
 
   TemplateNode _convert(Map template, {TemplateNode parent}) {
     var children = template[_mapKeyChildren];
+    var bindings = template[_mapKeyBindings];
     var events = template[_mapKeyEvents];
 
     var node = new JsonTemplateNode(
@@ -75,7 +77,7 @@ class JsonTemplateNodeConverter extends TemplateNodeConverter<String> {
         parent: parent, logger: logger
     );
 
-    //add all event bindings
+    // add all event-bindings
     if(events != null) {
       var converter = new JsonTemplateEventConverter();
 
@@ -84,6 +86,16 @@ class JsonTemplateNodeConverter extends TemplateNodeConverter<String> {
       }
     }
 
+    // add all data-bindings
+    if(bindings != null) {
+      var converter = new JsonTemplateBindingConverter();
+
+      for(var binding in bindings) {
+        node.bindings.add(converter.convert(binding));
+      }
+    }
+
+    // add all children nodes
     for(var child in children) {
       node.children.add(_convert(child));
     }
@@ -94,10 +106,12 @@ class JsonTemplateNodeConverter extends TemplateNodeConverter<String> {
 
 /// Represents a JSON [TemplateNode]
 class JsonTemplateNode extends TemplateNode<Map> {
+  final List<JsonTemplateBinding> bindings;
   final List<JsonTemplateEvent> events;
 
   JsonTemplateNode(String name, List<Map> attributes, {JsonTemplateNode parent, Logger logger}) :
     super(name, attributes, parent: parent, logger: logger),
+    bindings = new List<JsonTemplateBinding>(),
     events = new List<JsonTemplateEvent>();
 
   TemplateAttributeConverter get attributeConverter => new JsonTemplateAttributeConverter(logger);
@@ -139,12 +153,12 @@ class JsonTemplateAttribute extends TemplateAttribute<String> {
 ///     var event = new JsonTemplateEventConverter().convert(eventJsonMap);
 ///
 class JsonTemplateEventConverter extends Converter<Map, JsonTemplateEvent> {
-  static const String _mapKeyEventType = 'type';
-  static const String _mapKeyEventBinding = 'binding';
+  static const String _mapKeyBinding = 'binding';
+  static const String _mapKeyType = 'type';
 
   JsonTemplateEvent convert(Map value) {
-    return new JsonTemplateEvent(value[_mapKeyEventType])
-      ..parameter.addAll(parseParameterList(value[_mapKeyEventBinding]));
+    return new JsonTemplateEvent(value[_mapKeyType])
+      ..parameter.addAll(parseParameterList(value[_mapKeyBinding]));
   }
 
   Map convertBack(JsonTemplateEvent value) {
@@ -177,8 +191,29 @@ class JsonTemplateEvent {
 
 class JsonTemplateEventParameter {
   final String propertyName;
-  final String name;
+  final String type;
   final String value;
 
-  JsonTemplateEventParameter(this.propertyName, this.name, this.value);
+  JsonTemplateEventParameter(this.propertyName, this.type, this.value);
+}
+
+
+class JsonTemplateBindingConverter extends Converter<Map, JsonTemplateBinding> {
+  static const String _mapKeyAttribute = 'attribute';
+  static const String _mapKeyProperty = 'property';
+
+  JsonTemplateBinding convert(Map value) {
+    return new JsonTemplateBinding(value[_mapKeyAttribute], value[_mapKeyProperty]);
+  }
+
+  Map convertBack(JsonTemplateBinding value) {
+    throw new UnimplementedError("Converting back to a JSON map isn't supported yet.");
+  }
+}
+
+class JsonTemplateBinding {
+  final String attributeName;
+  final String propertyName;
+
+  JsonTemplateBinding(this.attributeName, this.propertyName);
 }

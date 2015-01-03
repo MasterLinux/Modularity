@@ -1,6 +1,12 @@
 #Data-Binding
 There are two available bindings, a simple one-way and a two-way binding which are used to update the `DOM` and a `Property` automatically.
 
+##Available properties
+* Property<T>
+> A simple property
+* CollectionProperty<T extends Collection>
+> A property for collections
+
 ##Supported HTML elements
 * DivElement
 * InputElement
