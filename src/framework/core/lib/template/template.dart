@@ -14,23 +14,84 @@ part 'html_template.dart';
 part 'binding.dart';
 part 'property.dart';
 
+abstract class TemplateController {
+  //TODO implement
+}
+
 /// A template is an abstraction layer
 /// between an input format like a XML document
 /// and a specific output format like HTML
-abstract class Template<TIn> { //TODO TOut required?
+abstract class Template<TIn> {
+  static const String namespace = "modularity.core.template.Template";
+
+  final TemplateController controller;
+  final List<TemplateBinding> bindings;
+  final List<TemplateEvent> events;
   final Logger logger;
-  TemplateNode _node;
+  final String id;
+
+  html.HtmlElement _htmlNode;
 
   /// Initializes the template with a specific input format of type [TIn]
-  Template(TIn template, {this.logger}) {
-    _node = nodeConverter.convert(template);
+  Template(TIn template, this.id, this.controller, {this.logger}) :
+    bindings = new List<TemplateBinding>(),
+    events = new List<TemplateEvent>() {
+    _htmlNode = buildHtmlNode(nodeConverter.convert(template), id);
   }
 
-  /// Gets the [TemplateNode] of this template
-  TemplateNode get node => _node;
+  /// Gets the [HtmlElement] of this template
+  html.HtmlElement get node => _htmlNode;
 
   /// Gets the [TemplateNodeConverter] to convert the given input to a [TemplateNode]
   TemplateNodeConverter<TIn> get nodeConverter;
+
+  /// Adds the template to the DOM
+  void render(String parentId) {
+    var parent = html.document.getElementById(parentId);
+
+    if(parent != null) {
+      parent.nodes.add(_htmlNode);
+    } else if(logger != null) {
+      logger.log(new UnknownParentNodeError(namespace, parentId));
+    }
+  }
+
+  /// Removes the template from DOM
+  void destroy() {
+    _htmlNode.remove();
+  }
+
+  /// Builds the HTML template with the help of a [TemplateNode]
+  html.HtmlElement buildHtmlNode(TemplateNode templateNode, [String id = null]) {
+    var node = new html.Element.tag(templateNode.name);
+
+    //TODO set bindings
+
+    //set template id
+    if(id != null) {
+      node.id = id;
+    }
+
+    for (var attribute in templateNode.attributes) {
+      node.attributes[attribute.name] = attribute.value;
+    }
+
+    for (var child in templateNode.children) {
+      node.children.add(buildHtmlNode(child));
+    }
+
+    return node;
+  }
+}
+
+/// Error which is used whenever the parent node isn't found
+class UnknownParentNodeError extends ErrorMessage {
+  final String parentId;
+
+  UnknownParentNodeError(String namespace, this.parentId) : super(namespace);
+
+  @override
+  String get message => "Unable to find parent node with ID => \"$parentId\".";
 }
 
 /// Converter used to convert a specific input of type [TIn] to a [TemplateNode]
@@ -129,3 +190,28 @@ class UnsupportedAttributeWarning extends WarningMessage {
       "Attribute => \"$attributeName\" isn't supported by the current template type. You should remove all unsupported attributes for a better parsing performance";
 }
 
+/*
+/// Represents an event usually used for
+/// nodes, like a click or hover
+class TemplateEvent {
+  final List<TemplateBindingParameter> bindings;
+  final String callbackName;
+
+  TemplateEvent(this.callbackName) : bindings = new List<TemplateBindingParameter>();
+}
+
+///
+class TemplateBindingParameter {
+  final String name;
+  final String value;
+
+  TemplateBindingParameter(this.name, this.value);
+}
+
+class TemplateBinding {
+  final String attributeName;
+  final String propertyName;
+
+  TemplateBinding(this.attributeName, this.propertyName);
+}
+*/

@@ -38,8 +38,8 @@ abstract class JsonTemplate extends Template<String> {
 
   /// Initializes the [JsonTemplate] with the help of
   /// a JSON [template] string
-  JsonTemplate(String template, {Logger logger}) :
-    super(template, logger: logger);
+  JsonTemplate(String template, String id, TemplateController controller, {Logger logger}) :
+    super(template, id, controller, logger: logger);
 
   TemplateNodeConverter get nodeConverter => new JsonTemplateNodeConverter(logger);
 }
@@ -177,7 +177,7 @@ class JsonTemplateEventConverter extends Converter<Map, JsonTemplateEvent> {
 }
 
 
-class JsonTemplateEvent {
+class JsonTemplateEvent extends TemplateEvent {
   final String callbackName;
   final List<JsonTemplateEventParameter> parameter;
 
