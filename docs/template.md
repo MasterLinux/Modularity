@@ -90,7 +90,13 @@ A parameter consists of a name `index:`, the name of a property to bind `#index`
     }],
     "events": [{
       "type": "click",
-      "binding": "openPage(index:#index=1,element:#el)"
+      "binding": {
+        "callback": "openPage",
+        "parameter": [{
+          "name": "uri",
+          "value": "home_uri"
+        }]
+      }
     }],
     "attributes": [{
       "name": "title",

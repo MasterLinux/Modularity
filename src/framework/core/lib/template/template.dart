@@ -1,16 +1,15 @@
 library modularity.core.template;
 
 import 'package:quiver/core.dart' show hash2;
-import 'package:xml/xml.dart';
 import 'dart:html' as html;
 
 import '../utility/converter.dart' show Converter;
 import '../logger.dart' show Logger, ErrorMessage, WarningMessage;
 import 'dart:convert' show JSON;
 import 'dart:async' show StreamSubscription;
+import 'dart:collection' show HashMap;
 
 part 'json_template.dart';
-part 'html_template.dart';
 part 'binding.dart';
 part 'property.dart';
 
@@ -25,7 +24,7 @@ abstract class Template<TIn> {
   static const String namespace = "modularity.core.template.Template";
 
   final TemplateController controller;
-  final List<TemplateBinding> bindings;
+  final List<TemplateDataBinding> bindings;
   final List<TemplateEvent> events;
   final Logger logger;
   final String id;
@@ -34,7 +33,7 @@ abstract class Template<TIn> {
 
   /// Initializes the template with a specific input format of type [TIn]
   Template(TIn template, this.id, this.controller, {this.logger}) :
-    bindings = new List<TemplateBinding>(),
+    bindings = new List<TemplateDataBinding>(),
     events = new List<TemplateEvent>() {
     _htmlNode = buildHtmlNode(nodeConverter.convert(template), id);
   }
@@ -116,13 +115,19 @@ abstract class TemplateNode<TIn> {
   /// A list of this node's attributes
   final List<TemplateAttribute> attributes;
 
+  final List<TemplateDataBinding> bindings;
+
+  final List<TemplateEvent> events;
+
   /// Gets the parent node or `null` if there is no parent
   final TemplateNode parent;
 
   /// Initializes the [TemplateNode] with the help of a [XmlElement]
   TemplateNode(this.name, List<TIn> attributes, {this.parent, this.logger}) :
       this.attributes = new List<TemplateAttribute>(),
-      this.children = new List<TemplateNode>() {
+      this.children = new List<TemplateNode>(),
+      this.bindings = new List<TemplateDataBinding>(),
+      this.events = new List<TemplateEvent>() {
     _applyAttributes(attributes);
   }
 
@@ -190,28 +195,25 @@ class UnsupportedAttributeWarning extends WarningMessage {
       "Attribute => \"$attributeName\" isn't supported by the current template type. You should remove all unsupported attributes for a better parsing performance";
 }
 
-/*
 /// Represents an event usually used for
 /// nodes, like a click or hover
 class TemplateEvent {
-  final List<TemplateBindingParameter> bindings;
+  final TemplateEventBinding binding;
+  final String type;
+
+  TemplateEvent(this.type, this.binding);
+}
+
+class TemplateEventBinding {
   final String callbackName;
+  final Map<String, String> parameter;
 
-  TemplateEvent(this.callbackName) : bindings = new List<TemplateBindingParameter>();
+  TemplateEventBinding(this.callbackName) : parameter = new HashMap<String, String>();
 }
 
-///
-class TemplateBindingParameter {
-  final String name;
-  final String value;
-
-  TemplateBindingParameter(this.name, this.value);
-}
-
-class TemplateBinding {
+class TemplateDataBinding {
   final String attributeName;
   final String propertyName;
 
-  TemplateBinding(this.attributeName, this.propertyName);
+  TemplateDataBinding(this.attributeName, this.propertyName);
 }
-*/
