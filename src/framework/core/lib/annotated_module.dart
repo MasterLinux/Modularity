@@ -6,13 +6,13 @@ part of modularity.core;
  * modules with the help of its library
  * and class name.
  */
-class Module {
+class Module implements TemplateController {
   final Map<String, Object> config;
   final Logger logger;
   final String name;
   final String lib;
 
-  HtmlTemplate _template;
+  JsonTemplate _template;
   ApplicationContext _context;
   ClassMirror _reflectedClass;
   InstanceMirror _instance;
@@ -45,7 +45,7 @@ class Module {
   /**
    * Gets the template of the module
    */
-  HtmlTemplate get template => _template;
+  JsonTemplate get template => _template;
 
   /**
    * Prefix used for the node ID
@@ -56,9 +56,9 @@ class Module {
    * Initializes the module with the help
    * of a class which uses module annotations.
    */
-  Module(this.lib, this.name, String template, this.config, {this.logger}) {
+  Module(this.lib, this.name, Map template, this.config, {this.logger}) {
     _id = new UniqueId(ID_PREFIX).build();
-    _template = new HtmlTemplate(_id, template, logger: logger);
+    _template = new JsonTemplate(template, _id, this, logger: logger);
     onInit(new InitEventArgs(this.config));
   }
 
@@ -80,10 +80,26 @@ class Module {
     onRemoved();
   }
 
+  void invokeCallback(String callbackName, Map<String, String> parameter) {
+    var args = null; //TODO TemplateCallbackEventArgs
+
+    _invokeHandlerWhere(
+            (methodName, meta) => methodName == new Symbol(callbackName) &&
+                meta.hasReflectee &&
+                meta.reflectee is annotations.TemplateCallback,
+            _reflectedClass, _instance, args
+    ); //TODO return false if not found
+  }
+
+  Property getProperty(String name) {
+    //TODO implement
+    return null;
+  }
+
   /**
    * Invokes all event handler which are passed the given [test].
    */
-  void _invokeHandlerWhere(bool test(InstanceMirror mirror), ClassMirror classMirror, InstanceMirror instanceMirror, [EventArgs args]) {
+  void _invokeHandlerWhere(bool test(Symbol methodName, InstanceMirror mirror), ClassMirror classMirror, InstanceMirror instanceMirror, [EventArgs args]) {
     classMirror.instanceMembers.forEach((Symbol methodName, MethodMirror methodMirror) {
 
       //check whether method is annotated
@@ -91,7 +107,9 @@ class Module {
         && methodMirror.metadata.isNotEmpty) {
 
         //get all methods to invoke
-        var annotations = methodMirror.metadata.where(test);
+        var annotations = methodMirror.metadata.where((meta) {
+          test(methodName, meta);
+        });
 
         //invoke onInit method
         if(annotations.isNotEmpty) {
@@ -181,7 +199,7 @@ class Module {
    */
   void onBeforeAdd(NavigationEventArgs args) {
     _invokeHandlerWhere(
-            (meta) => meta.hasReflectee && meta.reflectee is annotations.OnBeforeAddAnnotation,
+            (methodName, meta) => meta.hasReflectee && meta.reflectee is annotations.OnBeforeAddAnnotation,
             _reflectedClass, _instance, args
     );
   }
@@ -192,7 +210,7 @@ class Module {
    */
   void onAdded(NavigationEventArgs args) {
     _invokeHandlerWhere(
-            (meta) => meta.hasReflectee && meta.reflectee is annotations.OnAddedAnnotation,
+            (methodName, meta) => meta.hasReflectee && meta.reflectee is annotations.OnAddedAnnotation,
             _reflectedClass, _instance, args
     );
   }
@@ -204,7 +222,7 @@ class Module {
    */
   void onBeforeRemove() {
     _invokeHandlerWhere(
-            (meta) => meta.hasReflectee && meta.reflectee is annotations.OnBeforeRemoveAnnotation,
+            (methodName, meta) => meta.hasReflectee && meta.reflectee is annotations.OnBeforeRemoveAnnotation,
             _reflectedClass, _instance
     );
   }
@@ -215,7 +233,7 @@ class Module {
    */
   void onRemoved() {
     _invokeHandlerWhere(
-        (meta) => meta.hasReflectee && meta.reflectee is annotations.OnRemovedAnnotation,
+        (methodName, meta) => meta.hasReflectee && meta.reflectee is annotations.OnRemovedAnnotation,
         _reflectedClass, _instance
     );
   }
@@ -227,7 +245,7 @@ class Module {
    */
   void onRequestCompleted(RequestCompletedEventArgs args) {
     _invokeHandlerWhere(
-            (meta) => meta.hasReflectee
+            (methodName, meta) => meta.hasReflectee
               && meta.reflectee is annotations.OnRequestCompleted
               && (
                   (meta.reflectee.requestId == args.requestId
@@ -245,7 +263,7 @@ class Module {
    */
   void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
     _invokeHandlerWhere(
-      (meta) => meta.hasReflectee
+      (methodName, meta) => meta.hasReflectee
         && meta.reflectee is annotations.OnLoadingStateChanged
         && (meta.reflectee.isLoading == args.isLoading || meta.reflectee.isDefault),
       _reflectedClass, _instance, args

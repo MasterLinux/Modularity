@@ -113,3 +113,17 @@ class Module {
   const Module(this.version, {this.author, this.company, this.eMail, this.website});
 
 }
+
+
+//TODO document
+const Object TemplateCallback = const TemplateCallbackAnnotation();
+
+class TemplateCallbackAnnotation {
+  const TemplateCallbackAnnotation();
+}
+
+const Object TemplateProperty = const TemplatePropertyAnnotation();
+
+class TemplatePropertyAnnotation {
+  const TemplatePropertyAnnotation();
+}
