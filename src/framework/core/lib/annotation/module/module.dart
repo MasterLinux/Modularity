@@ -18,6 +18,12 @@
  *         @Navigator -> TODO
  *         Navigator navigator;
  *
+ *         @TemplateProperty -> TODO
+ *         Property<String> moduleTitle;
+ *
+ *         @TemplateCallback -> TODO
+ *         void showInfo(TemplateCallbackEventArgs args) { ... }
+ *
  *         @OnInit
  *         void initModule(ModuleContext context, InitEventArgs args) { ... }
  *
