@@ -3,9 +3,7 @@ part of modularity.core.template;
 /// Template which converts a JSON template string into a Template.
 ///
 /// Example:
-///     var template = new JsonTemplate(
-///     '''
-///     {
+///     var template = new JsonTemplate('''{
 ///       "type": "StackPanel",
 ///       "attributes": [{
 ///         "name": "orientation",
@@ -26,15 +24,13 @@ part of modularity.core.template;
 ///         }],
 ///         "children": []
 ///       }]
-///     }
-///     '''
-///     );
+///     }''');
 ///
 ///     // The TemplateNode which can be converted
 ///     // to a HTML node
 ///     var node = template.node;
 ///
-abstract class JsonTemplate extends Template<String> {
+class JsonTemplate extends Template<String> {
 
   /// Initializes the [JsonTemplate] with the help of
   /// a JSON [template] string
@@ -68,7 +64,7 @@ class JsonTemplateNodeConverter extends TemplateNodeConverter<String> {
 
   TemplateNode _convert(Map template, {TemplateNode parent}) {
     var children = template[_mapKeyChildren];
-    var bindings = template[_mapKeyBindings];
+    //var bindings = template[_mapKeyBindings];
     var events = template[_mapKeyEvents];
 
     var node = new JsonTemplateNode(
@@ -83,15 +79,6 @@ class JsonTemplateNodeConverter extends TemplateNodeConverter<String> {
 
       for(var event in events) {
         node.events.add(converter.convert(event));
-      }
-    }
-
-    // add all data-bindings
-    if(bindings != null) {
-      var converter = new JsonTemplateDataBindingConverter();
-
-      for(var binding in bindings) {
-        node.bindings.add(converter.convert(binding));
       }
     }
 
@@ -116,6 +103,7 @@ class JsonTemplateNode extends TemplateNode<Map> {
 
 /// Converts a JSON object represented by a [Map] into an attribute
 class JsonTemplateAttributeConverter extends TemplateAttributeConverter<Map> {
+  static const String _mapKeyBinding = 'binding';
   static const String _mapKeyValue = 'value';
   static const String _mapKeyName = 'name';
   final Logger logger;
@@ -126,6 +114,7 @@ class JsonTemplateAttributeConverter extends TemplateAttributeConverter<Map> {
     return new JsonTemplateAttribute(
       value[_mapKeyName],
       value[_mapKeyValue],
+      propertyName: value[_mapKeyBinding],
       logger: logger
     );
   }
@@ -138,8 +127,8 @@ class JsonTemplateAttributeConverter extends TemplateAttributeConverter<Map> {
 /// Represents a JSON [TemplateAttribute]
 class JsonTemplateAttribute extends TemplateAttribute<String> {
 
-  JsonTemplateAttribute(String name, String value, {Logger logger}) :
-    super(name, value, logger: logger);
+  JsonTemplateAttribute(String name, String value, {String propertyName, Logger logger}) :
+    super(name, value, propertyName: propertyName, logger: logger);
 }
 
 /// Converts a JSON event [Map] to a [TemplateEvent].
@@ -182,10 +171,10 @@ class JsonTemplateEventConverter extends Converter<Map, TemplateEvent> {
 ///     }
 ///
 class JsonTemplateEventBindingConverter extends Converter<Map, TemplateEventBinding> {
-  static const String _mapKeyCallback = 'callback';
   static const String _mapKeyParameter = 'parameter';
-  static const String _mapKeyName = 'name';
+  static const String _mapKeyCallback = 'callback';
   static const String _mapKeyValue = 'value';
+  static const String _mapKeyName = 'name';
 
   TemplateEventBinding convert(Map value) {
     var binding = new TemplateEventBinding(value[_mapKeyCallback]);

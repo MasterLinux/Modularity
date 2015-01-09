@@ -84,10 +84,6 @@ A parameter consists of a name `index:`, the name of a property to bind `#index`
   }],
   "children": [{
     "type": "Button",
-    "bindings": [{
-      "attribute": "title",
-      "property": "title"
-    }],
     "events": [{
       "type": "click",
       "binding": {
@@ -100,7 +96,8 @@ A parameter consists of a name `index:`, the name of a property to bind `#index`
     }],
     "attributes": [{
       "name": "title",
-      "value": "Click Me!"
+      "value": "Click Me!",
+      "binding": "title"
     }],
     "children": []
   }]

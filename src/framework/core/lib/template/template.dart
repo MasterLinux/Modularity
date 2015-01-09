@@ -14,7 +14,11 @@ part 'binding.dart';
 part 'property.dart';
 
 abstract class TemplateController {
-  //TODO implement
+  /// Handler which is invoked whenever a specific event is thrown
+  void invokeCallback(String callbackName, Map<String, String> parameter);
+
+  /// Gets a specific property by its name
+  Property getProperty(String name);
 }
 
 /// A template is an abstraction layer
@@ -23,9 +27,9 @@ abstract class TemplateController {
 abstract class Template<TIn> {
   static const String namespace = "modularity.core.template.Template";
 
+  final List<StreamSubscription> events;
   final TemplateController controller;
-  final List<TemplateDataBinding> bindings;
-  final List<TemplateEvent> events;
+  final List<DataBinding> bindings;
   final Logger logger;
   final String id;
 
@@ -33,8 +37,8 @@ abstract class Template<TIn> {
 
   /// Initializes the template with a specific input format of type [TIn]
   Template(TIn template, this.id, this.controller, {this.logger}) :
-    bindings = new List<TemplateDataBinding>(),
-    events = new List<TemplateEvent>() {
+    bindings = new List<DataBinding>(),
+    events = new List<StreamSubscription>() {
     _htmlNode = buildHtmlNode(nodeConverter.convert(template), id);
   }
 
@@ -49,7 +53,7 @@ abstract class Template<TIn> {
     var parent = html.document.getElementById(parentId);
 
     if(parent != null) {
-      parent.nodes.add(_htmlNode);
+      parent.nodes.add(node);
     } else if(logger != null) {
       logger.log(new UnknownParentNodeError(namespace, parentId));
     }
@@ -57,22 +61,47 @@ abstract class Template<TIn> {
 
   /// Removes the template from DOM
   void destroy() {
-    _htmlNode.remove();
+    //remove all event handler
+    for(var eventSubscription in events) {
+      eventSubscription.cancel();
+    }
+
+    events.clear();
+    node.remove();
+
+    //TODO destruct html node? or recreate events and data-bindings on adding?
   }
 
   /// Builds the HTML template with the help of a [TemplateNode]
   html.HtmlElement buildHtmlNode(TemplateNode templateNode, [String id = null]) {
     var node = new html.Element.tag(templateNode.name);
 
-    //TODO set bindings
 
     //set template id
     if(id != null) {
       node.id = id;
     }
 
+    // register event handler
+    for (var event in templateNode.events) {
+      var subscription = node.on[event.type].listen((_) {
+        controller.invokeCallback(
+            event.binding.callbackName,
+            event.binding.parameter
+        );
+      });
+      events.add(subscription);
+    }
+
+    // set attributes and data-binding
     for (var attribute in templateNode.attributes) {
       node.attributes[attribute.name] = attribute.value;
+
+      if(attribute.propertyName != null) {
+        bindings.add(
+            new ElementBinding(node, controller.getProperty(attribute.propertyName), logger: logger)
+        );
+      }
     }
 
     for (var child in templateNode.children) {
@@ -115,8 +144,6 @@ abstract class TemplateNode<TIn> {
   /// A list of this node's attributes
   final List<TemplateAttribute> attributes;
 
-  final List<TemplateDataBinding> bindings;
-
   final List<TemplateEvent> events;
 
   /// Gets the parent node or `null` if there is no parent
@@ -126,7 +153,6 @@ abstract class TemplateNode<TIn> {
   TemplateNode(this.name, List<TIn> attributes, {this.parent, this.logger}) :
       this.attributes = new List<TemplateAttribute>(),
       this.children = new List<TemplateNode>(),
-      this.bindings = new List<TemplateDataBinding>(),
       this.events = new List<TemplateEvent>() {
     _applyAttributes(attributes);
   }
@@ -173,8 +199,11 @@ abstract class TemplateAttribute<TValue> {
   /// Gets or sets the value of the attribute
   TValue value;
 
+  /// Name of the property which is bind to this attribute
+  String propertyName;
+
   /// Initializes the template attribute with a [name] and its [value]
-  TemplateAttribute(this.name, this.value, {this.logger});
+  TemplateAttribute(this.name, this.value, {this.propertyName, this.logger});
 
   /// Compares this attribute with another one
   bool operator ==(TemplateAttribute another)

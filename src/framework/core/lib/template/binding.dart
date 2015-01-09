@@ -1,62 +1,135 @@
 part of modularity.core.template;
 
-/// Binding which allows the update of a HTML element on property change
-abstract class Binding<TElement extends html.Element, TProperty> {
-  Property<TProperty> property;
+/// Binding for bidirectional communication. If the property is
+/// updated the HTML element will be notified and updated.
+/// Whenever the HTML element is updated the property will be updated.
+abstract class DataBinding<TElement, TPropertyValue> {
+  Property<TPropertyValue> _property;
   TElement element;
-
-  Binding(this.element, this.property);
 
   /**
    * This function is invoked whenever the
    * value of the property is changed. So
    * the DOM element could be updated.
    */
-  void notifyPropertyChanged();
+  void notifyPropertyChanged(Property<TPropertyValue> property);
 
   /**
-   * Handler which is invoked before the binding
-   * will be destroyed. This function should be used
-   * to remove events from the DOM element.
+   * This function is invoked whenever an
+   * attribute of the element is changed. So
+   * the property could be updated.
    */
-  void onUnbind();
+  void notifyElementChanged();
+
+  /**
+   * Binds a property to a specific DOM element
+   */
+  void set property(Property<TPropertyValue> property) {
+    _property = property;
+
+    if(_property != null) {
+      _property.registerPropertyChangedHandler(notifyPropertyChanged);
+    }
+  }
+
+  /**
+   * Gets the property of the binding
+   */
+  Property<TPropertyValue> get property {
+    return _property;
+  }
 
   /**
    * Destroys the binding. This function
    * is used to avoid memory leaks.
    */
   void unbind() {
-    onUnbind();
     element = null;
-    property = null;
+
+    if(_property != null) {
+      _property.removePropertyChangedHandler(notifyPropertyChanged);
+      _property = null;
+    }
   }
 }
 
-/// Binding for bidirectional communication. If the property is updated the HTML element will be notified.
-/// And if the HTML element is updated the property will be set.
-abstract class TwoWayBinding<TElement extends html.Element, TProperty> extends Binding<TElement, TProperty> {
+/// Error which is thrown whenever a specific element type isn't supported yet
+class UnsupportedElementWarning extends WarningMessage {
+  final String elementType;
 
-  TwoWayBinding(element, property) : super(element, property);
+  UnsupportedElementWarning(namespace, this.elementType) : super(namespace);
 
-  /**
-   * This function is invoked whenever the
-   * value of the element is changed. So
-   * the property could be updated.
-   */
-  void notifyElementChanged();
+  String get message => "The element of type [$elementType] is currently not supported.";
+}
+
+/// Proxy class for element bindings
+class ElementBinding extends DataBinding<html.Element, String> {
+  static const String namespace = "modularity.core.template.ElementBinding";
+  final Logger logger;
+  DataBinding _binding;
+
+  ElementBinding(html.Element element, Property<String> property, {this.logger}) {
+    _binding = _getBinding(element, property);
+  }
+
+  void notifyPropertyChanged(Property<String> property) {
+    if(_binding != null) {
+      _binding.notifyPropertyChanged(property);
+    }
+  }
+
+  void notifyElementChanged() {
+    if(_binding != null) {
+      _binding.notifyElementChanged();
+    }
+  }
+
+  void unbind() {
+    if(_binding != null) {
+      _binding.unbind();
+    }
+
+    super.unbind();
+  }
+
+  DataBinding _getBinding(html.Element element, Property<String> property) {
+    var tagName = element.tagName.toLowerCase();
+    DataBinding binding = null;
+
+    switch (tagName) {
+      case "div":
+        binding = new DivBinding(element, property);
+        break;
+
+      case "input":
+        binding = new InputBinding(element, property);
+        break;
+
+      default:
+        if(logger != null) {
+          logger.log(new UnsupportedElementWarning(namespace, tagName));
+        }
+        break;
+    }
+
+    return binding;
+  }
 }
 
 /**
  * One-way binding for divs
  */
-class DivBinding extends Binding<html.DivElement, String> {
-  DivBinding(element, property) : super(element, property);
+class DivBinding extends DataBinding<html.DivElement, String> {
+  DivBinding(element, property) {
+    this.property = property;
+    this.element = element;
+  }
 
-  void notifyPropertyChanged() {
+  void notifyPropertyChanged(Property<String> property) {
     element.innerHtml = property.value;
   }
 
-  void onUnbind() {
+  void notifyElementChanged() {
     //does nothing
   }
 }
@@ -64,16 +137,19 @@ class DivBinding extends Binding<html.DivElement, String> {
 /**
  * Two-way binding for input fields
  */
-class InputBinding extends TwoWayBinding<html.InputElement, String> {
+class InputBinding extends DataBinding<html.InputElement, String> {
   StreamSubscription _subscription;
 
-  InputBinding(html.Element element, property) : super(element, property) {
+  InputBinding(html.Element element, property) {
+    this.property = property;
+    this.element = element;
+
     _subscription = element.onChange.listen((event) {
       notifyElementChanged();
     });
   }
 
-  void notifyPropertyChanged() {
+  void notifyPropertyChanged(Property<String> property) {
     element.value = property.value;
   }
 
@@ -81,11 +157,13 @@ class InputBinding extends TwoWayBinding<html.InputElement, String> {
     property.notifyElementValueChanged(element.value);
   }
 
-  void onUnbind() {
+  void unbind() {
     //remove event listener
     if(_subscription != null) {
       _subscription.cancel();
       _subscription = null;
     }
+
+    super.unbind();
   }
 }

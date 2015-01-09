@@ -1,134 +1,82 @@
 part of modularity.core.template;
 
-typedef OnElementValueChangedHandler(Property sender);
+typedef OnElementValueChangedHandler<TPropertyValue>(Property<TPropertyValue> sender);
+typedef OnPropertyChangedHandler<TPropertyValue>(Property<TPropertyValue> sender);
 
-class Property<T> {
-  static const String namespace = "modularity.core.template.Property";
-  OnElementValueChangedHandler _elValueChangedHandler;
-  final Logger logger;
-  Binding _binding;
-  T _value;
-
-  /**
-   * Initializes the property
-   */
-  Property({this.logger});
+class Property<TPropertyValue> {
+  final List<OnElementValueChangedHandler<TPropertyValue>> elementValueChangedHandler;
+  final List<OnPropertyChangedHandler<TPropertyValue>> propertyChangedHandler;
+  TPropertyValue _value;
 
   /**
    * Initializes the property
    * with an initial [value]
    */
-  Property.withValue(T value, {this.logger}): _value = value;
+  Property.withValue(TPropertyValue value): _value = value;
 
   /**
-   * Sets the value and updates
-   * the DOM element bind to this
-   * property. Throws an [MissingBindingException]
-   * if [element] is not set.
+   * Initializes the property
    */
-  set value(T val) {
+  Property() :
+    elementValueChangedHandler = new List<OnElementValueChangedHandler<TPropertyValue>>(),
+    propertyChangedHandler = new List<OnPropertyChangedHandler<TPropertyValue>>();
+
+  /**
+   * Sets the value and notifies
+   * each listener that the value
+   * is changed
+   */
+  set value(TPropertyValue val) {
     if(val != _value) {
       _value = val;
-      notifyPropertyChanged();
+      _notifyPropertyChanged();
     }
   }
 
   /**
    * Gets the value od this property
    */
-  T get value {
+  TPropertyValue get value {
     return _value;
   }
 
   /**
-   * Binds a DOM element to
-   * this property. It throws
-   * an [NotSupportedElementException]
-   * if there is no specific [Binding]
-   * for the given [element]
+   * Notifies each registered listener for property changes
+   * that the value is changed.
    */
-  Property<T> bind(html.Element element) {
-    unbind();
-
-    if(element is html.DivElement) { //TODO test
-      _binding = new DivBinding(element, this);
-
-    } else if(element is html.InputElement) {
-      _binding = new InputBinding(element, this);
-
-    } else if(logger != null) {
-      logger.log(new UnsupportedElementError(namespace, element.tagName));
-    }
-
-    return this;
-  }
-
-  /**
-   * Removes the binding. This function
-   * should be called before removing
-   * the bound DOM element from DOM.
-   */
-  Property<T> unbind() {
-    if(_binding != null) {
-      _binding.unbind();
-      _binding = null;
-    }
-
-    return this;
-  }
-
-  /**
-   * Notifies the DOM element that the value
-   * is changed.
-   */
-  void notifyPropertyChanged() {
-    if(_binding != null) {
-      _binding.notifyPropertyChanged();
-    } else if(logger != null) {
-      logger.log(new MissingBindingError(namespace));
-    }
-  }
-
-  /**
-   * Sets the new [value] of the bound element
-   * and invokes the [OnElementValueChangedHandler]
-   * on change
-   */
-  void notifyElementValueChanged(T value) {
-    if(value != _value) {
-      _value = value;
-
-      if(_elValueChangedHandler != null) {
-        _elValueChangedHandler(this);
-      }
+  void _notifyPropertyChanged() {
+    for(var handler in propertyChangedHandler) {
+      handler(this);
     }
   }
 
   /**
    * Registers an event [handler] which is invoked
-   * whenever the value of the DOM element is changed.
-   * This happens in case of a two-way binding for example when
-   * the user enters a new value into an input element.
+   * whenever the value of the property is changed
    */
-  Property<T> onElementValueChanged(OnElementValueChangedHandler handler) {
-    _elValueChangedHandler = handler;
-    return this;
+  void registerPropertyChangedHandler(OnPropertyChangedHandler<TPropertyValue> handler) {
+    propertyChangedHandler.add(handler);
   }
-}
 
-/// Error which is thrown whenever a binding is missing
-class MissingBindingError extends ErrorMessage {
+  /**
+   * Removes a specific handler
+   */
+  void removePropertyChangedHandler(OnPropertyChangedHandler<TPropertyValue> handler) {
+    propertyChangedHandler.remove(handler);
+  }
 
-  MissingBindingError(namespace) : super(namespace);
+  /**
+   *
+   */
+  void notifyElementValueChanged(TPropertyValue value) {
+    _value = value;
 
-  String get message =>  "The binding must not be null.";
-}
+    for(var handler in elementValueChangedHandler) {
+      handler(this);
+    }
+  }
 
-/// Error which is thrown whenever a specific element type isn't supported yet
-class UnsupportedElementError extends ErrorMessage {
-  final String elementType;
-
-  UnsupportedElementError(namespace, this.elementType) : super(namespace);
-
-  String get message => "The element of type [$elementType] is currently not supported.";
+  void registerElementValueChangedHandler(OnElementValueChangedHandler<TPropertyValue> handler) {
+    elementValueChangedHandler.add(handler);
+  }
 }
