@@ -36,9 +36,9 @@ abstract class Template<TIn> {
   html.HtmlElement _htmlNode;
 
   /// Initializes the template with a specific input format of type [TIn]
-  Template(TIn template, this.id, this.controller, {this.logger}) :
-    bindings = new List<DataBinding>(),
-    events = new List<StreamSubscription>() {
+  Template(TIn template, this.id, this.controller, {this.logger})
+      : bindings = new List<DataBinding>(),
+        events = new List<StreamSubscription>() {
     _htmlNode = buildHtmlNode(nodeConverter.convert(template), id);
   }
 
@@ -52,9 +52,9 @@ abstract class Template<TIn> {
   void render(String parentId) {
     var parent = html.document.getElementById(parentId);
 
-    if(parent != null) {
+    if (parent != null) {
       parent.nodes.add(node);
-    } else if(logger != null) {
+    } else if (logger != null) {
       logger.log(new UnknownParentNodeError(namespace, parentId));
     }
   }
@@ -62,12 +62,12 @@ abstract class Template<TIn> {
   /// Removes the template from DOM
   void destroy() {
     //remove all event handler
-    for(var eventSubscription in events) {
+    for (var eventSubscription in events) {
       eventSubscription.cancel();
     }
 
     //remove all bindings
-    for(var binding in bindings) {
+    for (var binding in bindings) {
       binding.unbind();
     }
 
@@ -82,31 +82,25 @@ abstract class Template<TIn> {
   html.HtmlElement buildHtmlNode(TemplateNode templateNode, [String id = null]) {
     var node = new html.Element.tag(templateNode.name);
 
-
     //set template id
-    if(id != null) {
+    if (id != null) {
       node.id = id;
     }
 
-    // register event handler
+    //register event handler
     for (var event in templateNode.events) {
       var subscription = node.on[event.type].listen((_) {
-        controller.invokeCallback(
-            event.binding.callbackName,
-            event.binding.parameter
-        );
+        controller.invokeCallback(event.binding.callbackName, event.binding.parameter);
       });
       events.add(subscription);
     }
 
-    // set attributes and data-binding
+    //set attributes and data-binding
     for (var attribute in templateNode.attributes) {
       node.attributes[attribute.name] = attribute.value;
 
-      if(attribute.propertyName != null) {
-        bindings.add(
-            new ElementBinding(node, controller.getProperty(attribute.propertyName), logger: logger)
-        );
+      if (attribute.propertyName != null) {
+        bindings.add(new ElementBinding(node, controller.getProperty(attribute.propertyName), logger: logger));
       }
     }
 
@@ -129,13 +123,16 @@ class UnknownParentNodeError extends ErrorMessage {
 }
 
 /// Converter used to convert a specific input of type [TIn] to a [TemplateNode]
-abstract class TemplateNodeConverter<TIn> extends Converter<TIn, TemplateNode> {}
+abstract class TemplateNodeConverter<TIn> extends Converter<TIn, TemplateNode> {
+}
 
 /// Converter used to convert a specific input of type [TIn] to a [TemplateAttribute]
-abstract class TemplateAttributeConverter<TIn> extends Converter<TIn, TemplateAttribute> {}
+abstract class TemplateAttributeConverter<TIn> extends Converter<TIn, TemplateAttribute> {
+}
 
 /// Converter used to convert a [Template] to another format of type [TOut]
-abstract class TemplateConverter<TOut> extends Converter<Template, TOut> {}
+abstract class TemplateConverter<TOut> extends Converter<Template, TOut> {
+}
 
 /// Represents a node similar to a XML or HTML node.
 abstract class TemplateNode<TIn> {
@@ -156,10 +153,10 @@ abstract class TemplateNode<TIn> {
   final TemplateNode parent;
 
   /// Initializes the [TemplateNode] with the help of a [XmlElement]
-  TemplateNode(this.name, List<TIn> attributes, {this.parent, this.logger}) :
-      this.attributes = new List<TemplateAttribute>(),
-      this.children = new List<TemplateNode>(),
-      this.events = new List<TemplateEvent>() {
+  TemplateNode(this.name, List<TIn> attributes, {this.parent, this.logger})
+      : this.attributes = new List<TemplateAttribute>(),
+        this.children = new List<TemplateNode>(),
+        this.events = new List<TemplateEvent>() {
     _applyAttributes(attributes);
   }
 
@@ -169,22 +166,21 @@ abstract class TemplateNode<TIn> {
   void _applyAttributes(List<TIn> attributes) {
     var converter = attributeConverter;
 
-    if(converter != null) {
-      for(var attribute in attributes) {
-        this.attributes.add(converter.convert(attribute)); //TODO check whether attribute is already added
+    if (converter != null) {
+      for (var attribute in attributes) {
+        this.attributes.add(converter.convert(attribute));
+        //TODO check whether attribute is already added
       }
-    } else if(logger != null && attributes.length > 0) {
+    } else if (logger != null && attributes.length > 0) {
       //TODO show warning if converter is null but there are attributes
     }
   }
 
   /// Gets the value of a specific attribute
   getAttributeValue(String attributeName, {defaultValue}) {
-    var attribute = attributes.firstWhere(
-            (attribute) => attribute.name == attributeName, orElse: () => null
-    );
+    var attribute = attributes.firstWhere((attribute) => attribute.name == attributeName, orElse: () => null);
 
-    if(attribute != null) {
+    if (attribute != null) {
       defaultValue = attribute.value;
     }
 
@@ -212,8 +208,7 @@ abstract class TemplateAttribute<TValue> {
   TemplateAttribute(this.name, this.value, {this.propertyName, this.logger});
 
   /// Compares this attribute with another one
-  bool operator ==(TemplateAttribute another)
-      => another.name == name && another.value == value;
+  bool operator ==(TemplateAttribute another) => another.name == name && another.value == value;
 
   /// Gets the hash code of this attribute
   int get hashCode => hash2(name, value);
@@ -226,8 +221,7 @@ class UnsupportedAttributeWarning extends WarningMessage {
   UnsupportedAttributeWarning(String namespace, this.attributeName) : super(namespace);
 
   @override
-  String get message =>
-      "Attribute => \"$attributeName\" isn't supported by the current template type. You should remove all unsupported attributes for a better parsing performance";
+  String get message => "Attribute => \"$attributeName\" isn't supported by the current template type. You should remove all unsupported attributes for a better parsing performance";
 }
 
 /// Represents an event usually used for

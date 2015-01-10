@@ -2,16 +2,15 @@ library modularity.tests;
 
 import 'package:scheduled_test/scheduled_test.dart' as test;
 import 'package:unittest/html_config.dart';
-import 'package:core/core.dart';
+import 'package:modularity/core.dart';
 
-//import '../lib/template/template.dart';
-import '../lib/exception/exception.dart';
-import '../lib/model/model.dart';
-import '../lib/logger.dart';
-//import 'mock/mock.dart';
+import 'package:modularity/template/template.dart';
+import 'package:modularity/exception/exception.dart';
+import 'package:modularity/model/model.dart';
+import 'package:modularity/logger.dart';
+import 'package:modularity/annotation/module/module.dart' as annotation;
 
 import 'dart:async';
-//import 'dart:html' as html;
 import 'dart:convert';
 
 part 'logger_test.dart';
@@ -40,6 +39,13 @@ void main() {
          "children": []
        }, {
          "type": "Button",
+         "events": [{
+           "type": "click",
+           "binding": {
+              "callback": "showInfo",
+              "parameter": []
+           }
+         }],
          "attributes": [{
            "name": "title",
            "value": "OK"
@@ -48,22 +54,35 @@ void main() {
        }]
      }''');
 
-  //var tpl = new JsonTemplate(tplMap, "tplId", null);
+  var menu = new Module(
+      "modularity.tests", "MenuModule", tplMap, {
+          "title": "That's an init text!"
+      }
+  );
 
-  //tpl.render("body");
+  var tpl = new JsonTemplate(tplMap, "tplId", menu);
+  print(tpl.node.children.length);
+
+  tpl.render("body");
 
   new LoggerTest().run();
   new ApplicationBuilderTest().run();
   new ApplicationTest().run();
 }
 
-//TODO fix matcher
-/// A matcher for ApplicationLoadingExceptions.
-//const Matcher isApplicationLoadingException = const _ApplicationLoadingException();
+@annotation.Module("1.0.5")
+class MenuModule {
 
-/*
-class _ApplicationLoadingException extends TypeMatcher {
-  const _ApplicationLoadingException(): super("ApplicationLoadingException");
-  bool matches(item, Map matchState) => item is ApplicationLoadingException;
-}*/
+  @annotation.TemplateCallback()
+  void showInfo(args) {
+    print("test click");
+  }
 
+  @annotation.TemplateProperty
+  Property<String> title = new Property<String>.withValue("test");
+
+  @annotation.OnInit
+  void init(context, args) {
+
+  }
+}
