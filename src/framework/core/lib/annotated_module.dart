@@ -84,9 +84,10 @@ class Module implements TemplateController {
     var args = null; //TODO TemplateCallbackEventArgs
 
     _invokeHandlerWhere(
-            (methodName, meta) => methodName == new Symbol(callbackName) &&
-                meta.hasReflectee &&
-                meta.reflectee is annotations.TemplateCallback,
+            (methodName, meta) {
+              return methodName == new Symbol(callbackName) && meta.hasReflectee &&
+                meta.reflectee is annotations.TemplateCallback;
+            },
             _reflectedClass, _instance, args
     ); //TODO return false if not found
   }
@@ -178,7 +179,9 @@ class Module implements TemplateController {
 
         //get onInit annotation
         var annotation = methodMirror.metadata.firstWhere(
-          (meta) => meta.hasReflectee && meta.reflectee is annotations.OnInitAnnotation,
+          (meta) {
+            return meta.hasReflectee && meta.reflectee is annotations.OnInitAnnotation;
+          },
           orElse: () => null
         );
 
@@ -199,7 +202,9 @@ class Module implements TemplateController {
    */
   void onBeforeAdd(NavigationEventArgs args) {
     _invokeHandlerWhere(
-            (methodName, meta) => meta.hasReflectee && meta.reflectee is annotations.OnBeforeAddAnnotation,
+            (methodName, meta) {
+              return meta.hasReflectee && meta.reflectee is annotations.OnBeforeAddAnnotation;
+            },
             _reflectedClass, _instance, args
     );
   }
@@ -210,7 +215,9 @@ class Module implements TemplateController {
    */
   void onAdded(NavigationEventArgs args) {
     _invokeHandlerWhere(
-            (methodName, meta) => meta.hasReflectee && meta.reflectee is annotations.OnAddedAnnotation,
+            (methodName, meta) {
+              return meta.hasReflectee && meta.reflectee is annotations.OnAddedAnnotation;
+            },
             _reflectedClass, _instance, args
     );
   }
@@ -222,7 +229,9 @@ class Module implements TemplateController {
    */
   void onBeforeRemove() {
     _invokeHandlerWhere(
-            (methodName, meta) => meta.hasReflectee && meta.reflectee is annotations.OnBeforeRemoveAnnotation,
+            (methodName, meta) {
+              return meta.hasReflectee && meta.reflectee is annotations.OnBeforeRemoveAnnotation;
+            },
             _reflectedClass, _instance
     );
   }
@@ -233,7 +242,9 @@ class Module implements TemplateController {
    */
   void onRemoved() {
     _invokeHandlerWhere(
-        (methodName, meta) => meta.hasReflectee && meta.reflectee is annotations.OnRemovedAnnotation,
+        (methodName, meta) {
+          return meta.hasReflectee && meta.reflectee is annotations.OnRemovedAnnotation;
+        },
         _reflectedClass, _instance
     );
   }
@@ -245,13 +256,15 @@ class Module implements TemplateController {
    */
   void onRequestCompleted(RequestCompletedEventArgs args) {
     _invokeHandlerWhere(
-            (methodName, meta) => meta.hasReflectee
-              && meta.reflectee is annotations.OnRequestCompleted
-              && (
-                  (meta.reflectee.requestId == args.requestId
-                  && meta.reflectee.isErrorHandler == args.isErrorOccurred)
-                  || meta.reflectee.isDefault
-              ),
+            (methodName, meta) {
+              return meta.hasReflectee
+                && meta.reflectee is annotations.OnRequestCompleted
+                && (
+                    (meta.reflectee.requestId == args.requestId
+                    && meta.reflectee.isErrorHandler == args.isErrorOccurred)
+                    || meta.reflectee.isDefault
+                );
+            },
             _reflectedClass, _instance, args
     );
   }
@@ -263,9 +276,11 @@ class Module implements TemplateController {
    */
   void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
     _invokeHandlerWhere(
-      (methodName, meta) => meta.hasReflectee
-        && meta.reflectee is annotations.OnLoadingStateChanged
-        && (meta.reflectee.isLoading == args.isLoading || meta.reflectee.isDefault),
+      (methodName, meta) {
+        return meta.hasReflectee
+          && meta.reflectee is annotations.OnLoadingStateChanged
+          && (meta.reflectee.isLoading == args.isLoading || meta.reflectee.isDefault);
+      },
       _reflectedClass, _instance, args
     );
   }

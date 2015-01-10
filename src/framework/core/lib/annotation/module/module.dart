@@ -68,6 +68,21 @@ part 'on_loading_state_changed.dart';
 part 'on_removed.dart';
 part 'on_request_completed.dart';
 
+//TODO document
+
+
+class TemplateCallback {
+  final String callbackName;
+  
+  const TemplateCallback({this.callbackName});
+}
+
+const Object TemplateProperty = const TemplatePropertyAnnotation();
+
+class TemplatePropertyAnnotation {
+  const TemplatePropertyAnnotation();
+}
+
 /**
  * Annotation which marks a class as module.
  * Each module requires a version number with
@@ -121,15 +136,3 @@ class Module {
 }
 
 
-//TODO document
-const Object TemplateCallback = const TemplateCallbackAnnotation();
-
-class TemplateCallbackAnnotation {
-  const TemplateCallbackAnnotation();
-}
-
-const Object TemplateProperty = const TemplatePropertyAnnotation();
-
-class TemplatePropertyAnnotation {
-  const TemplatePropertyAnnotation();
-}

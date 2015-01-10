@@ -12,17 +12,17 @@ class Property<TPropertyValue> {
    * Initializes the property
    * with an initial [value]
    */
-  Property.withValue(TPropertyValue value) :
-    elementValueChangedHandler = new List<OnElementValueChangedHandler<TPropertyValue>>(),
-    propertyChangedHandler = new List<OnPropertyChangedHandler<TPropertyValue>>(),
-    _value = value;
+  Property.withValue(TPropertyValue value)
+      : elementValueChangedHandler = new List<OnElementValueChangedHandler<TPropertyValue>>(),
+        propertyChangedHandler = new List<OnPropertyChangedHandler<TPropertyValue>>(),
+        _value = value;
 
   /**
    * Initializes the property
    */
-  Property() :
-    elementValueChangedHandler = new List<OnElementValueChangedHandler<TPropertyValue>>(),
-    propertyChangedHandler = new List<OnPropertyChangedHandler<TPropertyValue>>();
+  Property()
+      : elementValueChangedHandler = new List<OnElementValueChangedHandler<TPropertyValue>>(),
+        propertyChangedHandler = new List<OnPropertyChangedHandler<TPropertyValue>>();
 
   /**
    * Sets the value and notifies
@@ -30,7 +30,7 @@ class Property<TPropertyValue> {
    * is changed
    */
   set value(TPropertyValue val) {
-    if(val != _value) {
+    if (val != _value) {
       _value = val;
       _notifyPropertyChanged();
     }
@@ -48,7 +48,7 @@ class Property<TPropertyValue> {
    * that the value is changed.
    */
   void _notifyPropertyChanged() {
-    for(var handler in propertyChangedHandler) {
+    for (var handler in propertyChangedHandler) {
       handler(this);
     }
   }
@@ -74,7 +74,7 @@ class Property<TPropertyValue> {
   void notifyElementValueChanged(TPropertyValue value) {
     _value = value;
 
-    for(var handler in elementValueChangedHandler) {
+    for (var handler in elementValueChangedHandler) {
       handler(this);
     }
   }
