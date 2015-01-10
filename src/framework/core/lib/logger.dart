@@ -156,7 +156,7 @@ class Logger {
 /**
  * Interface for declaring classes as message observer
  */
-class MessageObserver {
+abstract class MessageObserver {
   void onMessageReceived(Logger sender, LoggingMessage message);
   void onMessagesCleared(Logger sender);
 }

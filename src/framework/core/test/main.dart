@@ -2,16 +2,16 @@ library modularity.tests;
 
 import 'package:scheduled_test/scheduled_test.dart' as test;
 import 'package:unittest/html_config.dart';
+import 'package:core/core.dart';
 
 //import '../lib/template/template.dart';
 import '../lib/exception/exception.dart';
 import '../lib/model/model.dart';
-import '../lib/core.dart';
 import '../lib/logger.dart';
-import 'mock/mock.dart';
+//import 'mock/mock.dart';
 
 import 'dart:async';
-import 'dart:html' as html;
+//import 'dart:html' as html;
 import 'dart:convert';
 
 part 'logger_test.dart';

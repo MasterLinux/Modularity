@@ -160,9 +160,9 @@ class ApplicationBuilderTest {
         ..languageCode = LANGUAGE_CODE;
 
       var appUnderTest = (new ApplicationBuilder(APP_NAME, APP_VERSION)
-                                        ..addPages(new List<Page>()..add(page))
-                                        ..addTasks(new List<Task>()..add(task))
-                                        ..addResources(new List<Resource>()..add(res)))
+                                        ..addPages(new List<ConfigPageModel>()..add(page))
+                                        ..addTasks(new List<ConfigTaskModel>()..add(task))
+                                        ..addResources(new List<ConfigResourceModel>()..add(res)))
                                         .build();
 
       test.expect(appUnderTest, test.isNotNull);
@@ -190,7 +190,7 @@ class ApplicationBuilderTest {
         ..uri = PAGE_URI;
 
       var appUnderTest = (new ApplicationBuilder(APP_NAME, APP_VERSION)
-                                        ..addPages(new List<Page>()..add(page)))
+                                        ..addPages(new List<ConfigPageModel>()..add(page)))
                                         .build();
 
       test.expect(appUnderTest, test.isNotNull);

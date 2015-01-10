@@ -17,7 +17,7 @@ class Page {
   Page(this.uri, this.title, {JsonTemplate template, this.logger}) : fragments = new List<Fragment>() {
     //load default template
     if (template == null) {
-      template = new DefaultPageTemplate(logger: logger); //TODO create default template
+      //template = new DefaultPageTemplate(logger: logger); //TODO create default template
     }
 
     _template = template;
