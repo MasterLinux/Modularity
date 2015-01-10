@@ -12,7 +12,10 @@ class Property<TPropertyValue> {
    * Initializes the property
    * with an initial [value]
    */
-  Property.withValue(TPropertyValue value): _value = value;
+  Property.withValue(TPropertyValue value) :
+    elementValueChangedHandler = new List<OnElementValueChangedHandler<TPropertyValue>>(),
+    propertyChangedHandler = new List<OnPropertyChangedHandler<TPropertyValue>>(),
+    _value = value;
 
   /**
    * Initializes the property

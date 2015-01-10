@@ -66,6 +66,12 @@ abstract class Template<TIn> {
       eventSubscription.cancel();
     }
 
+    //remove all bindings
+    for(var binding in bindings) {
+      binding.unbind();
+    }
+
+    bindings.clear();
     events.clear();
     node.remove();
 
