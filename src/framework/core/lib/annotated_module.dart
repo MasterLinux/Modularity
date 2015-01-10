@@ -1,5 +1,9 @@
 part of modularity.core;
 
+class TemplateCallbackEventArgs extends EventArgs {
+  //TODO implement
+}
+
 /**
  * Helper class to load and handle annotated
  * modules. This class is used to load
@@ -81,7 +85,7 @@ class Module implements TemplateController {
   }
 
   void invokeCallback(String callbackName, Map<String, String> parameter) {
-    var args = null; //TODO TemplateCallbackEventArgs
+    var args = new TemplateCallbackEventArgs();
 
     _invokeHandlerWhere(
             (methodName, meta) {
@@ -109,7 +113,7 @@ class Module implements TemplateController {
 
         //get all methods to invoke
         var annotations = methodMirror.metadata.where((meta) {
-          test(methodName, meta);
+          return test(methodName, meta);
         });
 
         //invoke onInit method

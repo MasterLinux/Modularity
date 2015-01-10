@@ -65,9 +65,9 @@ void main() {
 
   tpl.render("body");
 
-  new LoggerTest().run();
-  new ApplicationBuilderTest().run();
-  new ApplicationTest().run();
+  //new LoggerTest().run();
+  //new ApplicationBuilderTest().run();
+  //new ApplicationTest().run();
 }
 
 @annotation.Module("1.0.5")
