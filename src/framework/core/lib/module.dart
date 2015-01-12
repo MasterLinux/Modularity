@@ -1,6 +1,6 @@
 part of modularity.core;
 
-class TemplateCallbackEventArgs extends EventArgs {
+class ModuleCallbackInvocationEventArgs extends EventArgs {
   //TODO implement
 }
 
@@ -21,7 +21,7 @@ class Module implements TemplateController {
   ClassMirror _reflectedClass;
   InstanceMirror _instance;
 
-  annotations.Module _meta;
+  annotations.ApplicationModule _meta;
   String _id;
 
   /**
@@ -42,7 +42,7 @@ class Module implements TemplateController {
    * Gets the meta information
    * of this module.
    */
-  annotations.Module get meta {
+  annotations.ApplicationModule get meta {
     return _meta;
   }
 
@@ -84,8 +84,9 @@ class Module implements TemplateController {
     onRemoved();
   }
 
+  @override
   void invokeCallback(String callbackName, Map<String, String> parameter) {
-    var args = new TemplateCallbackEventArgs();
+    var args = new ModuleCallbackInvocationEventArgs();
 
     _invokeHandlerWhere(
             (methodName, meta) {
@@ -96,6 +97,7 @@ class Module implements TemplateController {
     ); //TODO return false if not found
   }
 
+  @override
   Property getProperty(String name) {
     //TODO implement
     return null;
@@ -137,7 +139,7 @@ class Module implements TemplateController {
 
     var metadata = _reflectedClass.metadata;
     var annotation = metadata.firstWhere(
-      (meta) => meta.hasReflectee && meta.reflectee is annotations.Module,
+      (meta) => meta.hasReflectee && meta.reflectee is annotations.ApplicationModule,
       orElse: () => null
     );
 
@@ -146,7 +148,7 @@ class Module implements TemplateController {
 
     //get module information for registration
     if(annotation != null && name != null) {
-      _meta = annotation.reflectee as annotations.Module;
+      _meta = annotation.reflectee as annotations.ApplicationModule;
 
       //try to invoke onInit handler of module, if handler doesn't exists throw exception
       if(!_tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {

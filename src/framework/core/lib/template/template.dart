@@ -100,7 +100,13 @@ abstract class Template<TIn> {
       node.attributes[attribute.name] = attribute.value;
 
       if (attribute.propertyName != null) {
-        bindings.add(new ElementBinding(node, controller.getProperty(attribute.propertyName), logger: logger));
+        var property = controller.getProperty(attribute.propertyName);
+
+        if(property != null) {
+          bindings.add(new ElementBinding(node, property, logger: logger));
+        } else if(logger != null) {
+          //TODO log property does not exist error
+        }
       }
     }
 
