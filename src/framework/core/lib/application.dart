@@ -1,35 +1,86 @@
 part of modularity.core;
 
 /**
- * Application data model which contains
- * each information to initialize an app
+ * Representation of a language
+ *
+ *   //
+ *   var german = new Language.fromCode("de_DE");
+ *   var english = new Language.fromCode("en-US");
+ *   var defaultLanguage = new Language();
  */
-class ApplicationInfo {
+class Language {
+  static const String defaultLanguage = "en";
+  static const String defaultCountry = "US";
 
-  /**
-   * Gets or sets the name of the application
-   */
-  String name;
+  String _language;
+  String _country;
 
-  /**
-   * Gets or sets the current version number of the application
-   */
-  String version;
+  Language.fromCode(String code) {
+    var info = _parse(code);
 
-  /**
-   * Gets or sets the language code of the current displayed language
-   */
-  String language;
+    _language = info.language;
+    _country = info.country;
+  }
 
-  /**
-   * Gets or sets the URI of the home page
-   */
-  String startUri;
+  factory Language({String language:defaultLanguage, String country:defaultCountry}) {
+    return new Language.fromCode("${language}-${country}");
+  }
 
-  /**
-   * Gets or sets the name of the author of the application
-   */
-  String author;
+  String get language => _language;
+
+  String get country => _country;
+
+  Language _parse(String code) {
+    return null; //TODO see https://pub.dartlang.org/packages/peg
+  }
+
+  String toString() => "${language}-${country}";
+}
+
+/**
+ * Representation of a version
+ *
+ *   var version = new Version.fromString("1.2.43");
+ *   var version = new Version.fromString("1.2.43_version-name");
+ *
+ */
+class Version {
+  String _major;
+  String _minor;
+  String _maintenance;
+  String _name;
+
+  Version.fromString(String versionString) {
+    var info = _parse(versionString);
+
+    _major = info.major;
+    _minor = info.minor;
+    _maintenance = info.maintenance;
+    _name = info.name;
+  }
+
+  String get major => _major;
+
+  String get minor => _minor;
+
+  String get maintenance => _maintenance;
+
+  String get name => _name;
+
+  Version _parse(String version) {
+    return null; //TODO see https://pub.dartlang.org/packages/peg
+  }
+
+  String toString() => "${major}.${minor}.${maintenance}"; //TODO add version name if set
+}
+
+class Author {
+  final String firstName;
+  final String lastName;
+  //TODO add company as new model class
+  //TODO add email
+
+  Author(this.firstName, this.lastName);
 }
 
 /**
@@ -37,8 +88,6 @@ class ApplicationInfo {
  */
 class Application implements NavigationListener {
   static const String namespace = "modularity.core.Application";
-  static const String defaultLanguage = "en_EN";    //TODO move const to the language manager class
-  static const String defaultVersion = "1.0.0";
   static const String defaultName = "undefined";
   bool _isStarted = false;
   bool _isBusy = false;
@@ -57,10 +106,29 @@ class Application implements NavigationListener {
   final Logger logger;
 
   /**
-   * Contains all information
-   * about the application
+   * Gets the name of the application
    */
-  final ApplicationInfo info;
+  final String name;
+
+  /**
+   * Gets the current version number of the application
+   */
+  final Version version;
+
+  /**
+   * Gets the default language of the application
+   */
+  final Language language;
+
+  /**
+   * Gets the URI of the first displayed page
+   */
+  final String startUri;
+
+  /**
+   * Gets the the author of the application
+   */
+  final Author author;
 
   /**
    * Gets all resources tasks if no resource is loaded
@@ -80,11 +148,15 @@ class Application implements NavigationListener {
    */
   bool get isStarted => _isStarted;
 
+  Application.fromConfig() {
+    //TODO build application from config
+  }
+
   /**
    * Initializes the application. If [logger]
    * is set the debug mode is enabled
    */
-  Application(this.info, this.navigator, {this.logger}) :
+  Application(this.name, this.version, this.language, this.author, this.startUri, this.navigator, {this.logger}) :
     resources = new HashMap<String, Resource>(),
     tasks = new HashMap<String, Task>()
   {
@@ -95,27 +167,6 @@ class Application implements NavigationListener {
     _validateVersion();
     _validateName();
   }
-
-  /**
-   * Gets the default language used
-   * as primary language
-   */
-  String get language => info.language;
-
-  /**
-   * Gets the application name
-   */
-  String get name => info.name;
-
-  /**
-   * Gets the application version
-   */
-  String get version => info.version;
-
-  /**
-   * Gets the URI of the first displayed page
-   */
-  String get startUri => info.startUri;
 
   /**
    * Gets all registered pages
@@ -192,7 +243,7 @@ class Application implements NavigationListener {
    * Adds all [pages] in list to the application
    */
   void addPages(List<Page> pages) {
-    if(stringUtil.isEmpty(info.startUri) && pages.isNotEmpty) {
+    if(stringUtil.isEmpty(startUri) && pages.isNotEmpty) {
       _validateStartUri(pages.first.uri);
     }
 
@@ -203,7 +254,7 @@ class Application implements NavigationListener {
    * Adds a single [page] to the application
    */
   void addPage(Page page) {
-    if(stringUtil.isEmpty(info.startUri)) {
+    if(stringUtil.isEmpty(startUri)) {
       _validateStartUri(page.uri);
     }
 
@@ -264,7 +315,7 @@ class Application implements NavigationListener {
    * Checks whether the default language is set.
    * If not the default is set.
    */
-  void _validateLanguage() {
+  void _validateLanguage() { //TODO validate in language class
     if (stringUtil.isEmpty(info.language)) {
       info.language = defaultLanguage;
 
@@ -292,7 +343,7 @@ class Application implements NavigationListener {
    * Checks whether the application version is set.
    * If not the default is set.
    */
-  void _validateVersion() {
+  void _validateVersion() { //TODO validate in Version class
     if (stringUtil.isEmpty(info.version)) {
       info.version = defaultVersion;
 
@@ -307,7 +358,7 @@ class Application implements NavigationListener {
    * If not it tries to use the URI of
    * the first added page.
    */
-  void _validateStartUri(String defaultUri) {
+  void _validateStartUri(String defaultUri) { //TODO create PageUri class with parser for validation
     if (stringUtil.isEmpty(info.startUri)) {
       info.startUri = defaultUri;
     }
