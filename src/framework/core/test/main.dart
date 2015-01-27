@@ -70,7 +70,7 @@ void main() {
   //new ApplicationTest().run();
 }
 
-@annotation.Module("1.0.5")
+@annotation.ApplicationModule("1.0.5")
 class MenuModule {
 
   @annotation.TemplateCallback()

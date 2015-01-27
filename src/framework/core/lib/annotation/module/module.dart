@@ -6,7 +6,7 @@
  *
  *     library myLib.module;
  *
- *     @Module("1.3.37")
+ *     @ApplicationModule("1.3.37")
  *     class ExampleModule {
  *
  *         @NavigationParameter -> TODO
@@ -91,17 +91,17 @@ class TemplatePropertyAnnotation {
  *
  * example usage:
  *
- *     @Module("1.0.0")
+ *     @ApplicationModule("1.0.0")
  *     class ExampleModule { ... }
  *
- *     @Module("1.0.0",
+ *     @ApplicationModule("1.0.0",
  *         author: "Author name",
  *         company: "Company name",
  *         eMail: "example@email.com",
  *         website: "http://www.example.com")
  *     class ExampleModuleWithOptionalAuthorInfo { ... }
  */
-class Module {
+class ApplicationModule {
 
   /**
    * Gets the author name of the module.
@@ -131,7 +131,7 @@ class Module {
   /**
    * Initializes the [@Module] annotation.
    */
-  const Module(this.version, {this.author, this.company, this.eMail, this.website});
+  const ApplicationModule(this.version, {this.author, this.company, this.eMail, this.website});
 
 }
 
