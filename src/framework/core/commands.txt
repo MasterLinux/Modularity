@@ -1,2 +1,0 @@
-cd C:\Users\Christoph\Documents\Development\Dart\Build_Ya_App\src\framework\core\lib
-dartdoc --out=../../../../docs/core core.dart
