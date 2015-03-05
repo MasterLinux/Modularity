@@ -18,9 +18,12 @@ class RestApiConfigLoader extends ConfigLoader {
   final Uri uri;
 
   RestApiConfigLoader.fromUri(this.uri);
+  
+  RestApiConfigLoader() : this.uri = null;
 
   Future<ApplicationInfo> load() {
     //TODO implement
+    return new Future.value(0);
   }
 
   bool get isLoaded {

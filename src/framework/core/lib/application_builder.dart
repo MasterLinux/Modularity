@@ -32,17 +32,17 @@ class ApplicationBuilder {
   /**
    * Sets the name of the [author]
    */
-  void set author(String author) => _author = author;
+  set author(String author) => _author = author;
 
   /**
    * Sets the URI of the first page to display on app start
    */
-  void set startUri(String startUri) => _startUri = startUri;
+  set startUri(String startUri) => _startUri = startUri;
 
   /**
    * Sets the default [language]
    */
-  void set language(String language) => _language = language;
+  set language(String language) => _language = language;
 
   /**
    * Adds all [pages] in list to the application
@@ -67,9 +67,10 @@ class ApplicationBuilder {
 
         //construct modules
         for(var moduleConfig in fragmentConfig.modules.objects) {
-          fragment.addModule(new AnnotatedModule(
+          fragment.addModule(new Module(
               moduleConfig.lib,
               moduleConfig.name,
+              moduleConfig.template,
               moduleConfig.config,
               logger: logger
           ));

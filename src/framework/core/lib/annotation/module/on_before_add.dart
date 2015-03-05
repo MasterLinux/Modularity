@@ -7,7 +7,7 @@ part of modularity.core.annotation.module;
  * example usage:
  *
  *     @OnBeforeAdd
- *     void onBeforeAddEventHandler() { ... }
+ *     void onBeforeAddEventHandler(NavigationEventArgs args) { ... }
  *
  */
 const Object OnBeforeAdd = const OnBeforeAddAnnotation();

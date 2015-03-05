@@ -6,7 +6,7 @@
  *
  *     library myLib.module;
  *
- *     @Module("1.3.37")
+ *     @ApplicationModule("1.3.37")
  *     class ExampleModule {
  *
  *         @NavigationParameter -> TODO
@@ -18,14 +18,20 @@
  *         @Navigator -> TODO
  *         Navigator navigator;
  *
+ *         @TemplateProperty -> TODO
+ *         Property<String> moduleTitle;
+ *
+ *         @TemplateCallback -> TODO
+ *         void showInfo(TemplateCallbackEventArgs args) { ... }
+ *
  *         @OnInit
  *         void initModule(ModuleContext context, InitEventArgs args) { ... }
  *
  *         @OnBeforeAdd
- *         void onBeforeAddEventHandler() { ... }
+ *         void onBeforeAddEventHandler(NavigationEventArgs args) { ... }
  *
  *         @OnAdded
- *         void onAddedEventHandler() { ... }
+ *         void onAddedEventHandler(NavigationEventArgs args) { ... }
  *
  *         @OnBeforeRemove
  *         void onBeforeRemoveEventHandler() { ... }
@@ -62,6 +68,21 @@ part 'on_loading_state_changed.dart';
 part 'on_removed.dart';
 part 'on_request_completed.dart';
 
+//TODO document
+
+
+class TemplateCallback {
+  final String callbackName;
+  
+  const TemplateCallback({this.callbackName});
+}
+
+const Object TemplateProperty = const TemplatePropertyAnnotation();
+
+class TemplatePropertyAnnotation {
+  const TemplatePropertyAnnotation();
+}
+
 /**
  * Annotation which marks a class as module.
  * Each module requires a version number with
@@ -70,17 +91,17 @@ part 'on_request_completed.dart';
  *
  * example usage:
  *
- *     @Module("1.0.0")
+ *     @ApplicationModule("1.0.0")
  *     class ExampleModule { ... }
  *
- *     @Module("1.0.0",
+ *     @ApplicationModule("1.0.0",
  *         author: "Author name",
  *         company: "Company name",
  *         eMail: "example@email.com",
  *         website: "http://www.example.com")
  *     class ExampleModuleWithOptionalAuthorInfo { ... }
  */
-class Module {
+class ApplicationModule {
 
   /**
    * Gets the author name of the module.
@@ -110,6 +131,8 @@ class Module {
   /**
    * Initializes the [@Module] annotation.
    */
-  const Module(this.version, {this.author, this.company, this.eMail, this.website});
+  const ApplicationModule(this.version, {this.author, this.company, this.eMail, this.website});
 
 }
+
+

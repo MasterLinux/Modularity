@@ -2,7 +2,7 @@ part of modularity.core;
 
 class Fragment {
   static const String namespace = "modularity.core.Fragment";
-  List<AnnotatedModule> modules;
+  List<Module> modules;
   ApplicationContext _context;
   final Logger logger;
 
@@ -34,7 +34,7 @@ class Fragment {
   }
 
   /// adds a collection of [AnnotatedModule]s to the fragment
-  void addModules(List<AnnotatedModule> modules) {
+  void addModules(List<Module> modules) {
     for(var module in modules) {
       addModule(module);
     }
@@ -43,7 +43,7 @@ class Fragment {
   /**
    * Adds a module to the fragment
    */
-  void addModule(AnnotatedModule module) {
+  void addModule(Module module) {
     if(!modules.contains(module)) {
       module.context = context;
       modules.add(module);
@@ -56,13 +56,13 @@ class Fragment {
 
   /**
    * Adds all its modules of the fragment to
-   * the DOM. The [isNavigatedBack]
+   * the DOM. The [args.isNavigatedBack]
    * flag indicates whether this fragment is
    * re-added 'caused by a back navigation
    */
-  void addToDOM(bool isNavigatedBack) {
+  void addToDOM(NavigationEventArgs args) {
     for(var module in modules) {
-      module.add(isNavigatedBack);
+      module.add(args);
     }
   }
 

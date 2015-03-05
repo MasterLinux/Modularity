@@ -19,6 +19,11 @@ class ConfigModuleModel extends ObjectModel {
   String name;
 
   /**
+   * The name of the template
+   */
+  String template;
+
+  /**
    * Config to setup the loaded
    * module
    */

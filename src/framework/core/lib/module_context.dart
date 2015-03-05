@@ -6,7 +6,7 @@ part of modularity.core;
  * with another modules.
  */
 class ModuleContext {
-  final AbstractModule module;
+  final Module module;
 
   /**
    * Initializes the module context.
@@ -19,12 +19,12 @@ class ModuleContext {
    * the title of the page or other information about
    * the page.
    */
-  Page get page =>  module.fragment.page;
+  Page get page => null;// module.fragment.page; //TODO
 
   /**
    * Gets the parent fragment of the module.
    */
-  Fragment get fragment => module.fragment;
+  Fragment get fragment => null; // module.fragment; //TODO
 
   /**
    * Gets the whole application

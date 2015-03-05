@@ -121,7 +121,7 @@ class Navigator {
   void addListener(NavigationListener listener) => _listener.add(listener);
 
   /// removes a specific [listener]
-  void removeListener(NavigationListener listener) => _listener.remove(listener);
+  bool removeListener(NavigationListener listener) => _listener.remove(listener);
 
   /// cleans up the navigator
   void clear() {
