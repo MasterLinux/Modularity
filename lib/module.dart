@@ -10,7 +10,7 @@ class ModuleCallbackInvocationEventArgs extends EventArgs {
  * modules with the help of its library
  * and class name.
  */
-class Module implements TemplateController {
+class Module implements TemplateController { //TODO rename to View
   final Map<String, Object> config;
   final Logger logger;
   final String name;

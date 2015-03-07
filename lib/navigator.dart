@@ -216,6 +216,24 @@ class NavigationEventArgs implements EventArgs {
   });
 }
 
+class NavigationUri {
+  String _path;
+
+  NavigationUri.fromString(String uri) {
+    _path = validateUri(uri);
+  }
+
+  String validateUri(String uri) {
+    return uri;
+  }
+
+  String get path => _path;
+
+  bool get isValid => true;
+
+  bool get isInvalid => !isValid;
+}
+
 abstract class NavigationStrategy {
   bool shouldReplace(Page page, Page previousPage);
 }

@@ -40,7 +40,7 @@ class Application implements NavigationListener {
   /**
    * Gets the URI of the first displayed page
    */
-  final String startUri;
+  NavigationUri startUri;
 
   /**
    * Gets the the author of the application
@@ -160,8 +160,8 @@ class Application implements NavigationListener {
    * Adds all [pages] in list to the application
    */
   void addPages(List<Page> pages) {
-    if(stringUtil.isEmpty(startUri) && pages.isNotEmpty) {
-      _validateStartUri(pages.first.uri);
+    if((startUri == null || startUri.isInvalid) && pages.isNotEmpty) {
+      startUri = new NavigationUri.fromString(pages.first.uri);
     }
 
     navigator.addPages(pages);
@@ -171,8 +171,8 @@ class Application implements NavigationListener {
    * Adds a single [page] to the application
    */
   void addPage(Page page) {
-    if(stringUtil.isEmpty(startUri)) {
-      _validateStartUri(page.uri);
+    if(startUri == null || startUri.isInvalid) {
+      startUri = new NavigationUri.fromString(page.uri);
     }
 
     page.context = new ApplicationContext(this);
@@ -267,17 +267,6 @@ class Application implements NavigationListener {
       if (logger != null) {
         logger.log(new MissingApplicationVersionError(namespace));
       }
-    }
-  }
-
-  /**
-   * Checks whether a start URI is set.
-   * If not it tries to use the URI of
-   * the first added page.
-   */
-  void _validateStartUri(String defaultUri) { //TODO create PageUri class with parser for validation
-    if (stringUtil.isEmpty(info.startUri)) {
-      info.startUri = defaultUri;
     }
   }
 }
