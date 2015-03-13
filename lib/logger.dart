@@ -1,17 +1,12 @@
-library modularity.core.logging;
-
-import 'dart:async' show Future, Completer;
+part of modularity.core;
 
 class Logger {
   final List<MessageObserver> _observer = new List<MessageObserver>();
   final List<LoggingMessage> messages = new List<LoggingMessage>();
-  final String applicationVersion;
-  final String applicationName;
-  final bool isSynchronouslyModeEnabled;
+  static Map<String, Logger> _cache;
+  final Application application;
 
   static const String namespace = "modularity.core.Logger";
-  static const String defaultApplicationVersion = "0.0.0";
-  static const String defaultApplicationName = "undefined";
 
   //all available level
   static const String customLevel = "custom";
@@ -22,27 +17,25 @@ class Logger {
   static const String networkLevel = "network";
 
   /**
-   * Initializes the logger for a specific application
-   * with its [applicationName] and [applicationVersion].
-   * It is possible to enable synchronously mode so a [Logger.log] or
-   * the call of [Logger.clear] is executed synchronously
+   * Initializes a logger for a specific application
    */
-  Logger({this.applicationName: defaultApplicationName,
-         this.applicationVersion: defaultApplicationVersion,
-         this.isSynchronouslyModeEnabled: false
-  }) {
-    if(applicationName == defaultApplicationName ||
-       applicationName == null ||
-       applicationName.isEmpty) {
-      log(new MissingApplicationNameError(namespace));
+  factory Logger(Application application) {
+    var key = "${application.name}_${application.version}";
+
+    if(_cache == null) {
+      _cache = {};
     }
 
-    if(applicationVersion == defaultApplicationVersion ||
-       applicationVersion == null ||
-       applicationVersion.isEmpty) {
-      log(new MissingApplicationVersionError(namespace));
+    if(_cache.containsKey(key)) {
+      return _cache[key];
+    } else {
+      final logger = new Logger._internal(application);
+      _cache[key] = logger;
+      return logger;
     }
   }
+
+  Logger._internal(this.application);
 
   /**
    * Registers a new [observer] which will be notified
@@ -75,23 +68,22 @@ class Logger {
     }
   }
 
-  void _clearSync() {
+  /**
+   * Removes all logging
+   * messages from logger
+   */
+  void clear() {
     messages.clear();
     _notifyMessagesCleared();
   }
 
   /**
-   * Removes all logging
-   * messages from logger
+   * Add a [message] to the logger to track
+   * a specific action, event, etc.
    */
-  Future clear() {
-    if(isSynchronouslyModeEnabled) {
-        return new Future.sync(() => _clearSync());
-    } else {
-        Completer completer = new Completer();
-        completer.complete();
-        return completer.future.then((_) => _clearSync());
-    }
+  void log(LoggingMessage message) {
+    messages.add(message);
+    _notifyMessageReceived(message);
   }
 
   /**
@@ -131,25 +123,6 @@ class Logger {
     return messages.where(
       (message) => message.level == customLevel && (message as CustomMessage).category == category
     );
-  }
-
-  void _logSync(LoggingMessage message) {
-    messages.add(message);
-    _notifyMessageReceived(message);
-  }
-
-  /**
-   * Add a [message] to the logger to track
-   * a specific action, event, etc.
-   */
-  Future log(LoggingMessage message) {
-    if(isSynchronouslyModeEnabled) {
-      return new Future.sync(() => _logSync(message));
-    } else {
-      Completer completer = new Completer();
-      completer.complete();
-      return completer.future.then((_) => _logSync(message));
-    }
   }
 }
 

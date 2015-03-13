@@ -1,51 +1,66 @@
 part of modularity.core;
 
+class Config {
+  NavigationUri startUri;
+  Language language;
+  Version version;
+  Author author;
+  String name;
+}
+
 /**
  * Representation of an application
  */
-class Application implements NavigationListener {
+abstract class Application implements NavigationListener {
   static const String namespace = "modularity.core.Application";
-  static const String defaultName = "undefined";
   bool _isStarted = false;
   bool _isBusy = false;
+  Navigator _navigator;
+  Logger _logger;
+
+  final Config config;
 
   /**
    * Gets the navigator used to navigate
    * through pages
    */
-  final Navigator navigator;
-
-  /**
-   * Logger used in this application.
-   * If logger is [null] the debug mode
-   * is disabled
-   */
-  final Logger logger;
+  Navigator get navigator => _navigator;
 
   /**
    * Gets the name of the application
    */
-  final String name;
+  String get name => config.name;
 
   /**
    * Gets the current version number of the application
    */
-  final Version version;
+  Version get version => config.version;
 
   /**
    * Gets the default language of the application
    */
-  final Language language;
+  Language get language => config.language;
 
   /**
    * Gets the URI of the first displayed page
    */
-  NavigationUri startUri;
+  NavigationUri get startUri => config.startUri;
 
   /**
    * Gets the the author of the application
    */
-  final Author author;
+  Author get author => config.author;
+
+  /**
+   * Flag which indicates whether the
+   * application is started or not
+   */
+  bool get isStarted => _isStarted;
+
+  /**
+   * Gets all registered pages
+   */
+  HashMap<String, Page> get pages => navigator.pages;
 
   /**
    * Gets all resources tasks if no resource is loaded
@@ -60,35 +75,22 @@ class Application implements NavigationListener {
   final HashMap<String, Task> tasks; //TODO move to task queue
 
   /**
-   * Flag which indicates whether the
-   * application is started or not
+   * Initializes the application
    */
-  bool get isStarted => _isStarted;
-
-  Application.fromConfig() {
-    //TODO build application from config
-  }
-
-  /**
-   * Initializes the application. If [logger]
-   * is set the debug mode is enabled
-   */
-  Application(this.name, this.version, this.language, this.author, this.startUri, this.navigator, {this.logger}) :
+  Application.fromConfig(this.config, {Navigator navigator, bool isDebugModeEnabled: false}) :
     resources = new HashMap<String, Resource>(),
     tasks = new HashMap<String, Task>()
   {
-    this.navigator.logger = logger;
+    if(isDebugModeEnabled) {
+      _logger = new Logger(this);
+    }
 
-    //validate application info
-    _validateLanguage();
-    _validateVersion();
-    _validateName();
+    //TODO initialize navigator
   }
 
-  /**
-   * Gets all registered pages
-   */
-  HashMap<String, Page> get pages => navigator.pages;
+  void _loadConfig(String config) {
+    //TODO implement
+  }
 
   /// Starts the application
   ///
@@ -99,7 +101,7 @@ class Application implements NavigationListener {
   ///       });
   ///     }
   ///
-  Future<Application> start() {
+  Future<Application> start() { //TODO use async keyword
     if(!_isBusy && !_isStarted) {
       _isBusy = true;
       Completer<Application> completer = new Completer<Application>();
@@ -132,7 +134,7 @@ class Application implements NavigationListener {
   ///       });
   ///     }
   ///
-  Future<Application> stop() {
+  Future<Application> stop() { //TODO use async keyword
     if(!_isBusy && _isStarted) {
       _isBusy = true;
       Completer<Application> completer = new Completer<Application>();
@@ -161,7 +163,7 @@ class Application implements NavigationListener {
    */
   void addPages(List<Page> pages) {
     if((startUri == null || startUri.isInvalid) && pages.isNotEmpty) {
-      startUri = new NavigationUri.fromString(pages.first.uri);
+      config.startUri = new NavigationUri.fromString(pages.first.uri);
     }
 
     navigator.addPages(pages);
@@ -172,7 +174,7 @@ class Application implements NavigationListener {
    */
   void addPage(Page page) {
     if(startUri == null || startUri.isInvalid) {
-      startUri = new NavigationUri.fromString(page.uri);
+      config.startUri = new NavigationUri.fromString(page.uri);
     }
 
     page.context = new ApplicationContext(this);
@@ -185,8 +187,8 @@ class Application implements NavigationListener {
    */
   void addTasks(List<Task> taskCollection) {
     tasks.addAll(new HashMap.fromIterable(taskCollection, key: (task) {
-      if(logger != null && tasks.containsKey(task.name)) {
-        logger.log(new TaskExistsWarning(namespace, task.name));
+      if(_logger != null && tasks.containsKey(task.name)) {
+        _logger.log(new TaskExistsWarning(namespace, task.name));
       }
 
       return task.name;
@@ -197,8 +199,8 @@ class Application implements NavigationListener {
    * Adds a single background [task] to the application
    */
   void addTask(Task task) {
-    if(logger != null && tasks.containsKey(task.name)) {
-      logger.log(new TaskExistsWarning(namespace, task.name));
+    if(_logger != null && tasks.containsKey(task.name)) {
+      _logger.log(new TaskExistsWarning(namespace, task.name));
     }
 
     tasks[task.name] = task;
@@ -209,8 +211,8 @@ class Application implements NavigationListener {
    */
   void addResources(List<Resource> resourceCollection) {
     resources.addAll(new HashMap.fromIterable(resourceCollection, key: (resource) {
-      if(logger != null && resources.containsKey(resource.name)) {
-        logger.log(new ResourceExistsWarning(namespace, resource.name));
+      if(_logger != null && resources.containsKey(resource.name)) {
+        _logger.log(new ResourceExistsWarning(namespace, resource.name));
       }
 
       return resource.name;
@@ -221,52 +223,10 @@ class Application implements NavigationListener {
    * Adds a single [resource] to the application
    */
   void addResource(Resource resource) {
-    if(logger != null && resources.containsKey(resource.name)) {
-      logger.log(new ResourceExistsWarning(namespace, resource.name));
+    if(_logger != null && resources.containsKey(resource.name)) {
+      _logger.log(new ResourceExistsWarning(namespace, resource.name));
     }
 
     resources[resource.name] = resource;
-  }
-
-  /**
-   * Checks whether the default language is set.
-   * If not the default is set.
-   */
-  void _validateLanguage() { //TODO validate in language class
-    if (stringUtil.isEmpty(info.language)) {
-      info.language = defaultLanguage;
-
-      if (logger != null) {
-        logger.log(new MissingDefaultLanguageWarning(namespace));
-      }
-    }
-  }
-
-  /**
-   * Checks whether the application name is set.
-   * If not the default is set.
-   */
-  void _validateName() {
-    if (stringUtil.isEmpty(info.name)) {
-      info.name = defaultName;
-
-      if (logger != null) {
-        logger.log(new MissingApplicationNameError(namespace));
-      }
-    }
-  }
-
-  /**
-   * Checks whether the application version is set.
-   * If not the default is set.
-   */
-  void _validateVersion() { //TODO validate in Version class
-    if (stringUtil.isEmpty(info.version)) {
-      info.version = defaultVersion;
-
-      if (logger != null) {
-        logger.log(new MissingApplicationVersionError(namespace));
-      }
-    }
   }
 }

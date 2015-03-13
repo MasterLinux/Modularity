@@ -5,7 +5,6 @@ dependencies:
   quiver: '>=0.20.0<0.21.0'
   xml: ">=2.0.0 <3.0.0"
   connect: "1.0.0-alpha.4"
-  polymer: any
 
 dev_dependencies:
   scheduled_test: any
