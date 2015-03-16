@@ -158,6 +158,10 @@ abstract class ViewModel {
     }
   }
 
+  void updateProperty(String name, dynamic value) {
+    _instanceMirror.setField(new Symbol("${name}"), value);
+  }
+
   /// Handler which is invoked whenever a specific view attribute is changed
   /// This function can be overridden to handle attributes changes
   void onAttributeChanged(String name, dynamic value) {}
@@ -206,7 +210,11 @@ abstract class View {
   View({this.viewModel, List<ViewBinding> bindings}) {
     _id = new UniqueId("mod_view").build();
     viewModel.subscribe(this);
+    setup(bindings);
+  }
 
+  /// Setups the view. Can be overridden to add event handler, etc.
+  void setup(List<ViewBinding> bindings) {
     //map attributes to view model
     if(bindings != null) {
       for(var binding in bindings) {
@@ -289,7 +297,7 @@ abstract class View {
     if(viewModel != null) {
       switch(binding.type) {
         case ViewBindingType.ATTRIBUTE:
-          _addAttributeBinding(binding.attributeName, binding.propertyName);
+          _addAttributeBinding(binding.attributeName, binding.propertyName, binding.defaultValue);
           break;
         case ViewBindingType.EVENT_HANDLER:
           _addEventHandlerBinding(binding.attributeName, binding.propertyName);
@@ -312,11 +320,16 @@ abstract class View {
     }
   }
 
-  void _addAttributeBinding(String attributeName, String propertyName) {
+  void _addAttributeBinding(String attributeName, String propertyName, dynamic defaultValue) {
     if(viewModel.containsProperty(propertyName)) {
       if(!_attributeBindings.containsKey(attributeName) && !_propertyBindings.containsKey(propertyName)) {
         _attributeBindings[attributeName] = propertyName;
         _propertyBindings[propertyName] = attributeName;
+
+        if(defaultValue != null) {
+          viewModel.updateProperty(propertyName, defaultValue);
+          //onAttributeChanged(attributeName, defaultValue);
+        }
       } else {
         //TODO log error. binding already exists
       }
@@ -330,21 +343,27 @@ abstract class View {
 abstract class HtmlElementView<TElement extends html.HtmlElement> extends View {
   TElement _htmlElement;
 
-  /// Initializes the view
-  HtmlElementView({ViewModel viewModel, List<ViewBinding> bindings, TElement htmlElement}) :
-    super(viewModel: viewModel, bindings: bindings) {
-    _htmlElement = htmlElement;
-    setup(_htmlElement);
-  }
+  HtmlElementView({ViewModel viewModel, List<ViewBinding> bindings}) : super(viewModel: viewModel, bindings: bindings);
 
   TElement toHtml() => _htmlElement;
+
+  /// Method used to create the HTML element
+  /// which represents this view
+  TElement createHtmlElement();
+
+  /// Method used to setup the HTML element like adding event handler, etc.
+  void setupHtmlElement(TElement element);
 
   View render() {
     return this;
   }
 
-  /// Function usually used to setup event handler
-  void setup(TElement element);
+  void setup(List<ViewBinding> bindings) {
+    _htmlElement = createHtmlElement();
+
+    super.setup(bindings);
+    setupHtmlElement(_htmlElement);
+  }
 }
 
 class TextChangedEventArgs implements EventArgs {
@@ -358,16 +377,19 @@ class TextChangedEventArgs implements EventArgs {
 class TextInput extends HtmlElementView<html.InputElement> {
   StreamSubscription<html.Event> _onTextChangedSubscription;
 
+  TextInput({ViewModel viewModel, List<ViewBinding> bindings}) : super(viewModel: viewModel, bindings: bindings);
+
   // events
   static const String onTextChangedEvent = "onTextChanged";
 
   // attributes
   static const String textAttribute = "text";
 
-  TextInput({ViewModel viewModel, List<ViewBinding> bindings}) :
-    super(viewModel: viewModel, bindings: bindings, htmlElement: new html.InputElement());
+  html.InputElement createHtmlElement() {
+    return new html.InputElement();
+  }
 
-  void setup(html.InputElement element) {
+  void setupHtmlElement(html.InputElement element) {
     if(hasEventHandler(onTextChangedEvent)) {
       _onTextChangedSubscription = element.onInput.listen((event) {
         invokeEventHandler(onTextChangedEvent, this, new TextChangedEventArgs(event.target.value));
