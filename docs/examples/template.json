@@ -1,0 +1,18 @@
+{
+  "template": {
+    "rootView": {
+      "lib": "modularity.core",
+      "type": "TextInput",
+      "attributes": [{
+        "name": "text",
+        "value": "initial value",
+        "binding": "title"
+      }],
+      "events": [{
+        "name": "onTextChanged",
+        "callback": "onChange"
+      }],
+      "subviews": []
+    }
+  }
+}
