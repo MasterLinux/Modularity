@@ -18,8 +18,80 @@ class ViewBinding {
   final ViewBindingType type;
   final String attributeName;
   final String propertyName;
+  final dynamic defaultValue;
 
-  ViewBinding(this.type, this.attributeName, this.propertyName);
+  ViewBinding(this.type, this.attributeName, this.propertyName, {this.defaultValue});
+}
+
+class ViewTemplateParser {
+  final ViewModel viewModel;
+
+  static const String attributesKey = "attributes";
+  static const String subviewsKey = "subviews";
+  static const String eventsKey = "events";
+  static const String libraryKey = "lib";
+  static const String typeKey = "type";
+  static const String nameKey = "name";
+  static const String valueKey = "value";
+  static const String bindingKey = "binding";
+
+  ViewTemplateParser(this.viewModel);
+
+  View parse(Map jsonMap) {
+    return _parseView(jsonMap);
+  }
+
+  View _parseView(Map jsonMap) {
+    var bindings = new List<ViewBinding>();
+    var subviews = new List<View>();
+
+    var libraryName = jsonMap[libraryKey] != null ? jsonMap[libraryKey] : View.defaultLibrary;
+    var viewType = jsonMap[typeKey];
+
+    var attributesList = jsonMap[attributesKey];
+    if(attributesList != null && attributesList is List) {
+      for(var attribute in attributesList) {
+        bindings.add(_parseAttributeBinding(attribute));
+      }
+    }
+
+    var eventsList = jsonMap[eventsKey];
+    if(eventsList != null && eventsList is List) {
+      for(var event in eventsList) {
+        bindings.add(_parseEventHandlerBinding(event));
+      }
+    }
+
+    var subviewsList = jsonMap[subviewsKey];
+    if(subviewsList != null && subviewsList is List) {
+      for(var subview in subviewsList) {
+        subviews.add(_parseView(subview));
+      }
+    }
+
+    return ViewTemplate.createView(
+      viewType,
+      libraryName: libraryName,
+      viewModel: viewModel,
+      bindings: bindings,
+      subviews: subviews
+    );
+  }
+
+  ViewBinding _parseEventHandlerBinding(Map event) {
+    var eventHandlerName = event[nameKey];
+    var propertyName = event[bindingKey];
+
+    return new ViewBinding(ViewBindingType.EVENT_HANDLER, eventHandlerName, propertyName);
+  }
+
+  ViewBinding _parseAttributeBinding(Map attribute) {
+    var attributeName = attribute[nameKey];
+    var propertyName = attribute[bindingKey];
+    var defaultValue = attribute[valueKey];
+
+    return new ViewBinding(ViewBindingType.ATTRIBUTE, attributeName, propertyName, defaultValue: defaultValue);
+  }
 }
 
 class ViewTemplate {
@@ -30,8 +102,8 @@ class ViewTemplate {
     _rootView = view;
   }
 
-  ViewTemplate.fromJsonMap(this.parentId, Map jsonMap) {
-    // TODO implement
+  ViewTemplate.fromJsonMap(this.parentId, Map jsonMap, {ViewModel viewModel}) {
+    _rootView = new ViewTemplateParser(viewModel).parse(jsonMap);
   }
 
   View get rootView => _rootView;
@@ -48,7 +120,7 @@ class ViewTemplate {
     }
   }
 
-  static View createView(String viewType, {String libraryName: "modularity.core", List<ViewBinding> bindings, ViewModel viewModel, List<View> subviews}) {
+  static View createView(String viewType, {String libraryName: View.defaultLibrary, List<ViewBinding> bindings, ViewModel viewModel, List<View> subviews}) {
     var classMirror = classUtil.getClassMirror(libraryName, viewType);
 
     var instanceMirror = classMirror.newInstance(new Symbol(""), [], {
@@ -106,6 +178,7 @@ abstract class View {
   final Map<String, String> _eventHandlerBindings = new Map<String, String>();
   final Map<String, String> _attributeBindings = new Map<String, String>();
   final Map<String, String> _propertyBindings = new Map<String, String>();
+  static const String defaultLibrary = "modularity.core";
   final List<View> subviews = new List<View>();
   final ViewModel viewModel;
   String _id;

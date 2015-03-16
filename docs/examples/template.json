@@ -5,12 +5,12 @@
       "type": "TextInput",
       "attributes": [{
         "name": "text",
-        "value": "initial value",
-        "binding": "title"
+        "binding": "title",
+        "value": "initial value"
       }],
       "events": [{
         "name": "onTextChanged",
-        "callback": "onChange"
+        "binding": "onChange"
       }],
       "subviews": []
     }
