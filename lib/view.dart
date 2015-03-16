@@ -137,43 +137,62 @@ abstract class ViewModel {
   List<View> _views = new List<View>();
   InstanceMirror _instanceMirror;
 
+  /// Initializes the view model
   ViewModel() {
     _instanceMirror = reflect(this);
   }
 
+  /// Notifies the view that a specific property in this view model is changed
+  /// Must be called to update the user interface
+  ///
+  /// Example:
+  ///     // implement setter which notifies the view on update
+  ///     set specificProperty(String val) {
+  ///       _specificProperty = val;
+  ///       notifyPropertyChanged("specificProperty");
+  ///     }
+  ///
   void notifyPropertyChanged(String name, dynamic value) {
     for(var view in _views) {
       view.notifyPropertyChanged(name, value);
     }
   }
 
+  /// Handler which is invoked whenever a specific view attribute is changed
+  /// This function can be overridden to handle attributes changes
   void onAttributeChanged(String name, dynamic value) {}
 
+  /// Subscribes a view as observer so it is able to listen for attribute changes
   void subscribe(View view) {
     if(!_views.contains(view)) {
       _views.add(view);
     }
   }
 
+  /// Unsubscribes a specific view from listening
   void unsubscribe(View view) {
     if(_views.contains(view)) {
       _views.remove(view);
     }
   }
 
+  /// Helper function which is used to invoke a specific event handler in this view model
   void invokeEventHandler(String name, View sender, EventArgs args) {
     _instanceMirror.invoke(new Symbol(name), [sender, args]);
   }
 
-  bool containsAttribute(String name) {
+  /// Checks whether this view model contains a specific property
+  bool containsProperty(String name) {
     return true; //TODO
   }
 
+  /// Checks whether this view model contains a specific event handler
   bool containsEventHandler(String name) {
     return true;
   }
 }
 
+/// Represents a view
 abstract class View {
   final Map<String, String> _eventHandlerBindings = new Map<String, String>();
   final Map<String, String> _attributeBindings = new Map<String, String>();
@@ -183,6 +202,7 @@ abstract class View {
   final ViewModel viewModel;
   String _id;
 
+  /// Initializes the view with a [ViewModel] and a list of [ViewBinding]s
   View({this.viewModel, List<ViewBinding> bindings}) {
     _id = new UniqueId("mod_view").build();
     viewModel.subscribe(this);
@@ -195,14 +215,18 @@ abstract class View {
     }
   }
 
+  /// Gets the ID of the view
   String get id => _id;
 
+  /// TODO comment
   View render();
 
+  /// Converts the view to an HTML element
   html.HtmlElement toHtml() {
     return render().toHtml();
   }
 
+  /// Adds the view to DOM
   void addToDOM(String parentId) {
     var element = toHtml()..id = id;
     var parentNode = html.document.querySelector(parentId);
@@ -214,6 +238,7 @@ abstract class View {
     }
   }
 
+  /// Removes the view from DOM
   void removeFromDOM() {
     cleanup();
 
@@ -226,6 +251,8 @@ abstract class View {
     }
   }
 
+  /// Cleanup function which is used to remove events [StreamSubscription], etc.
+  /// before the view is removed from DOM
   void cleanup() {
     viewModel.unsubscribe(this);
 
@@ -234,14 +261,18 @@ abstract class View {
     }
   }
 
+  /// Checks whether a specific attribute binding exists
   bool hasAttribute(String name) => _attributeBindings.containsKey(name);
 
+  /// Checks whether a specific event handler binding exists
   bool hasEventHandler(String name) => _eventHandlerBindings.containsKey(name);
 
+  /// Invokes a specific event handler
   void invokeEventHandler(String name, View sender, EventArgs args) {
     viewModel.invokeEventHandler(_eventHandlerBindings[name], sender, args);
   }
 
+  /// Notifies the view that a specific property in view model is changed
   void notifyPropertyChanged(String propertyName, dynamic value) {
     var attributeName = _propertyBindings.containsKey(propertyName) ? _propertyBindings[propertyName] : null;
 
@@ -250,9 +281,11 @@ abstract class View {
     }
   }
 
+  /// Handler which is invoked whenever a specific property in view model is changed
   void onAttributeChanged(String name, dynamic value) {}
 
-  void addBinding(ViewBinding binding) {
+  /// Adds a new view binding
+  void addBinding(ViewBinding binding) { // TODO allow multiple bindings
     if(viewModel != null) {
       switch(binding.type) {
         case ViewBindingType.ATTRIBUTE:
@@ -280,7 +313,7 @@ abstract class View {
   }
 
   void _addAttributeBinding(String attributeName, String propertyName) {
-    if(viewModel.containsAttribute(attributeName)) {
+    if(viewModel.containsProperty(propertyName)) {
       if(!_attributeBindings.containsKey(attributeName) && !_propertyBindings.containsKey(propertyName)) {
         _attributeBindings[attributeName] = propertyName;
         _propertyBindings[propertyName] = attributeName;
@@ -293,9 +326,11 @@ abstract class View {
   }
 }
 
+/// A view implementation used to create views using a [HtmlElement]
 abstract class HtmlElementView<TElement extends html.HtmlElement> extends View {
   TElement _htmlElement;
 
+  /// Initializes the view
   HtmlElementView({ViewModel viewModel, List<ViewBinding> bindings, TElement htmlElement}) :
     super(viewModel: viewModel, bindings: bindings) {
     _htmlElement = htmlElement;
@@ -308,6 +343,7 @@ abstract class HtmlElementView<TElement extends html.HtmlElement> extends View {
     return this;
   }
 
+  /// Function usually used to setup event handler
   void setup(TElement element);
 }
 
