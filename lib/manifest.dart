@@ -31,6 +31,7 @@ class ApplicationConverter implements Converter<Map, ApplicationModel> {
   static const String pagesKey = "pages";
   static const String nameKey = "name";
 
+  @override
   ApplicationModel convert(Map value) {
     var pageList = value[pagesKey];
     var pages = new List<PageModel>();
@@ -52,6 +53,7 @@ class ApplicationConverter implements Converter<Map, ApplicationModel> {
       ..pages = pages;
   }
 
+  @override
   Map convertBack(ApplicationModel value) {
     throw new UnimplementedError();
   }
@@ -71,6 +73,7 @@ class PageConverter implements Converter<Map, PageModel> {
   static const String titleKey = "title";
   static const String uriKey = "uri";
 
+  @override
   PageModel convert(Map value) {
     var template = value[templateKey] != null ? new ViewTemplateConverter().convert(value[templateKey]) : null;
 
@@ -92,6 +95,7 @@ class PageConverter implements Converter<Map, PageModel> {
       ..fragments = fragments;
   }
 
+  @override
   Map convertBack(PageModel value) {
     throw new UnimplementedError();
   }
@@ -107,6 +111,7 @@ class FragmentConverter implements Converter<Map, FragmentModel> {
   static const String parentIdKey = "parentId";
   static const String modulesKey = "modules";
 
+  @override
   FragmentModel convert(Map value) {
     var moduleList = value[modulesKey];
     var modules = new List<ModuleModel>();
@@ -124,6 +129,7 @@ class FragmentConverter implements Converter<Map, FragmentModel> {
       ..modules = modules;
   }
 
+  @override
   Map convertBack(FragmentModel value) {
     throw new UnimplementedError();
   }
@@ -143,6 +149,7 @@ class ModuleConverter implements Converter<Map, ModuleModel> {
   static const String libraryNameKey = "lib";
   static const String nameKey = "name";
 
+  @override
   ModuleModel convert(Map value) {
     var template = value[templateKey] != null ? new ViewTemplateConverter().convert(value[templateKey]) : null;
 
@@ -153,6 +160,7 @@ class ModuleConverter implements Converter<Map, ModuleModel> {
       ..template = template;
   }
 
+  @override
   Map convertBack(ModuleModel value) {
     throw new UnimplementedError();
   }
