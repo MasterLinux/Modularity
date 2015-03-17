@@ -1,13 +1,5 @@
 part of modularity.core;
 
-class Config {
-  NavigationUri startUri;
-  Language language;
-  Version version;
-  Author author;
-  String name;
-}
-
 /**
  * Representation of an application
  */
@@ -17,8 +9,13 @@ abstract class Application implements NavigationListener {
   bool _isBusy = false;
   Navigator _navigator;
   utility.Logger _logger;
+  NavigationUri _startUri;
+  Language _language;
+  Version _version;
+  Author _author;
+  String _name;
 
-  final Config config;
+  final Manifest manifest;
 
   /**
    * Gets the navigator used to navigate
@@ -29,27 +26,27 @@ abstract class Application implements NavigationListener {
   /**
    * Gets the name of the application
    */
-  String get name => config.name;
+  String get name => _name;
 
   /**
    * Gets the current version number of the application
    */
-  Version get version => config.version;
+  Version get version => _version;
 
   /**
    * Gets the default language of the application
    */
-  Language get language => config.language;
+  Language get language => _language;
 
   /**
    * Gets the URI of the first displayed page
    */
-  NavigationUri get startUri => config.startUri;
+  NavigationUri get startUri => _startUri;
 
   /**
    * Gets the the author of the application
    */
-  Author get author => config.author;
+  Author get author => _author;
 
   /**
    * Flag which indicates whether the
@@ -77,11 +74,19 @@ abstract class Application implements NavigationListener {
   /**
    * Initializes the application
    */
-  Application.fromConfig(this.config, {Navigator navigator, utility.Logger logger}) :
+  Application.fromManifest(this.manifest, {Navigator navigator, utility.Logger logger}) :
     resources = new HashMap<String, Resource>(),
     tasks = new HashMap<String, Task>()
   {
     _logger = logger;
+
+    //get app info
+    var config = manifest.config;
+    _startUri = new NavigationUri.fromString(config.startUri);
+    _language = new Language.fromCode(config.language);
+    _author = new Author(config.author, config.author);
+    _version = new Version.fromString(config.version);
+    _name = config.name;
 
     if(navigator == null) {
       //TODO initialize navigator
