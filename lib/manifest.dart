@@ -1,17 +1,162 @@
 library modularity.core.manifest;
 
 import 'data/data.dart' show Converter;
+import 'dart:convert' show JSON;
 
 class Manifest {
+  ApplicationModel _config;
 
   Manifest.fromJson(String json) {
-
+    _config = new ApplicationConverter().convert(JSON.decode(json));
   }
 
-
+  ApplicationModel get config => _config;
 }
 
+//################################## application
+class ApplicationModel {
+  String startUri;
+  String language;
+  String version;
+  String author; //TODO model for author? which contains more info than the name
+  String name;
+  List<PageModel> pages;
+}
 
+class ApplicationConverter implements Converter<Map, ApplicationModel> {
+  static const String startUriKey = "startUri";
+  static const String languageKey = "language";
+  static const String versionKey = "version";
+  static const String authorKey = "author";
+  static const String pagesKey = "pages";
+  static const String nameKey = "name";
+
+  ApplicationModel convert(Map value) {
+    var pageList = value[pagesKey];
+    var pages = new List<PageModel>();
+
+    if(pageList != null && pageList is List) {
+      var converter = new PageConverter();
+
+      for(var page in pageList) {
+        pages.add(converter.convert(page));
+      }
+    }
+
+    return new ApplicationModel()
+      ..startUri = value[startUriKey]
+      ..language = value[languageKey]
+      ..version = value[versionKey]
+      ..author = value[authorKey]
+      ..name = value[nameKey]
+      ..pages = pages;
+  }
+
+  Map convertBack(ApplicationModel value) {
+    throw new UnimplementedError();
+  }
+}
+
+//################################## page
+class PageModel {
+  String uri;
+  String title;
+  ViewTemplateModel template;
+  List<FragmentModel> fragments;
+}
+
+class PageConverter implements Converter<Map, PageModel> {
+  static const String fragmentsKey = "fragments";
+  static const String templateKey = "template";
+  static const String titleKey = "title";
+  static const String uriKey = "uri";
+
+  PageModel convert(Map value) {
+    var template = value[templateKey] != null ? new ViewTemplateConverter().convert(value[templateKey]) : null;
+
+    var fragmentList = value[fragmentsKey];
+    var fragments = new List<FragmentModel>();
+
+    if(fragmentList != null && fragmentList is List) {
+      var converter = new FragmentConverter();
+
+      for(var fragment in fragmentList) {
+        fragments.add(converter.convert(fragment));
+      }
+    }
+
+    return new PageModel()
+      ..uri = value[uriKey]
+      ..title = value[titleKey]
+      ..template = template
+      ..fragments = fragments;
+  }
+
+  Map convertBack(PageModel value) {
+    throw new UnimplementedError();
+  }
+}
+
+//################################## fragment
+class FragmentModel {
+  String parentId;
+  List<ModuleModel> modules;
+}
+
+class FragmentConverter implements Converter<Map, FragmentModel> {
+  static const String parentIdKey = "parentId";
+  static const String modulesKey = "modules";
+
+  FragmentModel convert(Map value) {
+    var moduleList = value[modulesKey];
+    var modules = new List<ModuleModel>();
+
+    if(moduleList != null && moduleList is List) {
+      var converter = new ModuleConverter();
+
+      for(var module in moduleList) {
+        modules.add(converter.convert(module));
+      }
+    }
+
+    return new FragmentModel()
+      ..parentId = value[parentIdKey]
+      ..modules = modules;
+  }
+
+  Map convertBack(FragmentModel value) {
+    throw new UnimplementedError();
+  }
+}
+
+//################################## module
+class ModuleModel {
+  String lib;
+  String name;
+  ViewTemplateModel template;
+  Map<String, dynamic> attributes;
+}
+
+class ModuleConverter implements Converter<Map, ModuleModel> {
+  static const String attributesKey = "attributes";
+  static const String templateKey = "template";
+  static const String libraryNameKey = "lib";
+  static const String nameKey = "name";
+
+  ModuleModel convert(Map value) {
+    var template = value[templateKey] != null ? new ViewTemplateConverter().convert(value[templateKey]) : null;
+
+    return new ModuleModel()
+      ..lib = value[libraryNameKey]
+      ..name = value[nameKey]
+      ..attributes = value[attributesKey]
+      ..template = template;
+  }
+
+  Map convertBack(ModuleModel value) {
+    throw new UnimplementedError();
+  }
+}
 
 //################################## view template
 class ViewTemplateModel {
