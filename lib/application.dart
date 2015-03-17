@@ -77,15 +77,15 @@ abstract class Application implements NavigationListener {
   /**
    * Initializes the application
    */
-  Application.fromConfig(this.config, {Navigator navigator, bool isDebugModeEnabled: false}) :
+  Application.fromConfig(this.config, {Navigator navigator, Logger logger}) :
     resources = new HashMap<String, Resource>(),
     tasks = new HashMap<String, Task>()
   {
-    if(isDebugModeEnabled) {
-      _logger = new Logger(this);
-    }
+    _logger = logger;
 
-    //TODO initialize navigator
+    if(navigator == null) {
+      //TODO initialize navigator
+    }
   }
 
   void _loadConfig(String config) {

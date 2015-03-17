@@ -1,10 +1,11 @@
-part of modularity.core;
+library modularity.core.logging;
 
 class Logger {
   final List<MessageObserver> _observer = new List<MessageObserver>();
   final List<LoggingMessage> messages = new List<LoggingMessage>();
   static Map<String, Logger> _cache;
-  final Application application;
+  final String applicationName;
+  final String applicationVersion;
 
   static const String namespace = "modularity.core.Logger";
 
@@ -19,8 +20,8 @@ class Logger {
   /**
    * Initializes a logger for a specific application
    */
-  factory Logger(Application application) {
-    var key = "${application.name}_${application.version}";
+  factory Logger(String applicationName, String applicationVersion) {
+    var key = "${applicationName}_${applicationVersion}";
 
     if(_cache == null) {
       _cache = {};
@@ -29,13 +30,13 @@ class Logger {
     if(_cache.containsKey(key)) {
       return _cache[key];
     } else {
-      final logger = new Logger._internal(application);
+      final logger = new Logger._internal(applicationName, applicationVersion);
       _cache[key] = logger;
       return logger;
     }
   }
 
-  Logger._internal(this.application);
+  Logger._internal(this.applicationName, this.applicationVersion);
 
   /**
    * Registers a new [observer] which will be notified

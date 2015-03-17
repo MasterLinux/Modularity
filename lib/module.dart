@@ -10,13 +10,13 @@ class ModuleCallbackInvocationEventArgs extends EventArgs {
  * modules with the help of its library
  * and class name.
  */
-class Module implements TemplateController { //TODO rename to View
+class Module extends ViewModel {
   final Map<String, Object> config;
   final Logger logger;
   final String name;
   final String lib;
 
-  JsonTemplate _template;
+  ViewTemplate _template;
   ApplicationContext _context;
   ClassMirror _reflectedClass;
   InstanceMirror _instance;
@@ -49,7 +49,7 @@ class Module implements TemplateController { //TODO rename to View
   /**
    * Gets the template of the module
    */
-  JsonTemplate get template => _template;
+  ViewTemplate get template => _template;
 
   /**
    * Prefix used for the node ID
@@ -62,7 +62,7 @@ class Module implements TemplateController { //TODO rename to View
    */
   Module(this.lib, this.name, Map template, this.config, {this.logger}) {
     _id = new UniqueId(ID_PREFIX).build();
-    _template = new JsonTemplate(template, _id, this, logger: logger);
+    _template = new ViewTemplate.fromJsonMap(template, viewModel: this, logger: logger);
     onInit(new InitEventArgs(this.config));
   }
 
@@ -82,25 +82,6 @@ class Module implements TemplateController { //TODO rename to View
     onBeforeRemove();
     template.destroy();
     onRemoved();
-  }
-
-  @override
-  void invokeCallback(String callbackName, Map<String, String> parameter) {
-    var args = new ModuleCallbackInvocationEventArgs();
-
-    _invokeHandlerWhere(
-            (methodName, meta) {
-              return methodName == new Symbol(callbackName) && meta.hasReflectee &&
-                meta.reflectee is annotations.TemplateCallback;
-            },
-            _reflectedClass, _instance, args
-    ); //TODO return false if not found
-  }
-
-  @override
-  Property getProperty(String name) {
-    //TODO implement
-    return null;
   }
 
   /**

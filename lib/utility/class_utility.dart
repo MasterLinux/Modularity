@@ -22,7 +22,7 @@ ClassMirror getClassMirror(String libraryName, String className) {
   );
 
   if(libraryMirror != null &&
-  (reflectedClass = libraryMirror.declarations[classSymbol]) != null) {
+    (reflectedClass = libraryMirror.declarations[classSymbol]) != null) {
     return reflectedClass;
 
   } else if(libraryMirror != null && reflectedClass == null) {

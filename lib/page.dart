@@ -5,7 +5,7 @@ class Page {
   static const String namespace = "modularity.core.Page";
   NavigationParameter _navigationParameter;
   ApplicationContext _context;
-  JsonTemplate _template;
+  ViewTemplate _template;
 
   final List<Fragment> fragments;
   final Logger logger;
@@ -14,7 +14,7 @@ class Page {
 
   /// Initializes the page with its [uri] and [title]. The title is usually used by navigation modules
   /// to create menu entries automatically
-  Page(this.uri, this.title, {JsonTemplate template, this.logger}) : fragments = new List<Fragment>() {
+  Page(this.uri, this.title, {ViewTemplate template, this.logger}) : fragments = new List<Fragment>() {
     //load default template
     if (template == null) {
       //template = new DefaultPageTemplate(logger: logger); //TODO create default template
@@ -39,7 +39,7 @@ class Page {
   }
 
   /// Gets the template of this page
-  JsonTemplate get template => _template;
+  ViewTemplate get template => _template;
 
   /**
    * Adds this page to the DOM

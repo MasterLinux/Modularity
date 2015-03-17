@@ -1,4 +1,4 @@
-library modularity.core.eventArgs;
+library modularity.core.eventArgs; //TODO move to modularity.core.data
 
 part 'init_event_args.dart';
 part 'loading_state_changed_event_args.dart';

@@ -5,7 +5,7 @@ part of modularity.core;
  * is an interface to all global
  * information
  */
-class ApplicationContext {
+class ApplicationContext { //TODO remove
   final Application application;
   Fragment fragment;
   Page page;

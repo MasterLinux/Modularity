@@ -1,13 +1,17 @@
-//part of modularity.core;
-library modularity.core;
+library modularity.core.view;
 
-import 'utility/utility.dart';
-import 'utility/class_utility.dart' as classUtil;
-import 'dart:mirrors';
+import '../utility/class_utility.dart' as classUtil;
+import '../event_args/event_args.dart' show EventArgs;
+import '../utility/utility.dart' show UniqueId;
+import '../logger.dart' show Logger;
+import '../manifest.dart' show ViewTemplateModel, ViewBindingModel;
+import '../utility/converter.dart' show Converter;
+
 import 'dart:html' as html;
 import 'dart:async' show StreamSubscription;
-import 'event_args/event_args.dart' show EventArgs;
+import 'dart:mirrors' show InstanceMirror, reflect;
 
+part 'text_input.dart';
 
 enum ViewBindingType {
   EVENT_HANDLER,
@@ -23,92 +27,70 @@ class ViewBinding {
   ViewBinding(this.type, this.attributeName, this.propertyName, {this.defaultValue});
 }
 
-class ViewTemplateParser {
+class ViewConverter implements Converter<ViewTemplateModel, View> {
   final ViewModel viewModel;
 
-  static const String attributesKey = "attributes";
-  static const String subviewsKey = "subviews";
-  static const String eventsKey = "events";
-  static const String libraryKey = "lib";
-  static const String typeKey = "type";
-  static const String nameKey = "name";
-  static const String valueKey = "value";
-  static const String bindingKey = "binding";
+  ViewConverter(this.viewModel);
 
-  ViewTemplateParser(this.viewModel);
-
-  View parse(Map jsonMap) {
-    return _parseView(jsonMap);
-  }
-
-  View _parseView(Map jsonMap) {
+  View convert(ViewTemplateModel value) {
     var bindings = new List<ViewBinding>();
     var subviews = new List<View>();
 
-    var libraryName = jsonMap[libraryKey] != null ? jsonMap[libraryKey] : View.defaultLibrary;
-    var viewType = jsonMap[typeKey];
-
-    var attributesList = jsonMap[attributesKey];
-    if(attributesList != null && attributesList is List) {
-      for(var attribute in attributesList) {
-        bindings.add(_parseAttributeBinding(attribute));
+    if(value.subviews != null) {
+      for(var subview in value.subviews) {
+        subviews.add(convert(subview));
       }
     }
 
-    var eventsList = jsonMap[eventsKey];
-    if(eventsList != null && eventsList is List) {
-      for(var event in eventsList) {
-        bindings.add(_parseEventHandlerBinding(event));
+    if(value.attributes != null) {
+      for(var attribute in value.attributes) {
+        bindings.add(new ViewBinding(
+            ViewBindingType.ATTRIBUTE,
+            attribute.attributeName,
+            attribute.propertyName,
+            defaultValue: attribute.defaultValue
+        ));
       }
     }
 
-    var subviewsList = jsonMap[subviewsKey];
-    if(subviewsList != null && subviewsList is List) {
-      for(var subview in subviewsList) {
-        subviews.add(_parseView(subview));
+    if(value.events != null) {
+      for(var event in value.events) {
+        bindings.add(new ViewBinding(
+            ViewBindingType.EVENT_HANDLER,
+            event.attributeName,
+            event.propertyName
+        ));
       }
     }
 
     return ViewTemplate.createView(
-      viewType,
-      libraryName: libraryName,
-      viewModel: viewModel,
-      bindings: bindings,
-      subviews: subviews
+        value.type,
+        libraryName: value.lib != null ? value.lib : View.defaultLibrary,
+        viewModel: viewModel,
+        bindings: bindings,
+        subviews: subviews
     );
   }
 
-  ViewBinding _parseEventHandlerBinding(Map event) {
-    var eventHandlerName = event[nameKey];
-    var propertyName = event[bindingKey];
-
-    return new ViewBinding(ViewBindingType.EVENT_HANDLER, eventHandlerName, propertyName);
-  }
-
-  ViewBinding _parseAttributeBinding(Map attribute) {
-    var attributeName = attribute[nameKey];
-    var propertyName = attribute[bindingKey];
-    var defaultValue = attribute[valueKey];
-
-    return new ViewBinding(ViewBindingType.ATTRIBUTE, attributeName, propertyName, defaultValue: defaultValue);
+  ViewTemplateModel convertBack(View value) {
+    throw new UnimplementedError();
   }
 }
 
 class ViewTemplate {
-  final String parentId;
   View _rootView;
 
-  ViewTemplate(this.parentId, View view) {
+  ViewTemplate(View view, {Logger logger}) {
     _rootView = view;
   }
 
-  ViewTemplate.fromJsonMap(this.parentId, Map jsonMap, {ViewModel viewModel}) {
-    _rootView = new ViewTemplateParser(viewModel).parse(jsonMap);
+  ViewTemplate.fromModel(ViewTemplateModel model, {ViewModel viewModel, Logger logger}) {
+    _rootView = new ViewConverter(viewModel).convert(model);
   }
 
   View get rootView => _rootView;
 
-  void render() {
+  void render(String parentId) {
     if(rootView != null) {
       rootView.addToDOM(parentId);
     }
@@ -201,10 +183,11 @@ abstract class View {
   final Map<String, String> _eventHandlerBindings = new Map<String, String>();
   final Map<String, String> _attributeBindings = new Map<String, String>();
   final Map<String, String> _propertyBindings = new Map<String, String>();
-  static const String defaultLibrary = "modularity.core";
   final List<View> subviews = new List<View>();
   final ViewModel viewModel;
   String _id;
+
+  static const String defaultLibrary = "modularity.core.view";
 
   /// Initializes the view with a [ViewModel] and a list of [ViewBinding]s
   View({this.viewModel, List<ViewBinding> bindings}) {
@@ -345,6 +328,7 @@ abstract class HtmlElementView<TElement extends html.HtmlElement> extends View {
 
   HtmlElementView({ViewModel viewModel, List<ViewBinding> bindings}) : super(viewModel: viewModel, bindings: bindings);
 
+  @override
   TElement toHtml() => _htmlElement;
 
   /// Method used to create the HTML element
@@ -354,10 +338,12 @@ abstract class HtmlElementView<TElement extends html.HtmlElement> extends View {
   /// Method used to setup the HTML element like adding event handler, etc.
   void setupHtmlElement(TElement element);
 
+  @override
   View render() {
     return this;
   }
 
+  @override
   void setup(List<ViewBinding> bindings) {
     _htmlElement = createHtmlElement();
 
@@ -366,64 +352,13 @@ abstract class HtmlElementView<TElement extends html.HtmlElement> extends View {
   }
 }
 
-class TextChangedEventArgs implements EventArgs {
-  String text;
-
-  TextChangedEventArgs(this.text);
-}
-
-///
-///
-class TextInput extends HtmlElementView<html.InputElement> {
-  StreamSubscription<html.Event> _onTextChangedSubscription;
-
-  TextInput({ViewModel viewModel, List<ViewBinding> bindings}) : super(viewModel: viewModel, bindings: bindings);
-
-  // events
-  static const String onTextChangedEvent = "onTextChanged";
-
-  // attributes
-  static const String textAttribute = "text";
-
-  html.InputElement createHtmlElement() {
-    return new html.InputElement();
-  }
-
-  void setupHtmlElement(html.InputElement element) {
-    if(hasEventHandler(onTextChangedEvent)) {
-      _onTextChangedSubscription = element.onInput.listen((event) {
-        invokeEventHandler(onTextChangedEvent, this, new TextChangedEventArgs(event.target.value));
-      });
-    }
-  }
-
-  void cleanup() {
-    super.cleanup();
-
-    if(_onTextChangedSubscription != null) {
-      _onTextChangedSubscription.cancel();
-      _onTextChangedSubscription = null;
-    }
-  }
-
-  void onAttributeChanged(String name, dynamic value) {
-    switch(name) {
-      case textAttribute:
-        text = value as String;
-        break;
-    }
-  }
-
-  set text(String text) => _htmlElement.value = text;
-
-  String get text => _htmlElement.value;
-}
 
 class TestView extends View { //TODO remove
 
   TestView({ViewModel viewModel, List<ViewBinding> bindings}) :
     super(viewModel: viewModel, bindings: bindings);
 
+  @override
   View render() {
     return ViewTemplate.createView("TextInput", viewModel: viewModel, bindings: [
       new ViewBinding(ViewBindingType.EVENT_HANDLER, TextInput.onTextChangedEvent, "testFunc"),
