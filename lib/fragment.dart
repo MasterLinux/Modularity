@@ -4,7 +4,7 @@ class Fragment {
   static const String namespace = "modularity.core.Fragment";
   List<Module> modules;
   ApplicationContext _context;
-  final Logger logger;
+  final utility.Logger logger;
 
   /**
    * The ID of the fragment which is identical to

@@ -1,7 +1,4 @@
-library modularity.core.utility.classutility; //TODO rename to utility.class ?
-
-import '../exception/exception.dart';
-import 'dart:mirrors';
+part of modularity.core.utility;
 
 /**
  * Gets the mirror of a specific class with the help of

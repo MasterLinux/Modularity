@@ -1,6 +1,6 @@
 library modularity.core.manifest;
 
-import 'utility/converter.dart' show Converter;
+import 'data/data.dart' show Converter;
 
 class Manifest {
 

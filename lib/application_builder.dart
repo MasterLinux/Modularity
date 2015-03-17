@@ -8,7 +8,7 @@ class ApplicationBuilder {
   final List<Task> _tasks;
   final List<Resource> _resources;
   final List<Page> _pages;
-  final Logger logger;
+  final utility.Logger logger;
   final String _version;
   final String _name;
   String _author;

@@ -1,4 +1,4 @@
-library modularity.core.logging;
+part of modularity.core.utility;
 
 class Logger {
   final List<MessageObserver> _observer = new List<MessageObserver>();

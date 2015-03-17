@@ -8,7 +8,7 @@ class Page {
   ViewTemplate _template;
 
   final List<Fragment> fragments;
-  final Logger logger;
+  final utility.Logger logger;
   final String title;
   final String uri;
 

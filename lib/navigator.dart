@@ -14,7 +14,7 @@ class Navigator {
   final List<HistoryItem> _history;
   final Router _router;
   Page _currentPage;
-  Logger logger;
+  utility.Logger logger;
 
   /**
    * Gets all pages if no page is loaded
@@ -80,7 +80,7 @@ class Navigator {
   Future navigateTo(String uri, {NavigationParameter parameter}) {
     if(pages.containsKey(uri)) {
       var args = new NavigationEventArgs(uri, parameter: parameter);
-      var navigationId = new UniqueId(idPrefix).build();
+      var navigationId = new utility.UniqueId(idPrefix).build();
       var navigationStrategy = strategy();
 
       _cacheNavigationParameter(uri, navigationId, parameter);
@@ -181,7 +181,7 @@ class HistoryItem {
 class NavigationParameter {
   static const String namespace = "modularity.core.NavigationParameter";
   final HashMap<String, Object> _parameter;
-  final Logger logger;
+  final utility.Logger logger;
 
   /// Initializes the parameter set with the help of a [Map]
   NavigationParameter.fromMap(Map<String, Object> parameter, {this.logger}) : _parameter = parameter;

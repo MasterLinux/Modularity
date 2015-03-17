@@ -1,4 +1,4 @@
-library modularity.core.utility.converter; //TODO move to modularity.core.data
+part of modularity.core.data;
 
 /// Base class for a converter used to
 /// convert [TIn] to [TOut] and back.

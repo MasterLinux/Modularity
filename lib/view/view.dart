@@ -1,11 +1,8 @@
 library modularity.core.view;
 
-import '../utility/class_utility.dart' as classUtil;
-import '../event_args/event_args.dart' show EventArgs;
-import '../utility/utility.dart' show UniqueId;
-import '../logger.dart' show Logger;
+import '../utility/utility.dart' as utility show UniqueId, Logger, getClassMirror;
 import '../manifest.dart' show ViewTemplateModel, ViewBindingModel;
-import '../utility/converter.dart' show Converter;
+import '../data/data.dart' show Converter, EventArgs;
 
 import 'dart:html' as html;
 import 'dart:async' show StreamSubscription;
@@ -80,11 +77,11 @@ class ViewConverter implements Converter<ViewTemplateModel, View> {
 class ViewTemplate {
   View _rootView;
 
-  ViewTemplate(View view, {Logger logger}) {
+  ViewTemplate(View view, {utility.Logger logger}) {
     _rootView = view;
   }
 
-  ViewTemplate.fromModel(ViewTemplateModel model, {ViewModel viewModel, Logger logger}) {
+  ViewTemplate.fromModel(ViewTemplateModel model, {ViewModel viewModel, utility.Logger logger}) {
     _rootView = new ViewConverter(viewModel).convert(model);
   }
 
@@ -103,7 +100,7 @@ class ViewTemplate {
   }
 
   static View createView(String viewType, {String libraryName: View.defaultLibrary, List<ViewBinding> bindings, ViewModel viewModel, List<View> subviews}) {
-    var classMirror = classUtil.getClassMirror(libraryName, viewType);
+    var classMirror = utility.getClassMirror(libraryName, viewType);
 
     var instanceMirror = classMirror.newInstance(new Symbol(""), [], {
       new Symbol("viewModel"): viewModel,
@@ -191,7 +188,7 @@ abstract class View {
 
   /// Initializes the view with a [ViewModel] and a list of [ViewBinding]s
   View({this.viewModel, List<ViewBinding> bindings}) {
-    _id = new UniqueId("mod_view").build();
+    _id = new utility.UniqueId("mod_view").build();
     viewModel.subscribe(this);
     setup(bindings);
   }

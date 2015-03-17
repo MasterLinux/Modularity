@@ -16,7 +16,7 @@ abstract class Application implements NavigationListener {
   bool _isStarted = false;
   bool _isBusy = false;
   Navigator _navigator;
-  Logger _logger;
+  utility.Logger _logger;
 
   final Config config;
 
@@ -77,7 +77,7 @@ abstract class Application implements NavigationListener {
   /**
    * Initializes the application
    */
-  Application.fromConfig(this.config, {Navigator navigator, Logger logger}) :
+  Application.fromConfig(this.config, {Navigator navigator, utility.Logger logger}) :
     resources = new HashMap<String, Resource>(),
     tasks = new HashMap<String, Task>()
   {

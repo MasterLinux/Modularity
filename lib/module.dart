@@ -12,7 +12,7 @@ class ModuleCallbackInvocationEventArgs extends EventArgs {
  */
 class Module extends ViewModel {
   final Map<String, Object> config;
-  final Logger logger;
+  final utility.Logger logger;
   final String name;
   final String lib;
 
@@ -61,7 +61,7 @@ class Module extends ViewModel {
    * of a class which uses module annotations.
    */
   Module(this.lib, this.name, Map template, this.config, {this.logger}) {
-    _id = new UniqueId(ID_PREFIX).build();
+    _id = new utility.UniqueId(ID_PREFIX).build();
     _template = new ViewTemplate.fromJsonMap(template, viewModel: this, logger: logger);
     onInit(new InitEventArgs(this.config));
   }
@@ -116,7 +116,7 @@ class Module extends ViewModel {
    * is initialized on app start.
    */
   void onInit(InitEventArgs args) {
-    _reflectedClass = classUtil.getClassMirror(lib, name);
+    _reflectedClass = utility.getClassMirror(lib, name);
 
     var metadata = _reflectedClass.metadata;
     var annotation = metadata.firstWhere(
