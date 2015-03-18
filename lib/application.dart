@@ -79,22 +79,44 @@ abstract class Application implements NavigationListener {
     tasks = new HashMap<String, Task>()
   {
     _logger = logger;
-
-    //get app info
-    var config = manifest.config;
-    _startUri = new NavigationUri.fromString(config.startUri);
-    _language = new Language.fromCode(config.language);
-    _author = new Author(config.author, config.author);
-    _version = new Version.fromString(config.version);
-    _name = config.name;
+    _readConfig(manifest.config);
 
     if(navigator == null) {
       //TODO initialize navigator
     }
   }
 
-  void _loadConfig(String config) {
-    //TODO implement
+  void _readConfig(ApplicationModel config) {
+    //get app info
+    _startUri = config.startUri != null ? new NavigationUri.fromString(config.startUri) : null;
+    _language = new Language.fromCode(config.language);
+    _author = new Author(config.author, config.author);
+    _version = new Version.fromString(config.version);
+    _name = config.name;
+
+    // add all pages
+    for(var pageModel in config.pages) {
+      var template = pageModel.template != null ? new ViewTemplate.fromModel(pageModel.template) : null;
+      var uri = new NavigationUri.fromString(pageModel.uri);
+      var page = new Page(uri, pageModel.title, template: template, logger: _logger);
+
+      // add all fragments
+      for(var fragmentModel in pageModel.fragments) {
+        var fragment = new Fragment(fragmentModel.parentId, logger: _logger);
+
+        //add all modules
+        for(var moduleModel in fragmentModel.modules) {
+          var template = moduleModel.template != null ? new ViewTemplate.fromModel(moduleModel.template) : null;
+          var module = new Module(moduleModel.lib, moduleModel.name, template, moduleModel.attributes, logger: _logger);
+
+          fragment.addModule(module);
+        }
+
+        page.addFragment(fragment);
+      }
+
+      addPage(page);
+    }
   }
 
   /// Starts the application
@@ -179,7 +201,7 @@ abstract class Application implements NavigationListener {
    */
   void addPage(Page page) {
     if(startUri == null || startUri.isInvalid) {
-      config.startUri = new NavigationUri.fromString(page.uri);
+      startUri = new NavigationUri.fromString(page.uri);
     }
 
     page.context = new ApplicationContext(this);

@@ -11,12 +11,12 @@ class ModuleCallbackInvocationEventArgs extends EventArgs {
  * and class name.
  */
 class Module extends ViewModel {
-  final Map<String, Object> config;
+  final Map<String, dynamic> config;
   final utility.Logger logger;
+  final ViewTemplate template;
   final String name;
   final String lib;
 
-  ViewTemplate _template;
   ApplicationContext _context;
   ClassMirror _reflectedClass;
   InstanceMirror _instance;
@@ -47,11 +47,6 @@ class Module extends ViewModel {
   }
 
   /**
-   * Gets the template of the module
-   */
-  ViewTemplate get template => _template;
-
-  /**
    * Prefix used for the node ID
    */
   final String ID_PREFIX = "module";
@@ -60,9 +55,8 @@ class Module extends ViewModel {
    * Initializes the module with the help
    * of a class which uses module annotations.
    */
-  Module(this.lib, this.name, Map template, this.config, {this.logger}) {
+  Module(this.lib, this.name, this.template, this.config, {this.logger}) {
     _id = new utility.UniqueId(ID_PREFIX).build();
-    _template = new ViewTemplate.fromJsonMap(template, viewModel: this, logger: logger);
     onInit(new InitEventArgs(this.config));
   }
 

@@ -10,7 +10,7 @@ class Page {
   final List<Fragment> fragments;
   final utility.Logger logger;
   final String title;
-  final String uri;
+  final NavigationUri uri;
 
   /// Initializes the page with its [uri] and [title]. The title is usually used by navigation modules
   /// to create menu entries automatically
