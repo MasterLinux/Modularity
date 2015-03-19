@@ -1,9 +1,5 @@
 part of modularity.core;
 
-class ModuleCallbackInvocationEventArgs extends EventArgs {
-  //TODO implement
-}
-
 /**
  * Helper class to load and handle annotated
  * modules. This class is used to load
@@ -12,7 +8,6 @@ class ModuleCallbackInvocationEventArgs extends EventArgs {
  */
 class Module extends ViewModel {
   final Map<String, dynamic> config;
-  final utility.Logger logger; //TODO move to app_context
   final ApplicationContext context;
   final ViewTemplate template;
   final Fragment fragment;
@@ -25,6 +20,8 @@ class Module extends ViewModel {
 
   annotations.ApplicationModule _meta;
   String _id;
+
+  utility.Logger get logger => context.logger;
 
   /**
    * Gets the unique ID of the module.
@@ -52,7 +49,7 @@ class Module extends ViewModel {
    * Initializes the module with the help
    * of a class which uses module annotations.
    */
-  Module(this.lib, this.name, this.template, this.config, this.fragment, this.context, {this.logger}) {
+  Module(this.lib, this.name, this.template, this.config, this.fragment, this.context) {
     _id = new utility.UniqueId(ID_PREFIX).build();
     onInit(new InitEventArgs(this.config));
   }

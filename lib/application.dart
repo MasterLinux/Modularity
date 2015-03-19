@@ -8,13 +8,14 @@ abstract class Application implements NavigationListener {
   bool _isStarted = false;
   bool _isBusy = false;
   Navigator _navigator;
-  utility.Logger _logger;
+  //utility.Logger _logger;
   NavigationUri _startUri;
   Language _language;
   Version _version;
   Author _author;
   String _name;
 
+  final utility.Logger logger;
   final Manifest manifest;
 
   /**
@@ -74,11 +75,10 @@ abstract class Application implements NavigationListener {
   /**
    * Initializes the application
    */
-  Application.fromManifest(this.manifest, {Navigator navigator, utility.Logger logger}) :
+  Application.fromManifest(this.manifest, {Navigator navigator, this.logger}) :
     resources = new HashMap<String, Resource>(),
     tasks = new HashMap<String, Task>()
   {
-    _logger = logger;
     _readConfig(manifest.config);
 
     if(navigator == null) {
@@ -100,16 +100,16 @@ abstract class Application implements NavigationListener {
     for(var pageModel in config.pages) {
       var template = pageModel.template != null ? new ViewTemplate.fromModel(pageModel.template) : null;
       var uri = new NavigationUri.fromString(pageModel.uri);
-      var page = new Page(uri, pageModel.title, context, template: template, logger: _logger);
+      var page = new Page(uri, pageModel.title, context, template: template);
 
       // add all fragments
       for(var fragmentModel in pageModel.fragments) {
-        var fragment = new Fragment(fragmentModel.parentId, page, context, logger: _logger);
+        var fragment = new Fragment(fragmentModel.parentId, page, context);
 
         //add all modules
         for(var moduleModel in fragmentModel.modules) {
           var template = moduleModel.template != null ? new ViewTemplate.fromModel(moduleModel.template) : null;
-          var module = new Module(moduleModel.lib, moduleModel.name, template, moduleModel.attributes, fragment, context, logger: _logger);
+          var module = new Module(moduleModel.lib, moduleModel.name, template, moduleModel.attributes, fragment, context);
 
           fragment.addModule(module);
         }
@@ -206,8 +206,8 @@ abstract class Application implements NavigationListener {
    */
   void addTasks(List<Task> taskCollection) {
     tasks.addAll(new HashMap.fromIterable(taskCollection, key: (task) {
-      if(_logger != null && tasks.containsKey(task.name)) {
-        _logger.log(new TaskExistsWarning(namespace, task.name));
+      if(logger != null && tasks.containsKey(task.name)) {
+        logger.log(new TaskExistsWarning(namespace, task.name));
       }
 
       return task.name;
@@ -218,8 +218,8 @@ abstract class Application implements NavigationListener {
    * Adds a single background [task] to the application
    */
   void addTask(Task task) {
-    if(_logger != null && tasks.containsKey(task.name)) {
-      _logger.log(new TaskExistsWarning(namespace, task.name));
+    if(logger != null && tasks.containsKey(task.name)) {
+      logger.log(new TaskExistsWarning(namespace, task.name));
     }
 
     tasks[task.name] = task;
@@ -230,8 +230,8 @@ abstract class Application implements NavigationListener {
    */
   void addResources(List<Resource> resourceCollection) {
     resources.addAll(new HashMap.fromIterable(resourceCollection, key: (resource) {
-      if(_logger != null && resources.containsKey(resource.name)) {
-        _logger.log(new ResourceExistsWarning(namespace, resource.name));
+      if(logger != null && resources.containsKey(resource.name)) {
+        logger.log(new ResourceExistsWarning(namespace, resource.name));
       }
 
       return resource.name;
@@ -242,8 +242,8 @@ abstract class Application implements NavigationListener {
    * Adds a single [resource] to the application
    */
   void addResource(Resource resource) {
-    if(_logger != null && resources.containsKey(resource.name)) {
-      _logger.log(new ResourceExistsWarning(namespace, resource.name));
+    if(logger != null && resources.containsKey(resource.name)) {
+      logger.log(new ResourceExistsWarning(namespace, resource.name));
     }
 
     resources[resource.name] = resource;
@@ -261,4 +261,6 @@ class ApplicationContext {
   ApplicationContext(this.application);
 
   String get applicationName => application.name;
+
+  utility.Logger get logger => application.logger;
 }

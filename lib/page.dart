@@ -8,13 +8,12 @@ class Page {
   ViewTemplate _template;
 
   final List<Fragment> fragments;
-  final utility.Logger logger;
-  final String title;
   final NavigationUri uri;
+  final String title;
 
   /// Initializes the page with its [uri] and [title]. The title is usually used by navigation modules
   /// to create menu entries automatically
-  Page(this.uri, this.title, this.context, {ViewTemplate template, this.logger}) : fragments = new List<Fragment>() {
+  Page(this.uri, this.title, this.context, {ViewTemplate template}) : fragments = new List<Fragment>() {
     //load default template
     if (template == null) {
       //template = new DefaultPageTemplate(logger: logger); //TODO create default template
@@ -27,6 +26,8 @@ class Page {
   ViewTemplate get template => _template;
 
   Application get application => context.application;
+
+  utility.Logger get logger => context.logger;
 
   /**
    * Adds this page to the DOM

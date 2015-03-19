@@ -5,7 +5,6 @@ class Fragment {
   final List<Module> modules = new List<Module>();
 
   final ApplicationContext context;
-  final utility.Logger logger; //TODO move to app_context
   final Page page;
 
   /**
@@ -15,10 +14,12 @@ class Fragment {
    */
   final String id;
 
+  utility.Logger get logger => context.logger;
+
   /**
    * Initializes the fragment with its ID.
    */
-  Fragment(this.id, this.page, this.context, {this.logger});
+  Fragment(this.id, this.page, this.context);
 
   /// adds a collection of [AnnotatedModule]s to the fragment
   void addModules(List<Module> modules) {
