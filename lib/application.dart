@@ -7,9 +7,8 @@ abstract class Application implements NavigationListener {
   static const String namespace = "modularity.core.Application";
   bool _isStarted = false;
   bool _isBusy = false;
-  Navigator _navigator;
-  //utility.Logger _logger;
   NavigationUri _startUri;
+  Navigator _navigator;
   Language _language;
   Version _version;
   Author _author;
