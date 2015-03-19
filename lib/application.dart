@@ -87,8 +87,10 @@ abstract class Application implements NavigationListener {
   }
 
   void _readConfig(ApplicationModel config) {
+    var context = new ApplicationContext(this);
+
     //get app info
-    _startUri = config.startUri != null ? new NavigationUri.fromString(config.startUri) : null;
+    _startUri = config.startUri != null ? new NavigationUri.fromString(config.startUri) : new NavigationUri.fromString(config.pages.first.uri);
     _language = new Language.fromCode(config.language);
     _author = new Author(config.author, config.author);
     _version = new Version.fromString(config.version);
@@ -98,16 +100,16 @@ abstract class Application implements NavigationListener {
     for(var pageModel in config.pages) {
       var template = pageModel.template != null ? new ViewTemplate.fromModel(pageModel.template) : null;
       var uri = new NavigationUri.fromString(pageModel.uri);
-      var page = new Page(uri, pageModel.title, template: template, logger: _logger);
+      var page = new Page(uri, pageModel.title, context, template: template, logger: _logger);
 
       // add all fragments
       for(var fragmentModel in pageModel.fragments) {
-        var fragment = new Fragment(fragmentModel.parentId, logger: _logger);
+        var fragment = new Fragment(fragmentModel.parentId, page, context, logger: _logger);
 
         //add all modules
         for(var moduleModel in fragmentModel.modules) {
           var template = moduleModel.template != null ? new ViewTemplate.fromModel(moduleModel.template) : null;
-          var module = new Module(moduleModel.lib, moduleModel.name, template, moduleModel.attributes, logger: _logger);
+          var module = new Module(moduleModel.lib, moduleModel.name, template, moduleModel.attributes, fragment, context, logger: _logger);
 
           fragment.addModule(module);
         }
@@ -189,10 +191,6 @@ abstract class Application implements NavigationListener {
    * Adds all [pages] in list to the application
    */
   void addPages(List<Page> pages) {
-    if((startUri == null || startUri.isInvalid) && pages.isNotEmpty) {
-      config.startUri = new NavigationUri.fromString(pages.first.uri);
-    }
-
     navigator.addPages(pages);
   }
 
@@ -200,12 +198,6 @@ abstract class Application implements NavigationListener {
    * Adds a single [page] to the application
    */
   void addPage(Page page) {
-    if(startUri == null || startUri.isInvalid) {
-      startUri = new NavigationUri.fromString(page.uri);
-    }
-
-    page.context = new ApplicationContext(this);
-
     navigator.addPage(page);
   }
 

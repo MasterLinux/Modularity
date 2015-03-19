@@ -2,9 +2,11 @@ part of modularity.core;
 
 class Fragment {
   static const String namespace = "modularity.core.Fragment";
-  List<Module> modules;
-  ApplicationContext _context;
-  final utility.Logger logger;
+  final List<Module> modules = new List<Module>();
+
+  final ApplicationContext context;
+  final utility.Logger logger; //TODO move to app_context
+  final Page page;
 
   /**
    * The ID of the fragment which is identical to
@@ -16,22 +18,7 @@ class Fragment {
   /**
    * Initializes the fragment with its ID.
    */
-  Fragment(this.id, {this.logger});
-
-  /**
-   * Sets the application context
-   */
-  void set context(ApplicationContext context) {
-    _context = context;
-    _context.fragment = this;
-  }
-
-  /**
-   * Gets the application context
-   */
-  ApplicationContext get context {
-    return _context;
-  }
+  Fragment(this.id, this.page, this.context, {this.logger});
 
   /// adds a collection of [AnnotatedModule]s to the fragment
   void addModules(List<Module> modules) {
@@ -45,7 +32,6 @@ class Fragment {
    */
   void addModule(Module module) {
     if(!modules.contains(module)) {
-      module.context = context;
       modules.add(module);
     }
 
@@ -96,4 +82,16 @@ class Fragment {
       module.onLoadingStateChanged(args);
     }
   }
+}
+
+/// Warning which is used whenever a fragment is already added
+class FragmentExistsWarning extends utility.WarningMessage {
+  final String _uri;
+  final String _id;
+
+  FragmentExistsWarning(String namespace, String pageUri, String fragmentId) : _id = fragmentId, _uri = pageUri, super(namespace);
+
+  @override
+  String get message =>
+  "Fragment with ID => \"$_id\" is already added to page with URI => \"$_uri\". You have to fix the duplicate to ensure that the application works as expected.";
 }

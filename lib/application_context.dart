@@ -5,10 +5,10 @@ part of modularity.core;
  * is an interface to all global
  * information
  */
-class ApplicationContext { //TODO remove
+class ApplicationContext {
   final Application application;
-  Fragment fragment;
-  Page page;
 
   ApplicationContext(this.application);
+
+  String get applicationName => application.name;
 }

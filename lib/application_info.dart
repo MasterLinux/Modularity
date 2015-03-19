@@ -82,3 +82,35 @@ class Author {
 
   Author(this.firstName, this.lastName);
 }
+
+class MissingApplicationNameError extends utility.ErrorMessage {
+  MissingApplicationNameError(String namespace) : super(namespace);
+
+  @override
+  String get message =>
+  "Application name is missing. You have to set a name to ensure that your application runs correctly.";
+}
+
+class MissingApplicationVersionError extends utility.ErrorMessage {
+  MissingApplicationVersionError(String namespace) : super(namespace);
+
+  @override
+  String get message =>
+  "Application version is missing. You have to set a version number to ensure that your application runs correctly.";
+}
+
+class MissingStartUriError extends utility.ErrorMessage {
+  MissingStartUriError(String namespace) : super(namespace);
+
+  @override
+  String get message =>
+  "Start URI is missing. You have to set a start URI or have to add a page to ensure that your application runs correctly.";
+}
+
+class MissingDefaultLanguageWarning extends utility.WarningMessage {
+  MissingDefaultLanguageWarning(String namespace) : super(namespace);
+
+  @override
+  String get message =>
+  "Application Language is not set. So it will be fall back to the default language.";
+}

@@ -12,8 +12,10 @@ class ModuleCallbackInvocationEventArgs extends EventArgs {
  */
 class Module extends ViewModel {
   final Map<String, dynamic> config;
-  final utility.Logger logger;
+  final utility.Logger logger; //TODO move to app_context
+  final ApplicationContext context;
   final ViewTemplate template;
+  final Fragment fragment;
   final String name;
   final String lib;
 
@@ -23,11 +25,6 @@ class Module extends ViewModel {
 
   annotations.ApplicationModule _meta;
   String _id;
-
-  /**
-   * Gets or sets the application context
-   */
-  ApplicationContext context;
 
   /**
    * Gets the unique ID of the module.
@@ -55,7 +52,7 @@ class Module extends ViewModel {
    * Initializes the module with the help
    * of a class which uses module annotations.
    */
-  Module(this.lib, this.name, this.template, this.config, {this.logger}) {
+  Module(this.lib, this.name, this.template, this.config, this.fragment, this.context, {this.logger}) {
     _id = new utility.UniqueId(ID_PREFIX).build();
     onInit(new InitEventArgs(this.config));
   }
@@ -65,7 +62,7 @@ class Module extends ViewModel {
    */
   void add(NavigationEventArgs args) {
     onBeforeAdd(args);
-    template.render(context.fragment.id);
+    template.render(fragment.id);
     onAdded(args);
   }
 
@@ -266,4 +263,15 @@ class Module extends ViewModel {
     );
   }
 
+}
+
+class ModuleExistsWarning extends utility.WarningMessage {
+  final String _fragmentId;
+  final String _moduleId;
+
+  ModuleExistsWarning(String namespace, String moduleId, String fragmentId) : _fragmentId = fragmentId, _moduleId = moduleId, super(namespace);
+
+  @override
+  String get message =>
+    "Module with ID => \"$_moduleId\" is already added to fragment with ID => \"$_fragmentId\". You have to fix the duplicate to ensure that the application works as expected.";
 }

@@ -232,6 +232,8 @@ class NavigationUri {
   bool get isValid => true;
 
   bool get isInvalid => !isValid;
+
+  //TODO implement toString
 }
 
 abstract class NavigationStrategy {
@@ -240,5 +242,26 @@ abstract class NavigationStrategy {
 
 class DefaultNavigationStrategy implements NavigationStrategy {
   bool shouldReplace(Page page, Page previousPage) => false;
+}
+
+class ParameterExistsWarning extends utility.WarningMessage { //TODO rename to NavigationParameterExistsWarning
+  final String _name;
+
+  ParameterExistsWarning(String namespace, String name) : _name = name, super(namespace);
+
+  @override
+  String get message =>
+  "Parameter with name => \"$_name\" already exists. You have to fix the duplicate to ensure that the application works as expected.";
+}
+
+class MissingParameterWarning extends utility.WarningMessage {
+  final String _name;
+  final String _uri;
+
+  MissingParameterWarning(String namespace, String uri, String name) : _name = name, _uri = uri, super(namespace);
+
+  @override
+  String get message =>
+  "Parameter with name => \"$_name\" is missing. Check whether the given parameter name for page with URI => \"$_uri\" is correct.";
 }
 

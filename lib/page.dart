@@ -4,7 +4,7 @@ part of modularity.core;
 class Page {
   static const String namespace = "modularity.core.Page";
   NavigationParameter _navigationParameter;
-  ApplicationContext _context;
+  ApplicationContext context;
   ViewTemplate _template;
 
   final List<Fragment> fragments;
@@ -14,7 +14,7 @@ class Page {
 
   /// Initializes the page with its [uri] and [title]. The title is usually used by navigation modules
   /// to create menu entries automatically
-  Page(this.uri, this.title, {ViewTemplate template, this.logger}) : fragments = new List<Fragment>() {
+  Page(this.uri, this.title, this.context, {ViewTemplate template, this.logger}) : fragments = new List<Fragment>() {
     //load default template
     if (template == null) {
       //template = new DefaultPageTemplate(logger: logger); //TODO create default template
@@ -23,23 +23,10 @@ class Page {
     _template = template;
   }
 
-  /**
-   * Sets the application context
-   */
-  void set context(ApplicationContext context) {
-    _context = context;
-    _context.page = this;
-  }
-
-  /**
-   * Gets the application context
-   */
-  ApplicationContext get context {
-    return _context;
-  }
-
   /// Gets the template of this page
   ViewTemplate get template => _template;
+
+  Application get application => context.application;
 
   /**
    * Adds this page to the DOM
@@ -64,12 +51,11 @@ class Page {
   /// adds a [Fragment] to this page
   void addFragment(Fragment fragment) {
     if(!fragments.contains(fragment)) {
-      fragment.context = context;
       fragments.add(fragment);
     }
 
     else if(logger != null) {
-      logger.log(new FragmentExistsWarning(namespace, uri, fragment.id));
+      logger.log(new FragmentExistsWarning(namespace, uri.toString(), fragment.id));
     }
   }
 
@@ -98,9 +84,32 @@ class Page {
 
     //log if the required parameter isn't available
     else if(logger != null) {
-      logger.log(new MissingParameterWarning(namespace, uri, name));
+      logger.log(new MissingParameterWarning(namespace, uri.toString(), name));
     }
 
     return result;
   }
+}
+
+/**
+ * Warning which is used whenever a page already exists
+ */
+class PageExistsWarning extends utility.WarningMessage {
+  final String _uri;
+
+  PageExistsWarning(String namespace, String uri) : _uri = uri, super(namespace);
+
+  @override
+  String get message =>
+  "Page with URI => \"$_uri\" already exists. You have to fix the name duplicate to ensure that the application works as expected.";
+}
+
+class MissingPageWarning extends utility.WarningMessage {
+  final String _uri;
+
+  MissingPageWarning(String namespace, String uri) : _uri = uri, super(namespace);
+
+  @override
+  String get message =>
+  "Page with URI => \"$_uri\" does not exists. Please check whether a page with this URI is registered.";
 }

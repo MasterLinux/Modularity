@@ -21,3 +21,16 @@ class Resource {
     return "${languageCode}_${languageName}";
   }
 }
+
+/**
+ * Warning which is used whenever a resource already exists
+ */
+class ResourceExistsWarning extends utility.WarningMessage {
+  final String _name;
+
+  ResourceExistsWarning(String namespace, String name) : _name = name, super(namespace);
+
+  @override
+  String get message =>
+  "Resource with name => \"$_name\" already exists. You have to fix the name duplicate to ensure that the application works as expected.";
+}
