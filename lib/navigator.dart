@@ -158,10 +158,10 @@ class Navigator {
    */
   void addPage(Page page) {
     if(logger != null && pages.containsKey(page.uri)) {
-      logger.log(new PageExistsWarning(namespace, page.uri));
+      logger.log(new PageExistsWarning(namespace, page.uri.toString()));
     }
 
-    pages[page.uri] = page;
+    pages[page.uri.toString()] = page;
   }
 }
 
