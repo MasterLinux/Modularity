@@ -4,6 +4,7 @@ class MethodCollection {
   Map<Symbol, Method> _methods = new Map<Symbol, Method>();
   InstanceMirror _instanceMirror;
 
+  /// Initializes the collection
   MethodCollection(InstanceMirror instanceMirror) {
     _instanceMirror = instanceMirror;
 
@@ -15,20 +16,23 @@ class MethodCollection {
     });
   }
 
+  /// Returns true if the collection contains a method with the given [name]
   bool contains(Symbol name) => _methods.containsKey(name);
 
-  Method operator [](Symbol name) {
-    return _methods[name];
-  }
+  /// Returns the [Method] for the given [name] or null if [name] is not in the collection
+  Method operator [](Symbol name) => _methods[name];
 
+  /// Returns the first method that satisfies the given [test]
   Method firstWhere(bool test(Method method), { Method orElse() }) {
     return _methods.values.firstWhere(test, orElse: orElse);
   }
 
+  /// Returns each method that satisfies the given [test]
   Iterable<Method> where(bool test(Method method)) {
     return _methods.values.where(test);
   }
 
+  /// Invokes each method that satisfies the given [test]
   void invokeWhere(bool test(Method method), [List positionalArguments, Map<Symbol,dynamic> namedArguments]) {
     _methods.values.forEach((method) {
       if(test(method)) {
@@ -37,6 +41,7 @@ class MethodCollection {
     });
   }
 
+  /// Invokes the first method that satisfies the given [test]
   void invokeFirstWhere(bool test(Method method), [List positionalArguments, Map<Symbol,dynamic> namedArguments]) {
     var method = firstWhere(test, orElse: () => null);
 
@@ -51,11 +56,13 @@ class Method {
   MethodMirror _methodMirror;
   final Symbol name;
 
+  /// Initializes the method
   Method(this.name, MethodMirror methodMirror, InstanceMirror instanceMirror) {
     _instanceMirror = instanceMirror;
     _methodMirror = methodMirror;
   }
 
+  /// Invokes the method
   void invoke([List positionalArguments, Map<Symbol,dynamic> namedArguments]) {
     positionalArguments = positionalArguments != null ? positionalArguments : [];
     namedArguments = namedArguments != null ? namedArguments : {};
@@ -63,52 +70,74 @@ class Method {
     _instanceMirror.invoke(name, positionalArguments, namedArguments);
   }
 
+  /// Returns true if method is abstract
   bool get isAbstract => _methodMirror.isAbstract;
 
-  /// Gets a specific annotation by its [metadataName]. If annotation
-  /// does not exists it returns [null]
-  operator [](Symbol metadataName) {
+  /// Returns the 'metadata annotation' for the given [annotationName]
+  /// or null if method is not annotated with the annotation with the given name
+  operator [](Symbol annotationName) {
     var metadata = _methodMirror.metadata.firstWhere((meta) {
-      return meta.type.simpleName == metadataName;
+      return meta.type.simpleName == annotationName;
     }, orElse: () => null);
 
-    return metadata.reflectee;
+    return metadata != null ? metadata.reflectee : null;
   }
 
+  /// Returns true if the method is annotated with
+  /// the metadata annotation with the given [name]
   bool hasMetadata(Symbol name) => this[name] != null;
 }
 
 class FieldCollection {
+  Map<Symbol, Field> _fields = new Map<Symbol, Field>();
   InstanceMirror _instanceMirror;
 
+  /// Initializes the collection
   FieldCollection(InstanceMirror instanceMirror) {
     _instanceMirror = instanceMirror;
 
-    // TODO create field map, see methodColl
+    // get all fields
+    instanceMirror.type.instanceMembers.forEach((name, mirror) {
+      if(mirror.isSetter || mirror.isGetter) {
+        _fields[name] = new Field(name, _instanceMirror);
+      }
+    });
   }
 
+  /// Returns the [Field] for the given [name] or null if [name] is not in the collection
   Field operator [](Symbol name) {
-    return new Field(name, _instanceMirror);
+    return _fields[name];
   }
 
+  /// Associates the [Field] with the given [name] with the given [value]
   operator []=(Symbol name, Object value) => _instanceMirror.setField(name, value);
+
+  /// Returns true if the collection contains a [Field] with the given [name]
+  bool contains(Symbol name) => _fields.containsKey(name);
 }
 
 class Field {
   InstanceMirror _instanceMirror;
+  MethodMirror _methodMirror;
   final Symbol name;
 
+  /// Initializes the field
   Field(this.name, InstanceMirror instanceMirror) {
+    _methodMirror = instanceMirror.type.instanceMembers[name];
     _instanceMirror = instanceMirror;
   }
 
+  /// Sets the given [value]
   set(Object value) => _instanceMirror.setField(name, value);
 
+  /// Gets the value of the [Field]
   Object get() => _instanceMirror.getField(name);
 
-  bool get isSetter => false; // TODO implement
+  /// Returns true if [Field] is a setter
+  bool get isSetter => _methodMirror.isSetter;
 
-  bool get isGetter => true; // TODO implement
+  /// Returns true if [Field] is a getter
+  bool get isGetter => _methodMirror.isGetter;
 }
 
 ///
@@ -150,7 +179,7 @@ class ClassLoader<T> {
 
   MethodCollection get methods => _methods;
 
-  bool hasField(Symbol name) => true; //TODO implement
+  bool hasField(Symbol name) => _fields.contains(name);
 
   bool hasMethod(Symbol name) => _methods.contains(name);
 
