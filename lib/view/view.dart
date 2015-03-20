@@ -1,12 +1,11 @@
 library modularity.core.view;
 
-import '../utility/utility.dart' as utility show UniqueId, Logger, getClassMirror;
+import '../utility/utility.dart' as utility show UniqueId, Logger, ClassLoader;
 import '../manifest.dart' show ViewTemplateModel, ViewBindingModel;
 import '../data/data.dart' show Converter, EventArgs;
 
 import 'dart:html' as html;
 import 'dart:async' show StreamSubscription;
-import 'dart:mirrors' show InstanceMirror, reflect;
 
 part 'text_input.dart';
 
@@ -100,25 +99,23 @@ class ViewTemplate {
   }
 
   static View createView(String viewType, {String libraryName: View.defaultLibrary, List<ViewBinding> bindings, ViewModel viewModel, List<View> subviews}) {
-    var classMirror = utility.getClassMirror(libraryName, viewType);
-
-    var instanceMirror = classMirror.newInstance(new Symbol(""), [], {
-      new Symbol("viewModel"): viewModel,
-      new Symbol("bindings"): bindings
+    var loader = new utility.ClassLoader<View>(new Symbol(libraryName), new Symbol(viewType), const Symbol(""), [], {
+        #viewModel: viewModel,
+        #bindings: bindings
     });
 
-    return instanceMirror.reflectee as View;
+    return loader.instance;
   }
 }
 
 // similar to the state in react.js
 abstract class ViewModel {
+  utility.ClassLoader<ViewModel> _classLoader;
   List<View> _views = new List<View>();
-  InstanceMirror _instanceMirror;
 
   /// Initializes the view model
   ViewModel() {
-    _instanceMirror = reflect(this);
+    _classLoader = new utility.ClassLoader<ViewModel>.fromInstance(this);
   }
 
   /// Notifies the view that a specific property in this view model is changed
@@ -138,7 +135,7 @@ abstract class ViewModel {
   }
 
   void updateProperty(String name, dynamic value) {
-    _instanceMirror.setField(new Symbol("${name}"), value);
+    _classLoader.fields[new Symbol(name)].set(value);
   }
 
   /// Handler which is invoked whenever a specific view attribute is changed
@@ -161,7 +158,7 @@ abstract class ViewModel {
 
   /// Helper function which is used to invoke a specific event handler in this view model
   void invokeEventHandler(String name, View sender, EventArgs args) {
-    _instanceMirror.invoke(new Symbol(name), [sender, args]);
+    _classLoader.invokeMethod(new Symbol(name), [sender, args]);
   }
 
   /// Checks whether this view model contains a specific property
@@ -189,8 +186,11 @@ abstract class View {
   /// Initializes the view with a [ViewModel] and a list of [ViewBinding]s
   View({this.viewModel, List<ViewBinding> bindings}) {
     _id = new utility.UniqueId("mod_view").build();
-    viewModel.subscribe(this);
-    setup(bindings);
+
+    if(viewModel != null) {
+      viewModel.subscribe(this);
+      setup(bindings);
+    }
   }
 
   /// Setups the view. Can be overridden to add event handler, etc.

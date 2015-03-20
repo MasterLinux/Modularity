@@ -107,8 +107,14 @@ abstract class Application implements NavigationListener {
 
         //add all modules
         for(var moduleModel in fragmentModel.modules) {
-          var template = moduleModel.template != null ? new ViewTemplate.fromModel(moduleModel.template) : null;
-          var module = new Module(moduleModel.lib, moduleModel.name, template, moduleModel.attributes, fragment, context);
+          var module = new Module(
+              moduleModel.lib,
+              moduleModel.name,
+              moduleModel.template,
+              moduleModel.attributes,
+              fragment,
+              context
+          );
 
           fragment.addModule(module);
         }

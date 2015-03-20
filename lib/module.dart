@@ -7,13 +7,13 @@ part of modularity.core;
  * and class name.
  */
 class Module extends ViewModel {
-  final Map<String, dynamic> config;
+  final Map<String, dynamic> attributes;
   final ApplicationContext context;
-  final ViewTemplate template;
   final Fragment fragment;
   final String name;
   final String lib;
 
+  ViewTemplate _template;
   ApplicationContext _context;
   ClassMirror _reflectedClass;
   InstanceMirror _instance;
@@ -21,6 +21,7 @@ class Module extends ViewModel {
   annotations.ApplicationModule _meta;
   String _id;
 
+  ViewTemplate get template => _template;
   utility.Logger get logger => context.logger;
 
   /**
@@ -49,9 +50,11 @@ class Module extends ViewModel {
    * Initializes the module with the help
    * of a class which uses module annotations.
    */
-  Module(this.lib, this.name, this.template, this.config, this.fragment, this.context) {
+  Module(this.lib, this.name, ViewTemplateModel template, this.attributes, this.fragment, this.context) {
     _id = new utility.UniqueId(ID_PREFIX).build();
-    onInit(new InitEventArgs(this.config));
+    _template = template != null ? new ViewTemplate.fromModel(template, viewModel: this) : null;
+
+    onInit(new InitEventArgs(this.attributes));
   }
 
   /**
