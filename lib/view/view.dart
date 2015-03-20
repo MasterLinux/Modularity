@@ -1,11 +1,13 @@
 library modularity.core.view;
 
-import '../utility/utility.dart' as utility show UniqueId, Logger, ClassLoader;
+import '../utility/utility.dart' as utility show UniqueId, Logger;
 import '../manifest.dart' show ViewTemplateModel, ViewBindingModel;
 import '../data/data.dart' show Converter, EventArgs;
 
 import 'dart:html' as html;
 import 'dart:async' show StreamSubscription;
+
+import 'package:class_loader/class_loader.dart';
 
 part 'text_input.dart';
 
@@ -99,7 +101,7 @@ class ViewTemplate {
   }
 
   static View createView(String viewType, {String libraryName: View.defaultLibrary, List<ViewBinding> bindings, ViewModel viewModel, List<View> subviews}) {
-    var loader = new utility.ClassLoader<View>(new Symbol(libraryName), new Symbol(viewType), const Symbol(""), [], {
+    var loader = new ClassLoader<View>(new Symbol(libraryName), new Symbol(viewType), const Symbol(""), [], {
         #viewModel: viewModel,
         #bindings: bindings
     });
@@ -110,12 +112,12 @@ class ViewTemplate {
 
 // similar to the state in react.js
 abstract class ViewModel {
-  utility.ClassLoader<ViewModel> _classLoader;
+  ClassLoader<ViewModel> _classLoader;
   List<View> _views = new List<View>();
 
   /// Initializes the view model
   ViewModel() {
-    _classLoader = new utility.ClassLoader<ViewModel>.fromInstance(this);
+    _classLoader = new ClassLoader<ViewModel>.fromInstance(this);
   }
 
   /// Notifies the view that a specific property in this view model is changed
