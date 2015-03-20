@@ -1,10 +1,90 @@
 part of modularity.core.utility;
 
+class MethodCollection {
+  Map<Symbol, Method> _methods = new Map<Symbol, Method>();
+  InstanceMirror _instanceMirror;
+
+  MethodCollection(InstanceMirror instanceMirror) {
+    _instanceMirror = instanceMirror;
+
+    // get all methods
+    instanceMirror.type.instanceMembers.forEach((name, mirror) {
+      if(mirror.isRegularMethod && !mirror.isSetter && !mirror.isGetter && !mirror.isConstructor) {
+        _methods[name] = new Method(name, mirror, _instanceMirror);
+      }
+    });
+  }
+
+  bool contains(Symbol name) => _methods.containsKey(name);
+
+  Method operator [](Symbol name) {
+    return _methods[name];
+  }
+
+  Method firstWhere(bool test(Method method), { Method orElse() }) {
+    return _methods.values.firstWhere(test, orElse: orElse);
+  }
+
+  Iterable<Method> where(bool test(Method method)) {
+    return _methods.values.where(test);
+  }
+
+  void invokeWhere(bool test(Method method), [List positionalArguments, Map<Symbol,dynamic> namedArguments]) {
+    _methods.values.forEach((method) {
+      if(test(method)) {
+        method.invoke(positionalArguments, namedArguments);
+      }
+    });
+  }
+
+  void invokeFirstWhere(bool test(Method method), [List positionalArguments, Map<Symbol,dynamic> namedArguments]) {
+    var method = firstWhere(test, orElse: () => null);
+
+    if(method != null) {
+      method.invoke(positionalArguments, namedArguments);
+    }
+  }
+}
+
+class Method {
+  InstanceMirror _instanceMirror;
+  MethodMirror _methodMirror;
+  final Symbol name;
+
+  Method(this.name, MethodMirror methodMirror, InstanceMirror instanceMirror) {
+    _instanceMirror = instanceMirror;
+    _methodMirror = methodMirror;
+  }
+
+  void invoke([List positionalArguments, Map<Symbol,dynamic> namedArguments]) {
+    positionalArguments = positionalArguments != null ? positionalArguments : [];
+    namedArguments = namedArguments != null ? namedArguments : {};
+
+    _instanceMirror.invoke(name, positionalArguments, namedArguments);
+  }
+
+  bool get isAbstract => _methodMirror.isAbstract;
+
+  /// Gets a specific annotation by its [metadataName]. If annotation
+  /// does not exists it returns [null]
+  operator [](Symbol metadataName) {
+    var metadata = _methodMirror.metadata.firstWhere((meta) {
+      return meta.type.simpleName == metadataName;
+    }, orElse: () => null);
+
+    return metadata.reflectee;
+  }
+
+  bool hasMetadata(Symbol name) => this[name] != null;
+}
+
 class FieldCollection {
   InstanceMirror _instanceMirror;
 
   FieldCollection(InstanceMirror instanceMirror) {
     _instanceMirror = instanceMirror;
+
+    // TODO create field map, see methodColl
   }
 
   Field operator [](Symbol name) {
@@ -25,21 +105,22 @@ class Field {
   set(Object value) => _instanceMirror.setField(name, value);
 
   Object get() => _instanceMirror.getField(name);
+
+  bool get isSetter => false; // TODO implement
+
+  bool get isGetter => true; // TODO implement
 }
 
-/**
- * TODO:
- * var classLoader = new ClassLoader("lib", "class");
- * classLoader.methods.firstWhere((Symbol name, dynamic annotation) => true).invoke([], {});
- * classLoader.methods.whereName("method").invoke([], {});
- * classLoader.fields.whereName("field").set(1);
- * classLoader.fields.whereName("field").get(defaultValue: 1);
- */
+///
 class ClassLoader<T> {
   InstanceMirror _instanceMirror;
   ClassMirror _classMirror;
   FieldCollection _fields;
+  MethodCollection _methods;
 
+  /// Initializes the loader with the help of the [libraryName]
+  /// and [className] of the required class to load. The [constructorName]
+  /// can be used to use a specific constructor for initialization
   ClassLoader(Symbol libraryName, Symbol className, [Symbol constructorName, List positionalArguments, Map<Symbol,dynamic> namedArguments]) {
     _classMirror = _getClassMirror(libraryName, className);
 
@@ -50,13 +131,16 @@ class ClassLoader<T> {
     _instanceMirror = _classMirror.newInstance(constructorName, positionalArguments, namedArguments);
 
     _fields = new FieldCollection(_instanceMirror);
+    _methods = new MethodCollection(_instanceMirror);
   }
 
+  /// Initializes the loader with the help of an instance
   ClassLoader.fromInstance(T reflectee) {
     _instanceMirror = reflect(reflectee);
     _classMirror = _instanceMirror.type;
 
     _fields = new FieldCollection(_instanceMirror);
+    _methods = new MethodCollection(_instanceMirror);
   }
 
   /// Gets the instance of the loaded class
@@ -64,6 +148,11 @@ class ClassLoader<T> {
 
   FieldCollection get fields => _fields;
 
+  MethodCollection get methods => _methods;
+
+  bool hasField(Symbol name) => true; //TODO implement
+
+  bool hasMethod(Symbol name) => _methods.contains(name);
 
   /**
    * Invokes a method by its [name]

@@ -158,17 +158,17 @@ abstract class ViewModel {
 
   /// Helper function which is used to invoke a specific event handler in this view model
   void invokeEventHandler(String name, View sender, EventArgs args) {
-    _classLoader.invokeMethod(new Symbol(name), [sender, args]);
+    _classLoader.methods[new Symbol(name)].invoke([sender, args]);
   }
 
   /// Checks whether this view model contains a specific property
   bool containsProperty(String name) {
-    return true; //TODO
+    return _classLoader.hasField(new Symbol(name));
   }
 
   /// Checks whether this view model contains a specific event handler
   bool containsEventHandler(String name) {
-    return true;
+    return _classLoader.hasMethod(new Symbol(name));
   }
 }
 
