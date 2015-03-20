@@ -1,5 +1,6 @@
 part of modularity.core.utility;
 
+/// Collection for methods
 class MethodCollection {
   Map<Symbol, Method> _methods = new Map<Symbol, Method>();
   InstanceMirror _instanceMirror;
@@ -51,6 +52,7 @@ class MethodCollection {
   }
 }
 
+/// Represents a method
 class Method {
   InstanceMirror _instanceMirror;
   MethodMirror _methodMirror;
@@ -88,6 +90,7 @@ class Method {
   bool hasMetadata(Symbol name) => this[name] != null;
 }
 
+/// Collection for getter and setter
 class FieldCollection {
   Map<Symbol, Field> _fields = new Map<Symbol, Field>();
   InstanceMirror _instanceMirror;
@@ -116,6 +119,7 @@ class FieldCollection {
   bool contains(Symbol name) => _fields.containsKey(name);
 }
 
+/// Representation of a getter or setter
 class Field {
   InstanceMirror _instanceMirror;
   MethodMirror _methodMirror;
@@ -175,12 +179,16 @@ class ClassLoader<T> {
   /// Gets the instance of the loaded class
   T get instance => _instanceMirror.reflectee as T;
 
+  /// Gets all getter and setter of the reflected class
   FieldCollection get fields => _fields;
 
+  /// Gets all methods of the reflected class
   MethodCollection get methods => _methods;
 
+  /// Returns true if class contains a getter or setter the given [name]
   bool hasField(Symbol name) => _fields.contains(name);
 
+  /// Returns true if class contains method the given [name]
   bool hasMethod(Symbol name) => _methods.contains(name);
 
   /**
