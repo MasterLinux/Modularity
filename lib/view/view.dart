@@ -289,7 +289,7 @@ abstract class View {
   }
 
   void _addEventHandlerBinding(String attributeName, String propertyName) {
-    if(viewModel.containsEventHandler(attributeName)) {
+    if(viewModel.containsEventHandler(propertyName)) {
       if(!_eventHandlerBindings.containsKey(attributeName)) {
         _eventHandlerBindings[attributeName] = propertyName;
       } else {

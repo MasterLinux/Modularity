@@ -229,13 +229,15 @@ class ViewTemplateConverter implements Converter<Map, ViewTemplateModel> {
       ..subviews = subviews;
   }
 
+  //view == attribute
+  //viewModel == property
   ViewBindingModel _parseEventHandlerBinding(Map event) {
-    var eventHandlerName = event[nameKey];
-    var propertyName = event[bindingKey];
+    var eventHandlerName = event[bindingKey];
+    var attributeName = event[nameKey];
 
     return new ViewBindingModel()
-      ..attributeName = eventHandlerName
-      ..propertyName = propertyName;
+      ..attributeName = attributeName
+      ..propertyName = eventHandlerName;
   }
 
   ViewBindingModel _parseAttributeBinding(Map attribute) {
