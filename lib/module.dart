@@ -6,32 +6,22 @@ part of modularity.core;
  * modules with the help of its library
  * and class name.
  */
-class Module extends ViewModel {
+class Module extends ViewModel { // TODO rename to ModuleLoader
   final Map<String, dynamic> attributes;
   final ApplicationContext context;
   final Fragment fragment;
+  final String libraryName;
   final String name;
-  final String lib;
 
   ViewTemplate _template;
   ApplicationContext _context;
-  ClassMirror _reflectedClass;
+  ClassLoader _classLoader;
   InstanceMirror _instance;
 
   annotations.ApplicationModule _meta;
-  String _id;
 
   ViewTemplate get template => _template;
   utility.Logger get logger => context.logger;
-
-  /**
-   * Gets the unique ID of the module.
-   * Each instance of a module has
-   * its own unique ID.
-   */
-  String get id {
-    return _id;
-  }
 
   /**
    * Gets the meta information
@@ -42,17 +32,12 @@ class Module extends ViewModel {
   }
 
   /**
-   * Prefix used for the node ID
-   */
-  final String ID_PREFIX = "module";
-
-  /**
    * Initializes the module with the help
    * of a class which uses module annotations.
    */
-  Module(this.lib, this.name, ViewTemplateModel template, this.attributes, this.fragment, this.context) {
-    _id = new utility.UniqueId(ID_PREFIX).build();
+  Module(this.libraryName, this.name, ViewTemplateModel template, this.attributes, this.fragment, this.context) {
     _template = template != null ? new ViewTemplate.fromModel(template, viewModel: this) : null;
+    _classLoader = new ClassLoader(new Symbol(libraryName), new Symbol(name));
 
     onInit(new InitEventArgs(this.attributes));
   }
@@ -76,102 +61,35 @@ class Module extends ViewModel {
   }
 
   /**
-   * Invokes all event handler which are passed the given [test].
-   */
-  void _invokeHandlerWhere(bool test(Symbol methodName, InstanceMirror mirror), ClassMirror classMirror, InstanceMirror instanceMirror, [EventArgs args]) {
-    classMirror.instanceMembers.forEach((Symbol methodName, MethodMirror methodMirror) {
-
-      //check whether method is annotated
-      if(methodMirror.isRegularMethod
-        && methodMirror.metadata.isNotEmpty) {
-
-        //get all methods to invoke
-        var annotations = methodMirror.metadata.where((meta) {
-          return test(methodName, meta);
-        });
-
-        //invoke onInit method
-        if(annotations.isNotEmpty) {
-          if(args != null) {
-            instanceMirror.invoke(methodName, [args]);
-          } else {
-            instanceMirror.invoke(methodName, []);
-          }
-        }
-      }
-    });
-  }
-
-  /**
    * This init function is called once when the module
    * is initialized on app start.
    */
   void onInit(InitEventArgs args) {
-    _reflectedClass = utility.getClassMirror(lib, name);
-
-    var metadata = _reflectedClass.metadata;
-    var annotation = metadata.firstWhere(
-      (meta) => meta.hasReflectee && meta.reflectee is annotations.ApplicationModule,
-      orElse: () => null
-    );
-
-    //get new instance of module to invoke methods
-    _instance = _reflectedClass.newInstance(const Symbol(''), []);
+    var annotation = _classLoader.metadata[#ApplicationModule];
 
     //get module information for registration
-    if(annotation != null && name != null) {
-      _meta = annotation.reflectee as annotations.ApplicationModule;
+    if(annotation != null) {
+      _meta = annotation as annotations.ApplicationModule;
+
+      var onInitMethod = _classLoader.methods.firstWhereMetadata((name, meta) => name == #OnInitAnnotation);
 
       //try to invoke onInit handler of module, if handler doesn't exists throw exception
-      if(!_tryInvokeOnInitHandler(_reflectedClass, _instance, args)) {
+      if(onInitMethod != null) {
+        onInitMethod.invoke([context, args]);
+      } else {
         throw new MissingInitMethodException(name);
       }
     }
 
     //if name is missing throw exception
-    else if(annotation != null && name == null) {
+    else if(annotation != null && name == null) { //TODO refactor exceptions -> use errors?
       throw new MissingModuleIdException();
     }
 
     //if given type isn't a module throw exception
     else {
-      throw new InvalidModuleException(_reflectedClass.simpleName);
+      throw new InvalidModuleException(new Symbol(name));
     }
-  }
-
-  /**
-   * Tries to invoke the init method of the the module.
-   * In case the module doesn't contain a method marked
-   * with the [@OnInit] annotation this method returns
-   * false, otherwise it returns true
-   */
-  bool _tryInvokeOnInitHandler(ClassMirror classMirror, InstanceMirror instanceMirror, InitEventArgs args) {
-    var initHandlerExists = false;
-
-    classMirror.instanceMembers.forEach((methodName, methodMirror) {
-
-      //check whether method is annotated
-      if(!initHandlerExists
-        && methodMirror.isRegularMethod
-        && methodMirror.metadata.isNotEmpty) {
-
-        //get onInit annotation
-        var annotation = methodMirror.metadata.firstWhere(
-          (meta) {
-            return meta.hasReflectee && meta.reflectee is annotations.OnInitAnnotation;
-          },
-          orElse: () => null
-        );
-
-        //invoke onInit method if marked with onInit annotation
-        if(annotation != null) {
-          instanceMirror.invoke(methodName, [context, args]);
-          initHandlerExists = true;
-        }
-      }
-    });
-
-    return initHandlerExists;
   }
 
   /**
@@ -179,12 +97,11 @@ class Module extends ViewModel {
    * but before the template of the module is added to the DOM.
    */
   void onBeforeAdd(NavigationEventArgs args) {
-    _invokeHandlerWhere(
-            (methodName, meta) {
-              return meta.hasReflectee && meta.reflectee is annotations.OnBeforeAddAnnotation;
-            },
-            _reflectedClass, _instance, args
-    );
+    var method = _classLoader.methods.firstWhereMetadata((name, meta) => name == #OnBeforeAddAnnotation, orElse: () => null);
+
+    if(method != null) {
+      method.invoke([args]);
+    }
   }
 
   /**
@@ -192,12 +109,11 @@ class Module extends ViewModel {
    * of the module is completely added to DOM.
    */
   void onAdded(NavigationEventArgs args) {
-    _invokeHandlerWhere(
-            (methodName, meta) {
-              return meta.hasReflectee && meta.reflectee is annotations.OnAddedAnnotation;
-            },
-            _reflectedClass, _instance, args
-    );
+    var method = _classLoader.methods.firstWhereMetadata((name, meta) => name == #OnAddedAnnotation, orElse: () => null);
+
+    if(method != null) {
+      method.invoke([args]);
+    }
   }
 
   /**
@@ -206,12 +122,11 @@ class Module extends ViewModel {
    * is removed from DOM.
    */
   void onBeforeRemove() {
-    _invokeHandlerWhere(
-            (methodName, meta) {
-              return meta.hasReflectee && meta.reflectee is annotations.OnBeforeRemoveAnnotation;
-            },
-            _reflectedClass, _instance
-    );
+    var method = _classLoader.methods.firstWhereMetadata((name, meta) => name == #OnBeforeRemoveAnnotation, orElse: () => null);
+
+    if(method != null) {
+      method.invoke();
+    }
   }
 
   /**
@@ -219,12 +134,11 @@ class Module extends ViewModel {
    * of the module is completely removed from DOM.
    */
   void onRemoved() {
-    _invokeHandlerWhere(
-        (methodName, meta) {
-          return meta.hasReflectee && meta.reflectee is annotations.OnRemovedAnnotation;
-        },
-        _reflectedClass, _instance
-    );
+    var method = _classLoader.methods.firstWhereMetadata((name, meta) => name == #OnRemovedAnnotation, orElse: () => null);
+
+    if(method != null) {
+      method.invoke();
+    }
   }
 
   /**
@@ -233,18 +147,14 @@ class Module extends ViewModel {
    * also when an error occurred.
    */
   void onRequestCompleted(RequestCompletedEventArgs args) {
-    _invokeHandlerWhere(
-            (methodName, meta) {
-              return meta.hasReflectee
-                && meta.reflectee is annotations.OnRequestCompleted
-                && (
-                    (meta.reflectee.requestId == args.requestId
-                    && meta.reflectee.isErrorHandler == args.isErrorOccurred)
-                    || meta.reflectee.isDefault
-                );
-            },
-            _reflectedClass, _instance, args
+    var method = _classLoader.methods.firstWhereMetadata(
+      (name, meta) => name == #OnRequestCompleted && (meta as OnRequestCompleted).isExecutable(args),
+      orElse: () => null
     );
+
+    if(method != null) {
+      method.invoke([args]);
+    }
   }
 
   /**
@@ -253,14 +163,14 @@ class Module extends ViewModel {
    * data or receives data.
    */
   void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
-    _invokeHandlerWhere(
-      (methodName, meta) {
-        return meta.hasReflectee
-          && meta.reflectee is annotations.OnLoadingStateChanged
-          && (meta.reflectee.isLoading == args.isLoading || meta.reflectee.isDefault);
-      },
-      _reflectedClass, _instance, args
+    var method = _classLoader.methods.firstWhereMetadata(
+      (name, meta) => name == #OnLoadingStateChanged && (meta as OnLoadingStateChanged).isExecutable(args),
+      orElse: () => null
     );
+
+    if(method != null) {
+      method.invoke([args]);
+    }
   }
 
 }
