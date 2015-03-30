@@ -6,17 +6,18 @@ part of modularity.core;
  * modules with the help of its library
  * and class name.
  */
-class Module extends ViewModel { // TODO rename to ModuleLoader
+class Module { // TODO rename to ModuleLoader
   final Map<String, dynamic> attributes;
+  final ViewTemplateModel viewTemplateModel;
   final ApplicationContext context;
   final Fragment fragment;
   final String libraryName;
   final String name;
 
+  //ApplicationContext _context;
+  Field _dataContextField;
   ViewTemplate _template;
-  ApplicationContext _context;
   ClassLoader _classLoader;
-  InstanceMirror _instance;
 
   annotations.ApplicationModule _meta;
 
@@ -31,15 +32,19 @@ class Module extends ViewModel { // TODO rename to ModuleLoader
     return _meta;
   }
 
+  ViewModel get dataContext => _dataContextField.get();
+
   /**
    * Initializes the module with the help
    * of a class which uses module annotations.
    */
-  Module(this.libraryName, this.name, ViewTemplateModel template, this.attributes, this.fragment, this.context) {
-    _template = template != null ? new ViewTemplate.fromModel(template, viewModel: this) : null;
+  Module(this.libraryName, this.name, this.viewTemplateModel, this.attributes, this.fragment, this.context) {
     _classLoader = new ClassLoader(new Symbol(libraryName), new Symbol(name));
+    onInit(new InitEventArgs(attributes));
+  }
 
-    onInit(new InitEventArgs(this.attributes));
+  Future load() async {
+    await _classLoader.load();
   }
 
   /**
@@ -70,8 +75,10 @@ class Module extends ViewModel { // TODO rename to ModuleLoader
     //get module information for registration
     if(annotation != null) {
       _meta = annotation as annotations.ApplicationModule;
+      _dataContextField = _classLoader.fields.firstWhereMetadata((name, meta) => name == #DataContextAnnotation, orElse: () => null);
+      _template = template != null ? new ViewTemplate.fromModel(viewTemplateModel, viewModel: dataContext) : null;
 
-      var onInitMethod = _classLoader.methods.firstWhereMetadata((name, meta) => name == #OnInitAnnotation);
+      var onInitMethod = _classLoader.methods.firstWhereMetadata((name, meta) => name == #OnInitAnnotation, orElse: () => null);
 
       //try to invoke onInit handler of module, if handler doesn't exists throw exception
       if(onInitMethod != null) {
@@ -184,4 +191,10 @@ class ModuleExistsWarning extends utility.WarningMessage {
   @override
   String get message =>
     "Module with ID => \"$_moduleId\" is already added to fragment with ID => \"$_fragmentId\". You have to fix the duplicate to ensure that the application works as expected.";
+}
+
+const Object DataContext = const DataContextAnnotation();
+
+class DataContextAnnotation {
+  const DataContextAnnotation();
 }

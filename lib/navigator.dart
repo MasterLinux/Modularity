@@ -77,7 +77,7 @@ class Navigator {
   }
 
   /// opens a specific [Page] with the help of its [uri]
-  Future navigateTo(String uri, {NavigationParameter parameter}) {
+  Future navigateTo(NavigationUri uri, {NavigationParameter parameter}) {
     if(pages.containsKey(uri)) {
       var args = new NavigationEventArgs(uri, parameter: parameter);
       var navigationId = new utility.UniqueId(idPrefix).build();

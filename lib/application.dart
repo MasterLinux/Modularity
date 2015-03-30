@@ -5,8 +5,7 @@ part of modularity.core;
  */
 abstract class Application implements NavigationListener {
   static const String namespace = "modularity.core.Application";
-  bool _isStarted = false;
-  bool _isBusy = false;
+  bool _isRunning = false;
   NavigationUri _startUri;
   Navigator _navigator;
   Language _language;
@@ -50,9 +49,9 @@ abstract class Application implements NavigationListener {
 
   /**
    * Flag which indicates whether the
-   * application is started or not
+   * application is running or not
    */
-  bool get isStarted => _isStarted;
+  bool get isRunning => _isRunning;
 
   /**
    * Gets all registered pages
@@ -78,14 +77,16 @@ abstract class Application implements NavigationListener {
     resources = new HashMap<String, Resource>(),
     tasks = new HashMap<String, Task>()
   {
-    _readConfig(manifest.config);
+    _applyManifest(manifest.config).then((_) {
 
-    if(navigator == null) {
-      //TODO initialize navigator
-    }
+      if(navigator == null) {
+        //TODO initialize navigator
+      }
+    });
   }
 
-  void _readConfig(ApplicationModel config) {
+  /// Reads the manifest and initializes the application
+  Future _applyManifest(ApplicationModel config) async {
     var context = new ApplicationContext(this);
 
     //get app info
@@ -116,6 +117,8 @@ abstract class Application implements NavigationListener {
               context
           );
 
+          await module.load(); //TODO store all futures in list and load each concurrently? load in start() / run() method?
+
           fragment.addModule(module);
         }
 
@@ -129,63 +132,23 @@ abstract class Application implements NavigationListener {
   /// Starts the application
   ///
   /// For example:
-  ///     if(!application.isStarted) {
-  ///       application.start().then((instance) {
-  ///         //the call of start() must be completed before you can stop the application
-  ///       });
+  ///     if(!application.isRunning) {
+  ///       await application.run();
   ///     }
   ///
-  Future<Application> start() { //TODO use async keyword
-    if(!_isBusy && !_isStarted) {
-      _isBusy = true;
-      Completer<Application> completer = new Completer<Application>();
-      completer.complete(this);
+  Future<Application> run() async {
+    if(!isRunning) {
+      _isRunning = true;
 
-      return completer.future.then((instance) {
-        instance.navigator.addListener(instance);
+      navigator.addListener(this);
+      await navigator.navigateTo(startUri, parameter: new NavigationParameter.fromMap({})); //TODO start page parameter required
 
-        //TODO start page parameter required
-        return instance.navigator.navigateTo(instance.info.startUri).then((_) {
-          _isStarted = true;
-          _isBusy = false;
-
-          return instance;
-        });
-      });
-    } else if(_isBusy) {
-      throw new ExecutionException("start can only be called once");
-    } else {
-      throw new ExecutionException("application is already running");
+    } else if(logger != null) {
+      //TODO logger.log()...
+      //throw new ExecutionException("application is already running");
     }
-  }
 
-  /// Stops the application
-  ///
-  /// For example:
-  ///     if(application.isStarted) {
-  ///       application.stop().then((instance) {
-  ///         //the call of stop() must be completed before you start the application again
-  ///       });
-  ///     }
-  ///
-  Future<Application> stop() { //TODO use async keyword
-    if(!_isBusy && _isStarted) {
-      _isBusy = true;
-      Completer<Application> completer = new Completer<Application>();
-      completer.complete(this);
-
-      return completer.future.then((instance) {
-        instance.navigator.clear();
-
-        _isStarted = false;
-        _isBusy = false;
-        return instance;
-      });
-    } else if(_isBusy) {
-      throw new ExecutionException("stop can only be called once");
-    } else {
-      throw new ExecutionException("stop can only be called if application is currently running");
-    }
+    return this;
   }
 
   void onNavigatedTo(Navigator sender, Page page, NavigationEventArgs args) {
