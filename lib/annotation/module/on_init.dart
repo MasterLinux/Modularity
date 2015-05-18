@@ -1,5 +1,7 @@
 part of modularity.core.annotation.module;
 
+//TODO remove annotation
+
 /**
  * Annotation which marks a function
  * as init function of a module. A module
@@ -16,6 +18,7 @@ part of modularity.core.annotation.module;
  *     }
  *
  */
+@Deprecated("Use constructor instead")
 const Object OnInit = const OnInitAnnotation();
 
 /**

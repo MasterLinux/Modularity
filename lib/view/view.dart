@@ -101,23 +101,21 @@ class ViewTemplate {
   }
 
   static View createView(String viewType, {String libraryName: View.defaultLibrary, List<ViewBinding> bindings, ViewModel viewModel, List<View> subviews}) {
-    var loader = new ClassLoader<View>(new Symbol(libraryName), new Symbol(viewType), const Symbol(""), [], {
+    return new ClassLoader<View>(new Symbol(libraryName), new Symbol(viewType), const Symbol(""), [], {
         #viewModel: viewModel,
         #bindings: bindings
-    });
-
-    return loader.instance;
+    }).instance;
   }
 }
 
 // similar to the state in react.js
 abstract class ViewModel {
-  ClassLoader<ViewModel> _classLoader;
+  ClassLoader<ViewModel> _instance;
   List<View> _views = new List<View>();
 
   /// Initializes the view model
   ViewModel() {
-    _classLoader = new ClassLoader<ViewModel>.fromInstance(this);
+    _instance = new ClassLoader<ViewModel>.fromInstance(this);
   }
 
   /// Notifies the view that a specific property in this view model is changed
@@ -137,7 +135,7 @@ abstract class ViewModel {
   }
 
   void updateProperty(String name, dynamic value) {
-    _classLoader.fields[new Symbol(name)].set(value);
+    _instance.fields[new Symbol(name)].set(value);
   }
 
   /// Handler which is invoked whenever a specific view attribute is changed
@@ -160,17 +158,17 @@ abstract class ViewModel {
 
   /// Helper function which is used to invoke a specific event handler in this view model
   void invokeEventHandler(String name, View sender, EventArgs args) {
-    _classLoader.methods[new Symbol(name)].invoke([sender, args]);
+    _instance.methods[new Symbol(name)].invoke([sender, args]);
   }
 
   /// Checks whether this view model contains a specific property
   bool containsProperty(String name) {
-    return _classLoader.hasField(new Symbol(name));
+    return _instance.hasField(new Symbol(name));
   }
 
   /// Checks whether this view model contains a specific event handler
   bool containsEventHandler(String name) {
-    return _classLoader.hasMethod(new Symbol(name));
+    return _instance.hasMethod(new Symbol(name));
   }
 }
 

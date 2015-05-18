@@ -117,8 +117,6 @@ abstract class Application implements NavigationListener {
               context
           );
 
-          await module.load(); //TODO store all futures in list and load each concurrently? load in start() / run() method?
-
           fragment.addModule(module);
         }
 
