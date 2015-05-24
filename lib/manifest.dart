@@ -139,25 +139,20 @@ class FragmentConverter implements Converter<Map, FragmentModel> {
 class ModuleModel {
   String lib;
   String name;
-  ViewTemplateModel template;
   Map<String, dynamic> attributes;
 }
 
 class ModuleConverter implements Converter<Map, ModuleModel> {
   static const String attributesKey = "attributes";
-  static const String templateKey = "template";
   static const String libraryNameKey = "lib";
   static const String nameKey = "name";
 
   @override
   ModuleModel convert(Map value) {
-    var template = value[templateKey] != null ? new ViewTemplateConverter().convert(value[templateKey]) : null;
-
     return new ModuleModel()
       ..lib = value[libraryNameKey]
       ..name = value[nameKey]
-      ..attributes = value[attributesKey]
-      ..template = template;
+      ..attributes = value[attributesKey];
   }
 
   @override

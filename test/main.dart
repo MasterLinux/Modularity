@@ -4,7 +4,7 @@ import 'package:scheduled_test/scheduled_test.dart' as test;
 import 'package:unittest/html_config.dart';
 import 'package:modularity/view/view.dart';
 import 'package:modularity/manifest.dart';
-//import 'package:modularity/core.dart';
+import 'package:modularity/core.dart';
 
 //import 'package:modularity/template/template.dart';
 //import 'package:modularity/exception/exception.dart';
@@ -29,7 +29,7 @@ class TestViewModel extends ViewModel {
 
   set title(String title) {
     _title = title;
-    notifyPropertyChanged("title", title);
+    notifyPropertyChanged("title");
   }
 
   String get title => _title;
@@ -42,7 +42,9 @@ class TestViewModel extends ViewModel {
 void main() {
   useHtmlConfiguration();
 
+  new Core().tests();
 
+  /*
   var tpl = JSON.decode(
   """
   {
@@ -66,7 +68,7 @@ void main() {
 
   var vm = new TestViewModel();
   var ren = new ViewTemplate.fromModel(model, viewModel: vm);
-  ren.render("#body");
+  ren.render("#body");   */
 
   //vm.title = "test";
   //ren.destroy();

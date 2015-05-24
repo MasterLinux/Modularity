@@ -3,7 +3,7 @@ part of modularity.core;
 /**
  * Representation of an application
  */
-abstract class Application implements NavigationListener {
+class Application implements NavigationListener {
   static const String namespace = "modularity.core.Application";
   bool _isRunning = false;
   NavigationUri _startUri;
@@ -14,7 +14,6 @@ abstract class Application implements NavigationListener {
   String _name;
 
   final utility.Logger logger;
-  final Manifest manifest;
 
   /**
    * Gets the navigator used to navigate
@@ -62,32 +61,32 @@ abstract class Application implements NavigationListener {
    * Gets all resources tasks if no resource is loaded
    * it returns an empty list
    */
-  final HashMap<String, Resource> resources; //TODO move to resource manager
+  final HashMap<String, Resource> resources;
+
+  //TODO move to resource manager
 
   /**
    * Gets all background tasks if no task is loaded
    * it returns an empty list
    */
-  final HashMap<String, Task> tasks; //TODO move to task queue
+  final HashMap<String, Task> tasks;
+
+  //TODO move to task queue
 
   /**
    * Initializes the application
    */
-  Application.fromManifest(this.manifest, {Navigator navigator, this.logger}) :
-    resources = new HashMap<String, Resource>(),
-    tasks = new HashMap<String, Task>()
+  Application({Navigator navigator, this.logger}) :
+  resources = new HashMap<String, Resource>(),
+  tasks = new HashMap<String, Task>()
   {
-    _applyManifest(manifest.config).then((_) {
-
-      if(navigator == null) {
-        //TODO initialize navigator
-      }
-    });
+    _navigator = navigator != null ? navigator : new Navigator();
   }
 
   /// Reads the manifest and initializes the application
-  Future _applyManifest(ApplicationModel config) async {
+  Future applyManifest(Manifest manifest) async {
     var context = new ApplicationContext(this);
+    var config = manifest.config;
 
     //get app info
     _startUri = config.startUri != null ? new NavigationUri.fromString(config.startUri) : new NavigationUri.fromString(config.pages.first.uri);
@@ -97,26 +96,25 @@ abstract class Application implements NavigationListener {
     _name = config.name;
 
     // add all pages
-    for(var pageModel in config.pages) {
-      var template = pageModel.template != null ? new ViewTemplate.fromModel(pageModel.template) : null;
+    for (var pageModel in config.pages) {
+      var template = pageModel.template != null ? ViewTemplate.createTemplate(pageModel.template) : null;
       var uri = new NavigationUri.fromString(pageModel.uri);
       var page = new Page(uri, pageModel.title, context, template: template);
 
       // add all fragments
-      for(var fragmentModel in pageModel.fragments) {
+      for (var fragmentModel in pageModel.fragments) {
         var fragment = new Fragment(fragmentModel.parentId, page, context);
 
         //add all modules
-        for(var moduleModel in fragmentModel.modules) {
-          var module = new Module(
+        for (var moduleModel in fragmentModel.modules) {
+          var module = await Module.createModule(
               moduleModel.lib,
               moduleModel.name,
-              moduleModel.template,
               moduleModel.attributes,
-              fragment,
-              context
+              fragment
           );
 
+          await module.load();
           fragment.addModule(module);
         }
 
@@ -135,13 +133,14 @@ abstract class Application implements NavigationListener {
   ///     }
   ///
   Future<Application> run() async {
-    if(!isRunning) {
+    if (!isRunning) {
       _isRunning = true;
 
       navigator.addListener(this);
-      await navigator.navigateTo(startUri, parameter: new NavigationParameter.fromMap({})); //TODO start page parameter required
+      await navigator.navigateTo(startUri, parameter: new NavigationParameter.fromMap({}));
+      //TODO start page parameter required
 
-    } else if(logger != null) {
+    } else if (logger != null) {
       //TODO logger.log()...
       //throw new ExecutionException("application is already running");
     }
@@ -172,7 +171,7 @@ abstract class Application implements NavigationListener {
    */
   void addTasks(List<Task> taskCollection) {
     tasks.addAll(new HashMap.fromIterable(taskCollection, key: (task) {
-      if(logger != null && tasks.containsKey(task.name)) {
+      if (logger != null && tasks.containsKey(task.name)) {
         logger.log(new TaskExistsWarning(namespace, task.name));
       }
 
@@ -184,7 +183,7 @@ abstract class Application implements NavigationListener {
    * Adds a single background [task] to the application
    */
   void addTask(Task task) {
-    if(logger != null && tasks.containsKey(task.name)) {
+    if (logger != null && tasks.containsKey(task.name)) {
       logger.log(new TaskExistsWarning(namespace, task.name));
     }
 
@@ -196,7 +195,7 @@ abstract class Application implements NavigationListener {
    */
   void addResources(List<Resource> resourceCollection) {
     resources.addAll(new HashMap.fromIterable(resourceCollection, key: (resource) {
-      if(logger != null && resources.containsKey(resource.name)) {
+      if (logger != null && resources.containsKey(resource.name)) {
         logger.log(new ResourceExistsWarning(namespace, resource.name));
       }
 
@@ -208,7 +207,7 @@ abstract class Application implements NavigationListener {
    * Adds a single [resource] to the application
    */
   void addResource(Resource resource) {
-    if(logger != null && resources.containsKey(resource.name)) {
+    if (logger != null && resources.containsKey(resource.name)) {
       logger.log(new ResourceExistsWarning(namespace, resource.name));
     }
 

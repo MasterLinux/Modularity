@@ -5,7 +5,7 @@ import '../manifest.dart' show ViewTemplateModel, ViewBindingModel;
 import '../data/data.dart' show Converter, EventArgs;
 
 import 'dart:html' as html;
-import 'dart:async' show StreamSubscription;
+import 'dart:async' show StreamSubscription, Future;
 
 import 'package:class_loader/class_loader.dart';
 
@@ -25,23 +25,23 @@ class ViewBinding {
   ViewBinding(this.type, this.attributeName, this.propertyName, {this.defaultValue});
 }
 
-class ViewConverter implements Converter<ViewTemplateModel, View> {
+class ViewConverter implements Converter<ViewTemplateModel, Future<View>> {
   final ViewModel viewModel;
 
   ViewConverter(this.viewModel);
 
-  View convert(ViewTemplateModel value) {
+  Future<View> convert(ViewTemplateModel value) async {
     var bindings = new List<ViewBinding>();
     var subviews = new List<View>();
 
-    if(value.subviews != null) {
-      for(var subview in value.subviews) {
-        subviews.add(convert(subview));
+    if (value.subviews != null) {
+      for (var subview in value.subviews) {
+        subviews.add(await convert(subview));
       }
     }
 
-    if(value.attributes != null) {
-      for(var attribute in value.attributes) {
+    if (value.attributes != null) {
+      for (var attribute in value.attributes) {
         bindings.add(new ViewBinding(
             ViewBindingType.ATTRIBUTE,
             attribute.attributeName,
@@ -51,8 +51,8 @@ class ViewConverter implements Converter<ViewTemplateModel, View> {
       }
     }
 
-    if(value.events != null) {
-      for(var event in value.events) {
+    if (value.events != null) {
+      for (var event in value.events) {
         bindings.add(new ViewBinding(
             ViewBindingType.EVENT_HANDLER,
             event.attributeName,
@@ -61,7 +61,7 @@ class ViewConverter implements Converter<ViewTemplateModel, View> {
       }
     }
 
-    return ViewTemplate.createView(
+    return await ViewTemplate.createView(
         value.type,
         libraryName: value.lib != null ? value.lib : View.defaultLibrary,
         viewModel: viewModel,
@@ -70,7 +70,7 @@ class ViewConverter implements Converter<ViewTemplateModel, View> {
     );
   }
 
-  ViewTemplateModel convertBack(View value) {
+  ViewTemplateModel convertBack(Future<View> value) {
     throw new UnimplementedError();
   }
 }
@@ -82,29 +82,34 @@ class ViewTemplate {
     _rootView = view;
   }
 
-  ViewTemplate.fromModel(ViewTemplateModel model, {ViewModel viewModel, utility.Logger logger}) {
-    _rootView = new ViewConverter(viewModel).convert(model);
-  }
-
   View get rootView => _rootView;
 
   void render(String parentId) {
-    if(rootView != null) {
+    if (rootView != null) {
       rootView.addToDOM(parentId);
     }
   }
 
   void destroy() {
-    if(rootView != null) {
+    if (rootView != null) {
       rootView.removeFromDOM();
     }
   }
 
-  static View createView(String viewType, {String libraryName: View.defaultLibrary, List<ViewBinding> bindings, ViewModel viewModel, List<View> subviews}) {
-    return new ClassLoader<View>(new Symbol(libraryName), new Symbol(viewType), const Symbol(""), [], {
-        #viewModel: viewModel,
-        #bindings: bindings
-    }).instance;
+  static Future<ViewTemplate> createTemplate(ViewTemplateModel model, {ViewModel viewModel, utility.Logger logger}) async {
+    var view = await new ViewConverter(viewModel).convert(model);
+    return new ViewTemplate(view, logger: logger);
+  }
+
+  /// Loads a viw by its [viewType]
+  static Future<View> createView(String viewType, {String libraryName: View.defaultLibrary, List<ViewBinding> bindings, ViewModel viewModel, List<View> subviews}) async {
+    var viewLoader = new ClassLoader<View>(new Symbol(libraryName), new Symbol(viewType), const Symbol(""), [], {
+      #viewModel: viewModel,
+      #bindings: bindings
+    });
+
+    await viewLoader.load();
+    return viewLoader.instance;
   }
 }
 
@@ -128,9 +133,20 @@ abstract class ViewModel {
   ///       notifyPropertyChanged("specificProperty");
   ///     }
   ///
-  void notifyPropertyChanged(String name, dynamic value) {
-    for(var view in _views) {
-      view.notifyPropertyChanged(name, value);
+  ///     // implement getter which is required to get
+  ///     // the value for updating the view
+  ///     String get specificProperty => _specificProperty;
+  ///
+  void notifyPropertyChanged(String name) {
+    var getter = _instance.getter[new Symbol(name)];
+
+    if (getter != null) {
+      for (var view in _views) {
+        view.notifyPropertyChanged(name, getter.get());
+      }
+
+    } else {
+      // TODO throw warning, getter not found
     }
   }
 
@@ -140,18 +156,19 @@ abstract class ViewModel {
 
   /// Handler which is invoked whenever a specific view attribute is changed
   /// This function can be overridden to handle attributes changes
-  void onAttributeChanged(String name, dynamic value) {}
+  void onAttributeChanged(String name, dynamic value) {
+  }
 
   /// Subscribes a view as observer so it is able to listen for attribute changes
   void subscribe(View view) {
-    if(!_views.contains(view)) {
+    if (!_views.contains(view)) {
       _views.add(view);
     }
   }
 
   /// Unsubscribes a specific view from listening
   void unsubscribe(View view) {
-    if(_views.contains(view)) {
+    if (_views.contains(view)) {
       _views.remove(view);
     }
   }
@@ -187,7 +204,7 @@ abstract class View {
   View({this.viewModel, List<ViewBinding> bindings}) {
     _id = new utility.UniqueId("mod_view").build();
 
-    if(viewModel != null) {
+    if (viewModel != null) {
       viewModel.subscribe(this);
       setup(bindings);
     }
@@ -196,8 +213,8 @@ abstract class View {
   /// Setups the view. Can be overridden to add event handler, etc.
   void setup(List<ViewBinding> bindings) {
     //map attributes to view model
-    if(bindings != null) {
-      for(var binding in bindings) {
+    if (bindings != null) {
+      for (var binding in bindings) {
         addBinding(binding);
       }
     }
@@ -207,19 +224,20 @@ abstract class View {
   String get id => _id;
 
   /// TODO comment
-  View render();
+  Future<View> render();
 
   /// Converts the view to an HTML element
-  html.HtmlElement toHtml() {
-    return render().toHtml();
+  Future<html.HtmlElement> toHtml() async {
+    return (await render()).toHtml();
   }
 
   /// Adds the view to DOM
-  void addToDOM(String parentId) {
-    var element = toHtml()..id = id;
+  Future addToDOM(String parentId) async {
+    var element = (await toHtml())
+      ..id = id;
     var parentNode = html.document.querySelector(parentId);
 
-    if(parentNode != null) {
+    if (parentNode != null) {
       parentNode.nodes.add(element);
     } else {
       // TODO log node with ID is missing error
@@ -232,7 +250,7 @@ abstract class View {
 
     var node = html.document.querySelector("#${id}");
 
-    if(node != null) {
+    if (node != null) {
       node.remove();
     } else {
       // TODO log warning -> node already removed from DOM
@@ -244,7 +262,7 @@ abstract class View {
   void cleanup() {
     viewModel.unsubscribe(this);
 
-    for(var subview in subviews) {
+    for (var subview in subviews) {
       subview.cleanup();
     }
   }
@@ -264,18 +282,20 @@ abstract class View {
   void notifyPropertyChanged(String propertyName, dynamic value) {
     var attributeName = _propertyBindings.containsKey(propertyName) ? _propertyBindings[propertyName] : null;
 
-    if(attributeName != null) {
+    if (attributeName != null) {
       onAttributeChanged(attributeName, value);
     }
   }
 
   /// Handler which is invoked whenever a specific property in view model is changed
-  void onAttributeChanged(String name, dynamic value) {}
+  void onAttributeChanged(String name, dynamic value) {
+  }
 
   /// Adds a new view binding
-  void addBinding(ViewBinding binding) { // TODO allow multiple bindings
-    if(viewModel != null) {
-      switch(binding.type) {
+  void addBinding(ViewBinding binding) {
+    // TODO allow multiple bindings
+    if (viewModel != null) {
+      switch (binding.type) {
         case ViewBindingType.ATTRIBUTE:
           _addAttributeBinding(binding.attributeName, binding.propertyName, binding.defaultValue);
           break;
@@ -289,8 +309,8 @@ abstract class View {
   }
 
   void _addEventHandlerBinding(String attributeName, String propertyName) {
-    if(viewModel.containsEventHandler(propertyName)) {
-      if(!_eventHandlerBindings.containsKey(attributeName)) {
+    if (viewModel.containsEventHandler(propertyName)) {
+      if (!_eventHandlerBindings.containsKey(attributeName)) {
         _eventHandlerBindings[attributeName] = propertyName;
       } else {
         //TODO log error. binding already exists
@@ -301,12 +321,12 @@ abstract class View {
   }
 
   void _addAttributeBinding(String attributeName, String propertyName, dynamic defaultValue) {
-    if(viewModel.containsProperty(propertyName)) {
-      if(!_attributeBindings.containsKey(attributeName) && !_propertyBindings.containsKey(propertyName)) {
+    if (viewModel.containsProperty(propertyName)) {
+      if (!_attributeBindings.containsKey(attributeName) && !_propertyBindings.containsKey(propertyName)) {
         _attributeBindings[attributeName] = propertyName;
         _propertyBindings[propertyName] = attributeName;
 
-        if(defaultValue != null) {
+        if (defaultValue != null) {
           viewModel.updateProperty(propertyName, defaultValue);
           //onAttributeChanged(attributeName, defaultValue);
         }
@@ -326,7 +346,7 @@ abstract class HtmlElementView<TElement extends html.HtmlElement> extends View {
   HtmlElementView({ViewModel viewModel, List<ViewBinding> bindings}) : super(viewModel: viewModel, bindings: bindings);
 
   @override
-  TElement toHtml() => _htmlElement;
+  Future<TElement> toHtml() async => _htmlElement;
 
   /// Method used to create the HTML element
   /// which represents this view
@@ -336,7 +356,7 @@ abstract class HtmlElementView<TElement extends html.HtmlElement> extends View {
   void setupHtmlElement(TElement element);
 
   @override
-  View render() {
+  Future<View> render() async {
     return this;
   }
 
@@ -350,14 +370,15 @@ abstract class HtmlElementView<TElement extends html.HtmlElement> extends View {
 }
 
 
-class TestView extends View { //TODO remove
+class TestView extends View {
+  //TODO remove
 
   TestView({ViewModel viewModel, List<ViewBinding> bindings}) :
-    super(viewModel: viewModel, bindings: bindings);
+  super(viewModel: viewModel, bindings: bindings);
 
   @override
-  View render() {
-    return ViewTemplate.createView("TextInput", viewModel: viewModel, bindings: [
+  Future<View> render() async {
+    return await ViewTemplate.createView("TextInput", viewModel: viewModel, bindings: [
       new ViewBinding(ViewBindingType.EVENT_HANDLER, TextInput.onTextChangedEvent, "testFunc"),
       new ViewBinding(ViewBindingType.ATTRIBUTE, TextInput.textAttribute, "title")
     ]);

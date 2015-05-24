@@ -4,8 +4,8 @@ class Fragment {
   static const String namespace = "modularity.core.Fragment";
   final List<Module> modules = new List<Module>();
 
-  final ApplicationContext context;
-  final Page page;
+  final ApplicationContext context;  //TODO redefine application context
+  final Page page; //TODO use for communication?
 
   /**
    * The ID of the fragment which is identical to

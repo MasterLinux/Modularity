@@ -1,61 +1,50 @@
 part of modularity.core;
 
-class ModuleContext {
-  InitEventArgs arguments;
-  ViewModel viewModel;
-
-}
-
-abstract class Mod extends ViewModel {
+abstract class Module extends ViewModel {
+  static const String namespace = "modularity.core.Module";
+  static const String defaultLibrary = "modularity.core";
   ClassLoader _instance;
-  View _view;
 
-  Mod() {
+  /// Initial attributes to setup this module
+  final Map<String, dynamic> attributes;
+
+  /// Gets the fragment which contains
+  /// this module
+  final Fragment parent;
+
+  /// Initializes the module
+  Module(this.parent, this.attributes) {
     _instance = new ClassLoader.fromInstance(this);
-
-    _instance.load().then((_) {
-      onInit();
-    });
   }
 
-  /// Gets the data context. Can be overridden
-  /// to set a custom view model
-  ViewModel get dataContext => this;
+  /// Loads a specific module by its [libraryName] and [name]
+  static Future<Module> createModule(String libraryName, String name, Map<String, dynamic> attributes, Fragment parent) async {
+    var moduleLoader = new ClassLoader<Module>(new Symbol(libraryName), new Symbol(name), null, [parent, attributes], {});
+    await moduleLoader.load();
 
-  /// Sets a new view
-  void set view(View view) {
-    // clean up previous view
-    if(_view != null) {
-      dataContext.unsubscribe(_view);
-    }
-
-    _view = view;
-
-    dataContext.subscribe(_view);
+    return moduleLoader.instance;
   }
 
-  View get view => _view;
+  /// Gets the content view of this module
+  View get view;
 
-  void onPropertyChanged(String name) {
-    if(dataContext != null) {
-      var getter = _instance.getter[new Symbol(name)];
+  /// Gets the ID of the module or null if view is not set
+  String get id => view.id;
 
-      if(getter != null) {
-        dataContext.notifyPropertyChanged(name, getter.get());
-      } else {
-        // TODO throw warning
-      }
-    } else {
-      // TODO throw warning
-    }
+  /// loads the module
+  Future load() async {
+    await _instance.load();
+    onInit();
   }
 
   /**
    * Adds the template of the module to DOM.
    */
   void add(NavigationEventArgs args) {
+    subscribe(view);
+
     onBeforeAdd(args);
-    _view.addToDOM(fragment.id); //TODO
+    view.addToDOM(parent.id);
     onAdded(args);
   }
 
@@ -64,8 +53,10 @@ abstract class Mod extends ViewModel {
    */
   void remove() {
     onBeforeRemove();
-    _view.removeFromDOM();
+    view.removeFromDOM();
     onRemoved();
+
+    unsubscribe(view);
   }
 
   /**
@@ -114,13 +105,15 @@ abstract class Mod extends ViewModel {
   void onLoadingStateChanged(LoadingStateChangedEventArgs args);
 }
 
+/*
 /**
  * Helper class to load and handle annotated
  * modules. This class is used to load
  * modules with the help of its library
  * and class name.
  */
-class Module { // TODO rename to ModuleDecorator?
+class Module {
+  // TODO rename to ModuleDecorator?
   final Map<String, dynamic> attributes;
   final ViewTemplateModel viewTemplateModel;
   final ApplicationContext context;
@@ -135,6 +128,7 @@ class Module { // TODO rename to ModuleDecorator?
   annotations.ApplicationModule _meta;
 
   ViewTemplate get template => _template;
+
   utility.Logger get logger => context.logger;
 
   /**
@@ -186,14 +180,15 @@ class Module { // TODO rename to ModuleDecorator?
     var annotation = _instance.metadata[#ApplicationModule];
 
     //get module information for registration
-    if(annotation != null) {
+    if (annotation != null) {
       _meta = annotation as annotations.ApplicationModule;
-      _dataContextField = _instance.fields.firstWhereMetadata((name, meta) => name == #DataContextAnnotation, orElse: () => null);
+      //_dataContextField = _instance.fields.firstWhereMetadata((name, meta) => name == #DataContextAnnotation, orElse: () => null);
       _template = template != null ? new ViewTemplate.fromModel(viewTemplateModel, viewModel: dataContext) : null;
     }
 
     //if name is missing throw exception
-    else if(annotation != null && name == null) { //TODO refactor exceptions -> use errors?
+    else if (annotation != null && name == null) {
+      //TODO refactor exceptions -> use errors?
       throw new MissingModuleIdException();
     }
 
@@ -210,7 +205,7 @@ class Module { // TODO rename to ModuleDecorator?
   void onBeforeAdd(NavigationEventArgs args) {
     var method = _instance.methods.firstWhereMetadata((name, meta) => name == #OnBeforeAddAnnotation, orElse: () => null);
 
-    if(method != null) {
+    if (method != null) {
       method.invoke([args]);
     }
   }
@@ -222,7 +217,7 @@ class Module { // TODO rename to ModuleDecorator?
   void onAdded(NavigationEventArgs args) {
     var method = _instance.methods.firstWhereMetadata((name, meta) => name == #OnAddedAnnotation, orElse: () => null);
 
-    if(method != null) {
+    if (method != null) {
       method.invoke([args]);
     }
   }
@@ -235,7 +230,7 @@ class Module { // TODO rename to ModuleDecorator?
   void onBeforeRemove() {
     var method = _instance.methods.firstWhereMetadata((name, meta) => name == #OnBeforeRemoveAnnotation, orElse: () => null);
 
-    if(method != null) {
+    if (method != null) {
       method.invoke();
     }
   }
@@ -247,7 +242,7 @@ class Module { // TODO rename to ModuleDecorator?
   void onRemoved() {
     var method = _instance.methods.firstWhereMetadata((name, meta) => name == #OnRemovedAnnotation, orElse: () => null);
 
-    if(method != null) {
+    if (method != null) {
       method.invoke();
     }
   }
@@ -259,11 +254,11 @@ class Module { // TODO rename to ModuleDecorator?
    */
   void onRequestCompleted(RequestCompletedEventArgs args) {
     var method = _instance.methods.firstWhereMetadata(
-      (name, meta) => name == #OnRequestCompleted && (meta as OnRequestCompleted).isExecutable(args),
-      orElse: () => null
+            (name, meta) => name == #OnRequestCompleted && (meta as OnRequestCompleted).isExecutable(args),
+        orElse: () => null
     );
 
-    if(method != null) {
+    if (method != null) {
       method.invoke([args]);
     }
   }
@@ -275,16 +270,16 @@ class Module { // TODO rename to ModuleDecorator?
    */
   void onLoadingStateChanged(LoadingStateChangedEventArgs args) {
     var method = _instance.methods.firstWhereMetadata(
-      (name, meta) => name == #OnLoadingStateChanged && (meta as OnLoadingStateChanged).isExecutable(args),
-      orElse: () => null
+            (name, meta) => name == #OnLoadingStateChanged && (meta as OnLoadingStateChanged).isExecutable(args),
+        orElse: () => null
     );
 
-    if(method != null) {
+    if (method != null) {
       method.invoke([args]);
     }
   }
 
-}
+} */
 
 class ModuleExistsWarning extends utility.WarningMessage {
   final String _fragmentId;
@@ -294,11 +289,5 @@ class ModuleExistsWarning extends utility.WarningMessage {
 
   @override
   String get message =>
-    "Module with ID => \"$_moduleId\" is already added to fragment with ID => \"$_fragmentId\". You have to fix the duplicate to ensure that the application works as expected.";
-}
-
-const Object DataContext = const DataContextAnnotation();
-
-class DataContextAnnotation {
-  const DataContextAnnotation();
+  "Module with ID => \"$_moduleId\" is already added to fragment with ID => \"$_fragmentId\". You have to fix the duplicate to ensure that the application works as expected.";
 }

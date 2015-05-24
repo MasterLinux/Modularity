@@ -3,10 +3,10 @@ part of modularity.core;
 /**
  * Representation of a language
  *
- *   //
- *   var german = new Language.fromCode("de_DE");
- *   var english = new Language.fromCode("en-US");
- *   var defaultLanguage = new Language();
+ *     //
+ *     var german = new Language.fromCode("de_DE");
+ *     var english = new Language.fromCode("en-US");
+ *     var defaultLanguage = new Language();
  */
 class Language {
   static const String defaultLanguage = "en";
@@ -22,8 +22,9 @@ class Language {
     _country = info.country;
   }
 
-  factory Language({String language:defaultLanguage, String country:defaultCountry}) {
-    return new Language.fromCode("${language}-${country}");
+  Language({String language:defaultLanguage, String country:defaultCountry}) {
+    _language = language;
+    _country = country;
   }
 
   String get language => _language;
@@ -31,7 +32,8 @@ class Language {
   String get country => _country;
 
   Language _parse(String code) {
-    return null; //TODO see https://pub.dartlang.org/packages/peg
+    return new Language(language:"bla");
+    //TODO see https://pub.dartlang.org/packages/peg
   }
 
   String toString() => "${language}-${country}";
@@ -40,11 +42,15 @@ class Language {
 /**
  * Representation of a version
  *
- *   var version = new Version.fromString("1.2.43");
- *   var version = new Version.fromString("1.2.43_version-name");
+ *     var version = new Version.fromString("1.2.43");
+ *     var version = new Version.fromString("1.2.43_version-name");
  *
  */
 class Version {
+  static const String defaultMajor = "1";
+  static const String defaultMinor = "0";
+  static const String defaultMaintenance = "0";
+
   String _major;
   String _minor;
   String _maintenance;
@@ -59,6 +65,13 @@ class Version {
     _name = info.name;
   }
 
+  Version({String major:defaultMajor, String minor:defaultMinor, String maintenance:defaultMaintenance, String name}) {
+    _major = major;
+    _minor = minor;
+    _maintenance = maintenance;
+    _name = name;
+  }
+
   String get major => _major;
 
   String get minor => _minor;
@@ -68,15 +81,18 @@ class Version {
   String get name => _name;
 
   Version _parse(String version) {
-    return null; //TODO see https://pub.dartlang.org/packages/peg
+    return new Version();
+    //TODO see https://pub.dartlang.org/packages/peg
   }
 
-  String toString() => "${major}.${minor}.${maintenance}"; //TODO add version name if set
+  String toString() => "${major}.${minor}.${maintenance}";
+//TODO add version name if set
 }
 
 class Author {
   final String firstName;
   final String lastName;
+
   //TODO add company as new model class
   //TODO add email
 
