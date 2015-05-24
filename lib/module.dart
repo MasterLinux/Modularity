@@ -3,17 +3,16 @@ part of modularity.core;
 abstract class Module extends ViewModel {
   static const String namespace = "modularity.core.Module";
   static const String defaultLibrary = "modularity.core";
+  Map<String, dynamic> _attributes;
   ClassLoader _instance;
-
-  /// Initial attributes to setup this module
-  final Map<String, dynamic> attributes;
 
   /// Gets the fragment which contains
   /// this module
   final Fragment parent;
 
   /// Initializes the module
-  Module(this.parent, this.attributes) {
+  Module(this.parent, Map<String, dynamic> attributes) {
+    _attributes = attributes != null ? attributes : <String, dynamic>{};
     _instance = new ClassLoader.fromInstance(this);
   }
 
@@ -30,6 +29,12 @@ abstract class Module extends ViewModel {
 
   /// Gets the ID of the module or null if view is not set
   String get id => view.id;
+
+  /// Gets the initial attributes which are used to setup this module
+  Map<String, dynamic> get attributes => _attributes;
+
+  /// Checks whether the attribute with the given name exists
+  bool hasAttribute(String name) => attributes.containsKey(name);
 
   /// loads the module
   Future load() async {
