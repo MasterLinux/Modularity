@@ -1,5 +1,11 @@
 part of modularity.core;
 
+/// Navigator factory used to allow to inject a custom navigator
+typedef Navigator NavigatorFactory();
+
+/// Loads the default navigator
+Navigator _defaultNavigator() => new Navigator();
+
 /**
  * Representation of an application
  */
@@ -76,11 +82,10 @@ class Application implements NavigationListener {
   /**
    * Initializes the application
    */
-  Application({Navigator navigator, this.logger}) :
+  Application({NavigatorFactory navigatorFactory: _defaultNavigator, this.logger}) :
   resources = new HashMap<String, Resource>(),
-  tasks = new HashMap<String, Task>()
-  {
-    _navigator = navigator != null ? navigator : new Navigator();
+  tasks = new HashMap<String, Task>() {
+    _navigator = navigatorFactory();
   }
 
   /// Reads the manifest and initializes the application
@@ -148,6 +153,7 @@ class Application implements NavigationListener {
     return this;
   }
 
+  @override
   void onNavigatedTo(Navigator sender, Page page, NavigationEventArgs args) {
     //does nothing
   }
@@ -220,7 +226,7 @@ class Application implements NavigationListener {
  * is an interface to all global
  * information
  */
-class ApplicationContext {
+class ApplicationContext { //TODO merge application context and module context
   final Application application;
 
   ApplicationContext(this.application);
