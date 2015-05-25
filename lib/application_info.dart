@@ -1,5 +1,7 @@
 part of modularity.core;
 
+// TODO move to application.dart
+
 /**
  * Representation of a language
  *

@@ -26,7 +26,7 @@ class TextInput extends HtmlElementView<html.InputElement> {
 
   @override
   void setupHtmlElement(html.InputElement element) {
-    if(hasEventHandler(onTextChangedEvent)) {
+    if (hasEventHandler(onTextChangedEvent)) {
       _onTextChangedSubscription = element.onInput.listen((event) {
         invokeEventHandler(onTextChangedEvent, this, new TextChangedEventArgs(event.target.value));
       });
@@ -37,7 +37,7 @@ class TextInput extends HtmlElementView<html.InputElement> {
   void cleanup() {
     super.cleanup();
 
-    if(_onTextChangedSubscription != null) {
+    if (_onTextChangedSubscription != null) {
       _onTextChangedSubscription.cancel();
       _onTextChangedSubscription = null;
     }
@@ -45,7 +45,7 @@ class TextInput extends HtmlElementView<html.InputElement> {
 
   @override
   void onAttributeChanged(String name, dynamic value) {
-    switch(name) {
+    switch (name) {
       case textAttribute:
         text = value as String;
         break;

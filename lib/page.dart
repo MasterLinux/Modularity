@@ -32,20 +32,20 @@ class Page {
   /**
    * Adds this page to the DOM
    */
-  void open(NavigationEventArgs args) {
+  Future open(NavigationEventArgs args) async {
     _navigationParameter = args.parameter;
 
     for (var fragment in fragments) {
-      fragment.addToDOM(args);
+      await fragment.addToDOM(args);
     }
   }
 
   /**
    * Removes this page from DOM
    */
-  void close() {
+  Future close() async {
     for (var fragment in fragments) {
-      fragment.removeFromDOM();
+      await fragment.removeFromDOM();
     }
   }
 

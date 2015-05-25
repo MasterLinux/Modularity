@@ -45,20 +45,20 @@ abstract class Module extends ViewModel {
   /**
    * Adds the template of the module to DOM.
    */
-  void add(NavigationEventArgs args) {
+  Future add(NavigationEventArgs args) async {
     subscribe(view);
 
     onBeforeAdd(args);
-    view.addToDOM(parent.id);
+    await view.addToDOM(parent.id);
     onAdded(args);
   }
 
   /**
    * Removes the template of the module from DOM.
    */
-  void remove() {
+  Future remove() async {
     onBeforeRemove();
-    view.removeFromDOM();
+    await view.removeFromDOM();
     onRemoved();
 
     unsubscribe(view);

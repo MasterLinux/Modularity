@@ -61,7 +61,7 @@ class Application implements NavigationListener {
   /**
    * Gets all registered pages
    */
-  HashMap<String, Page> get pages => navigator.pages;
+  HashMap<NavigationUri, Page> get pages => navigator.pages;
 
   /**
    * Gets all resources tasks if no resource is loaded
@@ -94,7 +94,7 @@ class Application implements NavigationListener {
     var config = manifest.config;
 
     //get app info
-    _startUri = config.startUri != null ? new NavigationUri.fromString(config.startUri) : new NavigationUri.fromString(config.pages.first.uri);
+    _startUri = config.startUri != null ? new NavigationUri.fromString(config.startUri) : new NavigationUri.fromString(config.pages.first.uri); // TODO check whether config.pages.first is not null
     _language = new Language.fromCode(config.language);
     _author = new Author(config.author, config.author);
     _version = new Version.fromString(config.version);
@@ -141,7 +141,6 @@ class Application implements NavigationListener {
     if (!isRunning) {
       _isRunning = true;
 
-      navigator.addListener(this);
       await navigator.navigateTo(startUri, parameter: new NavigationParameter.fromMap({}));
       //TODO start page parameter required
 

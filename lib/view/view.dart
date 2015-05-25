@@ -75,7 +75,7 @@ class ViewConverter implements Converter<ViewTemplateModel, Future<View>> {
   }
 }
 
-class ViewTemplate {
+class ViewTemplate { // TODO remove and use View instead
   View _rootView;
 
   ViewTemplate(View view, {utility.Logger logger}) {
@@ -203,10 +203,10 @@ abstract class View {
   /// Initializes the view with a [ViewModel] and a list of [ViewBinding]s
   View({this.viewModel, List<ViewBinding> bindings}) {
     _id = new utility.UniqueId("mod_view").build();
+    setup(bindings);
 
     if (viewModel != null) {
       viewModel.subscribe(this);
-      setup(bindings);
     }
   }
 
@@ -228,13 +228,15 @@ abstract class View {
 
   /// Converts the view to an HTML element
   Future<html.HtmlElement> toHtml() async {
-    return (await render()).toHtml();
+    var view = await render();
+    return view.toHtml();
   }
 
   /// Adds the view to DOM
   Future addToDOM(String parentId) async {
-    var element = (await toHtml())
-      ..id = id;
+    var element = await toHtml();
+    element.id = id;
+
     var parentNode = html.document.querySelector(parentId);
 
     if (parentNode != null) {
@@ -245,7 +247,7 @@ abstract class View {
   }
 
   /// Removes the view from DOM
-  void removeFromDOM() {
+  Future removeFromDOM() async {
     cleanup();
 
     var node = html.document.querySelector("#${id}");

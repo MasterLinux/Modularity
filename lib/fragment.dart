@@ -47,9 +47,9 @@ class Fragment {
    * flag indicates whether this fragment is
    * re-added 'caused by a back navigation
    */
-  void addToDOM(NavigationEventArgs args) {
+  Future addToDOM(NavigationEventArgs args) async {
     for(var module in modules) {
-      module.add(args);
+      await module.add(args);
     }
   }
 
@@ -57,9 +57,9 @@ class Fragment {
    * Remove the fragment and all its
    * modules from DOM.
    */
-  void removeFromDOM() {
+  Future removeFromDOM() async {
     for(var module in modules) {
-      module.remove();
+      await module.remove();
     }
   }
 

@@ -5,11 +5,10 @@ typedef NavigationStrategy NavigationStrategyFactory();
 NavigationStrategy _defaultNavigationStrategy() => new DefaultNavigationStrategy();
 
 class Navigator {
+  static const String navigationIdPrefix = "navigation";
   static const String namespace = "modularity.core.Navigator";
-  static const String idPrefix = "navigation";
 
-  final HashMap<String, NavigationParameter> _parameterCache;
-  final List<NavigationListener> _listener;
+  final HashMap<String, NavigationEventArgs> _parameterCache;
   final NavigationStrategyFactory strategy;
   final List<HistoryItem> _history;
   final Router _router;
@@ -20,117 +19,95 @@ class Navigator {
    * Gets all pages if no page is loaded
    * it returns an empty list
    */
-  final HashMap<String, Page> pages;
+  final HashMap<NavigationUri, Page> pages;
 
   /// initializes the navigator with a specific [NavigationStrategy]
   /// if no [strategy] is set the default strategy is used
   Navigator({this.strategy: _defaultNavigationStrategy}) :
-    pages = new HashMap<String, Page>(),
-    _parameterCache = new HashMap<String, NavigationParameter>(),
-    _listener = new List<NavigationListener>(),
-    _history = new List<HistoryItem>(),
-    _router = new Router()
-  {
+  pages = new HashMap<NavigationUri, Page>(),
+  _parameterCache = new HashMap<String, NavigationEventArgs>(),
+  _history = new List<HistoryItem>(),
+  _router = new Router() {
     _router.root
-        ..addRoute(name: 'page', path: '/page/:uri/:id', enter: _openPage);
+      ..addRoute(name: 'page', path: '/page/:uri/:id', enter: _openPage);
 
     _router.listen();
   }
 
-  void _cacheNavigationParameter(String uri, String navigationId, NavigationParameter parameter) {
-      var key = "${uri}_${navigationId}";
-      _parameterCache[key] = parameter;
+  void _cacheNavigationParameter(NavigationUri uri, String navigationId, NavigationParameter parameter) {
+    var args = new NavigationEventArgs(uri, parameter: parameter);
+    var key = "${uri.path}_${navigationId}";
+    _parameterCache[key] = args;
   }
 
-  NavigationParameter _getCachedNavigationParameter(String uri, String navigationId) {
-      var key = "${uri}_${navigationId}";
-      return _parameterCache[key];
+  NavigationEventArgs _getCachedNavigationParameter(NavigationUri uri, String navigationId) {
+    var key = "${uri.path}_${navigationId}";
+    return _parameterCache[key];
   }
 
-  void _openPage(RouteEvent e) {
-    var uri = e.parameters['uri'];
+  Future _openPage(RouteEvent e) async {
+    var uri = new NavigationUri.fromString(e.parameters['uri']);
     var navigationId = e.parameters['id'];
 
-    if(pages.containsKey(uri)) {
-      var parameter = _getCachedNavigationParameter(uri, navigationId);
-      var args = new NavigationEventArgs(uri, parameter: parameter);
+    if (pages.containsKey(uri)) {
+      var args = _getCachedNavigationParameter(uri, navigationId);
       var historyItem = new HistoryItem()
         ..id = navigationId
         ..uri = uri;
 
-      if(_currentPage != null) {
-        _currentPage.close();
+      if (_currentPage != null) {
+        await _currentPage.close();
       }
 
       _currentPage = pages[uri];
-      _currentPage.open(args);
+      await _currentPage.open(args);
       _history.add(historyItem);
-
-      for(var listener in _listener) {
-        listener.onNavigatedTo(this, _currentPage, args);
-      }
     }
 
-    else if(logger != null) {
-      logger.log(new MissingPageWarning(namespace, uri));
+    else if (logger != null) {
+      logger.log(new MissingPageWarning(namespace, uri.path));
     }
   }
 
   /// opens a specific [Page] with the help of its [uri]
-  Future navigateTo(NavigationUri uri, {NavigationParameter parameter}) {
-    if(pages.containsKey(uri)) {
-      var args = new NavigationEventArgs(uri, parameter: parameter);
-      var navigationId = new utility.UniqueId(idPrefix).build();
+  Future navigateTo(NavigationUri uri, {NavigationParameter parameter}) async {
+    if (pages.containsKey(uri)) {
+      var navigationId = new utility.UniqueId(navigationIdPrefix).build();
       var navigationStrategy = strategy();
 
       _cacheNavigationParameter(uri, navigationId, parameter);
 
-      return _router.go('page', {'uri': uri, 'id': navigationId},
-          replace: navigationStrategy.shouldReplace(pages[uri], _currentPage)
+      await _router.go('page', {'uri': uri.path, 'id': navigationId},
+      replace: navigationStrategy.shouldReplace(pages[uri], _currentPage)
       );
     }
 
-    else if(logger != null) {
-      logger.log(new MissingPageWarning(namespace, uri));
+    else if (logger != null) {
+      logger.log(new MissingPageWarning(namespace, uri.path));
     }
-
-    //TODO return future
   }
 
   /// opens the previous [Page]
-  Future navigateBack() {
+  Future navigateBack() async {
     //remove current page from history
     _history.removeLast();
 
-    if(_history.isNotEmpty) {
+    if (_history.isNotEmpty) {
       var historyItem = _history.last;
-      var parameter = _getCachedNavigationParameter(historyItem.uri, historyItem.id);
+      var args = _getCachedNavigationParameter(historyItem.uri, historyItem.id);
+      args = new NavigationEventArgs(args.uri, parameter:args.parameter, isNavigatedBack:true);
 
       //TODO implement back navigation
-
-      for(var listener in _listener) {
-        var args = new NavigationEventArgs(historyItem.uri, parameter: parameter, isNavigatedBack: true);
-        listener.onNavigatedTo(this, _currentPage, args);
-      }
     }
-
-    //TODO return future
   }
-
-  /// adds a new [listener] which listen to page changes
-  void addListener(NavigationListener listener) => _listener.add(listener);
-
-  /// removes a specific [listener]
-  bool removeListener(NavigationListener listener) => _listener.remove(listener);
 
   /// cleans up the navigator
   void clear() {
-    if(_currentPage != null) {
+    if (_currentPage != null) {
       _currentPage.close();
       _currentPage = null;
     }
 
-    _listener.clear();
     _history.clear();
     logger = null;
   }
@@ -143,9 +120,9 @@ class Navigator {
   /**
    * Adds all [pages] in list to the application
    */
-  void addPages(List<Page> pagesCollection) {
-    pages.addAll(new HashMap.fromIterable(pagesCollection, key: (page) {
-      if(logger != null && pages.containsKey(page.uri)) {
+  void addPages(List<Page> pages) {
+    this.pages.addAll(new HashMap.fromIterable(pages, key: (page) {
+      if (logger != null && this.pages.containsKey(page.uri)) {
         logger.log(new PageExistsWarning(namespace, page.uri));
       }
 
@@ -157,11 +134,11 @@ class Navigator {
    * Adds a single [page] to the application
    */
   void addPage(Page page) {
-    if(logger != null && pages.containsKey(page.uri)) {
+    if (logger != null && pages.containsKey(page.uri)) {
       logger.log(new PageExistsWarning(namespace, page.uri.toString()));
     }
 
-    pages[page.uri.toString()] = page;
+    pages[page.uri] = page;
   }
 }
 
@@ -173,7 +150,7 @@ abstract class NavigationListener {
 }
 
 class HistoryItem {
-  String uri;
+  NavigationUri uri;
   String id;
 }
 
@@ -191,9 +168,9 @@ class NavigationParameter {
 
   /// adds a new parameter [value] by its [name]
   void add(String name, Object value) {
-    if(!contains(name)) {
+    if (!contains(name)) {
 
-    } else if(logger != null) {
+    } else if (logger != null) {
       logger.log(new ParameterExistsWarning(namespace, name));
     }
   }
@@ -206,14 +183,11 @@ class NavigationParameter {
 }
 
 class NavigationEventArgs implements EventArgs {
-  final NavigationParameter parameter; //TODO do not use dynamic
+  final NavigationParameter parameter;
   final bool isNavigatedBack;
-  final String uri;
+  final NavigationUri uri;
 
-  NavigationEventArgs(this.uri, {
-    this.isNavigatedBack: false,
-    this.parameter
-  });
+  NavigationEventArgs(this.uri, {this.isNavigatedBack: false, this.parameter});
 }
 
 class NavigationUri {
@@ -233,7 +207,11 @@ class NavigationUri {
 
   bool get isInvalid => !isValid;
 
-  //TODO implement toString
+  operator ==(another) => another is NavigationUri && another.path == path;
+
+  int get hashCode => quiver.hash2(path.hashCode, isInvalid.hashCode);
+
+//TODO implement toString
 }
 
 abstract class NavigationStrategy {
@@ -244,7 +222,8 @@ class DefaultNavigationStrategy implements NavigationStrategy {
   bool shouldReplace(Page page, Page previousPage) => false;
 }
 
-class ParameterExistsWarning extends utility.WarningMessage { //TODO rename to NavigationParameterExistsWarning
+class ParameterExistsWarning extends utility.WarningMessage {
+  //TODO rename to NavigationParameterExistsWarning
   final String _name;
 
   ParameterExistsWarning(String namespace, String name) : _name = name, super(namespace);
