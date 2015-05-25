@@ -2,8 +2,9 @@ part of modularity.core;
 
 class Fragment {
   static const String namespace = "modularity.core.Fragment";
-  final List<Module> modules = new List<Module>();
+  String _id;
 
+  final List<Module> modules = new List<Module>();
   final ApplicationContext context;  //TODO redefine application context
   final Page page; //TODO use for communication?
 
@@ -12,14 +13,16 @@ class Fragment {
    * its specific page template node in which
    * the fragment is placed
    */
-  final String id;
+  String get id => _id;
 
   utility.Logger get logger => context.logger;
 
   /**
    * Initializes the fragment with its ID.
    */
-  Fragment(this.id, this.page, this.context);
+  Fragment(String id, this.page, this.context) {
+    _id = id != null ? id : page.id;
+  }
 
   /// adds a collection of [AnnotatedModule]s to the fragment
   void addModules(List<Module> modules) {

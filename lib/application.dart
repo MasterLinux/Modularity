@@ -11,6 +11,8 @@ Navigator _defaultNavigator() => new Navigator();
  */
 class Application implements NavigationListener {
   static const String namespace = "modularity.core.Application";
+  static const String  defaultRootId = "modularity";
+
   bool _isRunning = false;
   NavigationUri _startUri;
   Navigator _navigator;
@@ -92,6 +94,7 @@ class Application implements NavigationListener {
   Future applyManifest(Manifest manifest) async {
     var context = new ApplicationContext(this);
     var config = manifest.config;
+    var rootId = config.rootId != null ? config.rootId : defaultRootId;
 
     //get app info
     _startUri = config.startUri != null ? new NavigationUri.fromString(config.startUri) : new NavigationUri.fromString(config.pages.first.uri); // TODO check whether config.pages.first is not null
@@ -102,9 +105,9 @@ class Application implements NavigationListener {
 
     // add all pages
     for (var pageModel in config.pages) {
-      var template = pageModel.template != null ? ViewTemplate.createTemplate(pageModel.template) : null;
+      var pageView = pageModel.template != null ? new ViewConverter().convert(pageModel.template) : null;
       var uri = new NavigationUri.fromString(pageModel.uri);
-      var page = new Page(uri, pageModel.title, context, template: template);
+      var page = new Page(rootId, uri, pageModel.title, context, view: pageView);
 
       // add all fragments
       for (var fragmentModel in pageModel.fragments) {

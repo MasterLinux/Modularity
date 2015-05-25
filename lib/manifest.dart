@@ -20,6 +20,7 @@ class ApplicationModel {
   String version;
   String author; //TODO model for author? which contains more info than the name
   String name;
+  String rootId;
   List<PageModel> pages;
 }
 
@@ -30,6 +31,7 @@ class ApplicationConverter implements Converter<Map, ApplicationModel> {
   static const String authorKey = "author";
   static const String pagesKey = "pages";
   static const String nameKey = "name";
+  static const String rootIdKey = "rootId";
 
   @override
   ApplicationModel convert(Map value) {
@@ -50,6 +52,7 @@ class ApplicationConverter implements Converter<Map, ApplicationModel> {
       ..version = value[versionKey]
       ..author = value[authorKey]
       ..name = value[nameKey]
+      ..rootId = value[rootIdKey]
       ..pages = pages;
   }
 

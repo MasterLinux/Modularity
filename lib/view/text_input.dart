@@ -57,4 +57,15 @@ class TextInput extends HtmlElementView<html.InputElement> {
   String get text => _htmlElement.value;
 }
 
+class ContentView extends HtmlElementView<html.DivElement> {
+
+  @override
+  html.DivElement createHtmlElement() => new html.DivElement();
+
+  @override
+  void setupHtmlElement(html.DivElement element) {
+    // does nothing
+  }
+}
+
 

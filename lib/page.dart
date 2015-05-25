@@ -5,27 +5,31 @@ class Page {
   static const String namespace = "modularity.core.Page";
   NavigationParameter _navigationParameter;
   ApplicationContext context;
-  ViewTemplate _template;
+  View _view;
 
   final List<Fragment> fragments;
   final NavigationUri uri;
   final String title;
+  final String rootId;
 
   /// Initializes the page with its [uri] and [title]. The title is usually used by navigation modules
   /// to create menu entries automatically
-  Page(this.uri, this.title, this.context, {ViewTemplate template}) : fragments = new List<Fragment>() {
-    //load default template
-    if (template == null) {
-      //template = new DefaultPageTemplate(logger: logger); //TODO create default template
+  Page(this.rootId, this.uri, this.title, this.context, {View view}) : fragments = new List<Fragment>() {
+    //load default view
+    if (view == null) {
+      view = new ContentView();
     }
 
-    _template = template;
+    _view = view;
   }
 
-  /// Gets the template of this page
-  ViewTemplate get template => _template;
+  /// Gets the view of this page
+  View get view => _view;
 
-  Application get application => context.application;
+  /// Gets the ID of the page view
+  String get id => view.id;
+
+  Application get application => context.application; //TODO remove
 
   utility.Logger get logger => context.logger;
 
@@ -34,6 +38,9 @@ class Page {
    */
   Future open(NavigationEventArgs args) async {
     _navigationParameter = args.parameter;
+
+    //TODO create view tree than add?
+    await view.addToDOM(rootId);
 
     for (var fragment in fragments) {
       await fragment.addToDOM(args);
@@ -47,6 +54,8 @@ class Page {
     for (var fragment in fragments) {
       await fragment.removeFromDOM();
     }
+
+    await view.removeFromDOM();
   }
 
   /// adds a [Fragment] to this page

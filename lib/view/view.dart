@@ -25,10 +25,11 @@ class ViewBinding {
   ViewBinding(this.type, this.attributeName, this.propertyName, {this.defaultValue});
 }
 
+/// Converts a [ViewTemplateModel] to a [View]
 class ViewConverter implements Converter<ViewTemplateModel, Future<View>> {
   final ViewModel viewModel;
 
-  ViewConverter(this.viewModel);
+  ViewConverter({this.viewModel});
 
   Future<View> convert(ViewTemplateModel value) async {
     var bindings = new List<ViewBinding>();
@@ -61,7 +62,7 @@ class ViewConverter implements Converter<ViewTemplateModel, Future<View>> {
       }
     }
 
-    return await ViewTemplate.createView(
+    return await View.createView(
         value.type,
         libraryName: value.lib != null ? value.lib : View.defaultLibrary,
         viewModel: viewModel,
@@ -72,44 +73,6 @@ class ViewConverter implements Converter<ViewTemplateModel, Future<View>> {
 
   ViewTemplateModel convertBack(Future<View> value) {
     throw new UnimplementedError();
-  }
-}
-
-class ViewTemplate { // TODO remove and use View instead
-  View _rootView;
-
-  ViewTemplate(View view, {utility.Logger logger}) {
-    _rootView = view;
-  }
-
-  View get rootView => _rootView;
-
-  void render(String parentId) {
-    if (rootView != null) {
-      rootView.addToDOM(parentId);
-    }
-  }
-
-  void destroy() {
-    if (rootView != null) {
-      rootView.removeFromDOM();
-    }
-  }
-
-  static Future<ViewTemplate> createTemplate(ViewTemplateModel model, {ViewModel viewModel, utility.Logger logger}) async {
-    var view = await new ViewConverter(viewModel).convert(model);
-    return new ViewTemplate(view, logger: logger);
-  }
-
-  /// Loads a viw by its [viewType]
-  static Future<View> createView(String viewType, {String libraryName: View.defaultLibrary, List<ViewBinding> bindings, ViewModel viewModel, List<View> subviews}) async {
-    var viewLoader = new ClassLoader<View>(new Symbol(libraryName), new Symbol(viewType), const Symbol(""), [], {
-      #viewModel: viewModel,
-      #bindings: bindings
-    });
-
-    await viewLoader.load();
-    return viewLoader.instance;
   }
 }
 
@@ -210,6 +173,17 @@ abstract class View {
     }
   }
 
+  /// Loads a view by its [viewType]
+  static Future<View> createView(String viewType, {String libraryName: View.defaultLibrary, List<ViewBinding> bindings, ViewModel viewModel, List<View> subviews}) async {
+    var viewLoader = new ClassLoader<View>(new Symbol(libraryName), new Symbol(viewType), const Symbol(""), [], {
+      #viewModel: viewModel,
+      #bindings: bindings
+    });
+
+    await viewLoader.load();
+    return viewLoader.instance;
+  }
+
   /// Setups the view. Can be overridden to add event handler, etc.
   void setup(List<ViewBinding> bindings) {
     //map attributes to view model
@@ -228,16 +202,13 @@ abstract class View {
 
   /// Converts the view to an HTML element
   Future<html.HtmlElement> toHtml() async {
-    var view = await render();
-    return view.toHtml();
+    return (await render()).toHtml();
   }
 
   /// Adds the view to DOM
   Future addToDOM(String parentId) async {
-    var element = await toHtml();
-    element.id = id;
-
-    var parentNode = html.document.querySelector(parentId);
+    var parentNode = html.document.querySelector("#${parentId}");
+    var element = (await toHtml())..id = id;
 
     if (parentNode != null) {
       parentNode.nodes.add(element);
@@ -380,7 +351,7 @@ class TestView extends View {
 
   @override
   Future<View> render() async {
-    return await ViewTemplate.createView("TextInput", viewModel: viewModel, bindings: [
+    return await View.createView("TextInput", viewModel: viewModel, bindings: [
       new ViewBinding(ViewBindingType.EVENT_HANDLER, TextInput.onTextChangedEvent, "testFunc"),
       new ViewBinding(ViewBindingType.ATTRIBUTE, TextInput.textAttribute, "title")
     ]);
