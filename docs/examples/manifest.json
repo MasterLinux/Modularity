@@ -1,0 +1,32 @@
+{
+  "rootId": "body",
+  "startUri": "home",
+  "language": "de-DE",
+  "version": "1.0.0",
+  "author": "Christoph",
+  "name": "Example App",
+  "pages": [{
+    "title": "Startseite",
+    "uri": "home",
+    "template": null,
+    "fragments": [{
+      "parentId": null,
+      "modules": [{
+        "lib": "modularity.core",
+        "name": "MenuModule",
+        "attributes": {
+          "title": "title_1"
+        }
+      },{
+        "lib": "modularity.core",
+        "name": "MenuModule",
+        "attributes": {
+          "title": "title_2"
+        }
+      },{
+        "lib": "modularity.core",
+        "name": "MenuModule"
+      }]
+    }]
+  }]
+}

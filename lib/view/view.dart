@@ -246,7 +246,7 @@ abstract class View {
   }
 
   /// Handler which is invoked whenever a specific property in view model is changed
-  void onPropertyChanged(String name, dynamic value);
+  void onPropertyChanged(String name, dynamic value); //TODO update children/subviews, too
 
   /// Invokes a specific event handler
   void invokeEventHandler(String name, View sender, EventArgs args) {
