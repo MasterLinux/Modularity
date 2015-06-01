@@ -9,8 +9,6 @@ import 'dart:async' show StreamSubscription, Future;
 
 import 'package:class_loader/class_loader.dart';
 
-part 'text_input.dart';
-
 enum ViewBindingType {
   EVENT_HANDLER,
   ATTRIBUTE
@@ -101,25 +99,39 @@ abstract class ViewModel {
   ///     String get specificProperty => _specificProperty;
   ///
   void notifyPropertyChanged(String name) {
-    var getter = _instance.getter[new Symbol(name)];
+    var nameSymbol = new Symbol(name);
 
-    if (getter != null) {
+    if (_instance.hasGetter(nameSymbol)) {
+      var value = _instance.getter[nameSymbol].get();
+
       for (var view in _views) {
-        view.notifyPropertyChanged(name, getter.get());
+        view.onPropertyChanged(name, value);
       }
-
     } else {
       // TODO throw warning, getter not found
     }
   }
 
-  void updateProperty(String name, dynamic value) {
-    _instance.fields[new Symbol(name)].set(value);
+  /// Handler which is invoked whenever a specific view attribute is changed
+  void onAttributeChanged(String name, dynamic value) {
+    var nameSymbol = new Symbol(name);
+
+    if (_instance.hasSetter(nameSymbol)) {
+      _instance.setter[nameSymbol].set(value);
+    } else {
+      // TODO throw warning, setter not found
+    }
   }
 
-  /// Handler which is invoked whenever a specific view attribute is changed
-  /// This function can be overridden to handle attributes changes
-  void onAttributeChanged(String name, dynamic value) {
+  /// Handler which is invoked whenever the view throws an event
+  void onEventHandlerInvoked(String name, View sender, EventArgs args) {
+    var nameSymbol = new Symbol(name);
+
+    if (_instance.hasMethod(nameSymbol)) {
+      _instance.methods[nameSymbol].invoke([sender, args]);
+    } else {
+      // TODO throw warning, method not found
+    }
   }
 
   /// Subscribes a view as observer so it is able to listen for attribute changes
@@ -134,21 +146,6 @@ abstract class ViewModel {
     if (_views.contains(view)) {
       _views.remove(view);
     }
-  }
-
-  /// Helper function which is used to invoke a specific event handler in this view model
-  void invokeEventHandler(String name, View sender, EventArgs args) {
-    _instance.methods[new Symbol(name)].invoke([sender, args]);
-  }
-
-  /// Checks whether this view model contains a specific property
-  bool containsProperty(String name) {
-    return _instance.hasField(new Symbol(name));
-  }
-
-  /// Checks whether this view model contains a specific event handler
-  bool containsEventHandler(String name) {
-    return _instance.hasMethod(new Symbol(name));
   }
 }
 
@@ -194,6 +191,16 @@ abstract class View {
     }
   }
 
+  /// Cleanup function which is used to remove events [StreamSubscription], etc.
+  /// before the view is removed from DOM
+  void cleanup() {
+    viewModel.unsubscribe(this);
+
+    for (var subview in subviews) {
+      subview.cleanup();
+    }
+  }
+
   /// Gets the ID of the view
   String get id => _id;
 
@@ -208,7 +215,8 @@ abstract class View {
   /// Adds the view to DOM
   Future addToDOM(String parentId) async {
     var parentNode = html.document.querySelector("#${parentId}");
-    var element = (await toHtml())..id = id;
+    var element = (await toHtml())
+      ..id = id;
 
     if (parentNode != null) {
       parentNode.nodes.add(element);
@@ -230,16 +238,24 @@ abstract class View {
     }
   }
 
-  /// Cleanup function which is used to remove events [StreamSubscription], etc.
-  /// before the view is removed from DOM
-  void cleanup() {
-    viewModel.unsubscribe(this);
-
-    for (var subview in subviews) {
-      subview.cleanup();
+  /// Notifies the view model that a specific view attribute is changed
+  void notifyAttributeChanged(String name, dynamic value) {
+    if (viewModel != null) {
+      viewModel.onAttributeChanged(name, value);
     }
   }
 
+  /// Handler which is invoked whenever a specific property in view model is changed
+  void onPropertyChanged(String name, dynamic value);
+
+  /// Invokes a specific event handler
+  void invokeEventHandler(String name, View sender, EventArgs args) {
+    if (viewModel != null) {
+      viewModel.onEventHandlerInvoked(_eventHandlerBindings[name], sender, args);
+    }
+  }
+
+/*
   /// Checks whether a specific attribute binding exists
   bool hasAttribute(String name) => _attributeBindings.containsKey(name);
 
@@ -309,7 +325,7 @@ abstract class View {
     } else {
       //TODO attribute is missing
     }
-  }
+  } */
 }
 
 /// A view implementation used to create views using a [HtmlElement]
@@ -342,6 +358,73 @@ abstract class HtmlElementView<TElement extends html.HtmlElement> extends View {
   }
 }
 
+class TextChangedEventArgs implements EventArgs {
+  String text;
+
+  TextChangedEventArgs(this.text);
+}
+
+///
+///
+class TextInput extends HtmlElementView<html.InputElement> {
+  StreamSubscription<html.Event> _onTextChangedSubscription;
+
+  TextInput({ViewModel viewModel, List<ViewBinding> bindings}) : super(viewModel: viewModel, bindings: bindings);
+
+  // events
+  static const String onTextChangedEvent = "onTextChanged";
+
+  // attributes
+  static const String textAttribute = "text";
+
+  @override
+  html.InputElement createHtmlElement() {
+    return new html.InputElement();
+  }
+
+  @override
+  void setupHtmlElement(html.InputElement element) {
+    if (hasEventHandler(onTextChangedEvent)) {
+      _onTextChangedSubscription = element.onInput.listen((event) {
+        invokeEventHandler(onTextChangedEvent, this, new TextChangedEventArgs(event.target.value));
+      });
+    }
+  }
+
+  @override
+  void cleanup() {
+    super.cleanup();
+
+    if (_onTextChangedSubscription != null) {
+      _onTextChangedSubscription.cancel();
+      _onTextChangedSubscription = null;
+    }
+  }
+
+  @override
+  void onPropertyChanged(String name, dynamic value) {
+    switch (name) {
+      case textAttribute:
+        text = value as String;
+        break;
+    }
+  }
+
+  set text(String text) => _htmlElement.value = text;
+
+  String get text => _htmlElement.value;
+}
+
+class ContentView extends HtmlElementView<html.DivElement> {
+
+  @override
+  html.DivElement createHtmlElement() => new html.DivElement();
+
+  @override
+  void setupHtmlElement(html.DivElement element) {
+    // does nothing
+  }
+}
 
 class TestView extends View {
   //TODO remove
@@ -357,3 +440,5 @@ class TestView extends View {
     ]);
   }
 }
+
+//TODO add ListView, FileTree, GridView, Button, TextView, Search
